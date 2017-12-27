@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<entitlements>
+  <entitlement>
+    <entitlementId>1</entitlementId>
+    <entitlementTag>WEST_Custom_Item_142</entitlementTag>
+    <status>ACTIVE</status>
+    <userId>{{ .HeroID }}</userId>
+  </entitlement>
+  <entitlement>
+    <entitlementId>1253</entitlementId>
+    <entitlementTag>WEST_Custom_Item_142</entitlementTag>
+    <status>ACTIVE</status>
+    <userId>{{ .HeroID }}</userId>
+  </entitlement>
+</entitlements>

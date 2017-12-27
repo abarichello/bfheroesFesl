@@ -1,0 +1,7 @@
+glide.lock
+
+*.exe
+main
+
+_data/lvl.db
+*.env
