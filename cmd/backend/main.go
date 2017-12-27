@@ -4,12 +4,12 @@ import (
 	"database/sql"
 	"flag"
 
-	"bitbucket.org/openheroes/backend/config"
-	"bitbucket.org/openheroes/backend/internal/fesl"
-	"bitbucket.org/openheroes/backend/internal/theater"
-	"bitbucket.org/openheroes/backend/server"
-	"bitbucket.org/openheroes/backend/storage/database"
-	"bitbucket.org/openheroes/backend/storage/level"
+	"github.com/Synaxis/unstable/backend/config"
+	"github.com/Synaxis/unstable/backend/internal/fesl"
+	"github.com/Synaxis/unstable/backend/internal/theater"
+	"github.com/Synaxis/unstable/backend/server"
+	"github.com/Synaxis/unstable/backend/storage/database"
+	"github.com/Synaxis/unstable/backend/storage/level"
 
 	"github.com/sirupsen/logrus"
 	"github.com/subosito/gotenv"

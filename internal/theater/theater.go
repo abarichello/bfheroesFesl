@@ -4,9 +4,9 @@ import (
 	"database/sql"
 	"time"
 
-	"bitbucket.org/openheroes/backend/internal/matchmaking"
-	"bitbucket.org/openheroes/backend/internal/network"
-	"bitbucket.org/openheroes/backend/storage/level"
+	"github.com/Synaxis/unstable/backend/internal/matchmaking"
+	"github.com/Synaxis/unstable/backend/internal/network"
+	"github.com/Synaxis/unstable/backend/storage/level"
 
 	"github.com/sirupsen/logrus"
 )

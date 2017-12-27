@@ -3,9 +3,9 @@ package theater
 import (
 	"fmt"
 
-	"bitbucket.org/openheroes/backend/internal/network"
-	"bitbucket.org/openheroes/backend/internal/network/codec"
-	"bitbucket.org/openheroes/backend/storage/level"
+	"github.com/Synaxis/unstable/backend/internal/network"
+	"github.com/Synaxis/unstable/backend/internal/network/codec"
+	"github.com/Synaxis/unstable/backend/storage/level"
 
 	"github.com/sirupsen/logrus"
 )

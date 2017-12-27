@@ -6,7 +6,7 @@ import (
 	"io"
 	"net"
 
-	"bitbucket.org/openheroes/backend/internal/network/codec"
+	"github.com/Synaxis/unstable/backend/internal/network/codec"
 
 	"github.com/sirupsen/logrus"
 )

@@ -1,9 +1,9 @@
 package fesl
 
 import (
-	"bitbucket.org/openheroes/backend/internal/matchmaking"
-	"bitbucket.org/openheroes/backend/internal/network"
-	"bitbucket.org/openheroes/backend/internal/network/codec"
+	"github.com/Synaxis/unstable/backend/internal/matchmaking"
+	"github.com/Synaxis/unstable/backend/internal/network"
+	"github.com/Synaxis/unstable/backend/internal/network/codec"
 
 	"github.com/sirupsen/logrus"
 )

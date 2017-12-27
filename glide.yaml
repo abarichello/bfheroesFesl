@@ -1,4 +1,4 @@
-package: bitbucket.org/openheroes/backend
+package: github.com/Synaxis/unstable/backend
 import:
 - package: github.com/go-chi/chi
   version: ^3.3.0

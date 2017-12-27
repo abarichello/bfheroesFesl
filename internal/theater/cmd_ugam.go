@@ -3,7 +3,7 @@ package theater
 import (
 	"strings"
 
-	"bitbucket.org/openheroes/backend/internal/network"
+	"github.com/Synaxis/unstable/backend/internal/network"
 
 	"github.com/sirupsen/logrus"
 )

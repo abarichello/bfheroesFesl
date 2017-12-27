@@ -1,7 +1,7 @@
 package matchmaking
 
 import (
-	"bitbucket.org/openheroes/backend/internal/network"
+	"github.com/Synaxis/unstable/backend/internal/network"
 )
 
 var Games = make(map[string]*network.Client)
