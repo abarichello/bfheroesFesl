@@ -39,7 +39,7 @@ func (tm *Theater) CGAM(event network.EventClientCommand) {
 		event.Command.Message["B-version"],
 	)
 	if err != nil {
-		logrus.Error("Cannot create new server", err)
+		logrus.Error("Cannot create New server", err)
 		return
 	}
 

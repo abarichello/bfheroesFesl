@@ -52,7 +52,7 @@ type userInfo struct {
 	// CID          string `fesl:"cid"` ??? = "1"
 }
 
-
+// this is awfull needs a clean looking
 // NuLookupUserInfo - Gets basic information about a game user
 func (fm *FeslManager) NuLookupUserInfo(event network.EventClientCommand) {
 	if !event.Client.IsActive {
