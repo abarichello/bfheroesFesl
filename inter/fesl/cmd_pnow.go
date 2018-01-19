@@ -25,6 +25,7 @@ type ansStart struct {
 
 // Start - a method of pnow
 // TODO: Here we can use "uID" (userID) to check if user is allowed to play / join game
+//TODO: SYNC WITH DISCORD ROLE AND BANNED ROLE
 func (fm *FeslManager) Start(event network.EventClientCommand) {
 	if !event.Client.IsActive {
 		logrus.Println("Client left")

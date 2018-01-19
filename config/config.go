@@ -15,7 +15,7 @@ var (
 )
 
 type cfg struct {
-	LogLevel string `envconfig:"LOG_LEVEL" default:"INFO"`
+	LogLevel string  `envconfig:"LOG_LEVEL" default:"INFO"`
 
 	HTTPBind  string `envconfig:"HTTP_BIND" default:"0.0.0.0:8080"`
 	HTTPSBind string `envconfig:"HTTPS_BIND" default:"0.0.0.0:443"`
@@ -28,12 +28,12 @@ type cfg struct {
 
 	// An address for clients where theater can be found.
 	// Preferable: domain name without protocol scheme and port
-	ThtrAddr string `envconfig:"THEATER_ADDR" default:"localhost"`
+	ThtrAddr string        `envconfig:"THEATER_ADDR" default:"localhost"`
 
 	TelemetricsIP   string `envconfig:"TELEMETRICS_IP" default:"127.0.0.1"`
 	TelemetricsPort int    `envconfig:"TELEMETRICS_PORT" default:"13505"`
 
-	LevelDBPath string `envconfig:"LEVEL_DB_PATH" default:"_data/lvl.db"`
+	LevelDBPath string     `envconfig:"LEVEL_DB_PATH" default:"_data/lvl.db"`
 }
 
 type MySQL struct {

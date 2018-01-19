@@ -88,9 +88,9 @@ func (fm *FeslManager) run() {
 				logrus.WithFields(logrus.Fields{
 					"srv": fm.name,
 					"cmd": fmt.Sprintf("%s/TXN:%s", event.Name, txn),
-				}).Debugf("Got event")
+				}).Debugf("Event")
 			default:
-				logrus.WithFields(logrus.Fields{"srv": fm.name, "event": event.Name}).Debugf("Got event")
+				logrus.WithFields(logrus.Fields{"srv": fm.name, "event": event.Name}).Debugf("Event")
 			}
 		}
 	}
