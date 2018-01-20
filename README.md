@@ -39,23 +39,6 @@ DATABASE_HOST=192.168.33.10
 DATABASE_PASSWORD=test
 ```
 
-## Development
-
-Before diving into the development you will probably need to download and [install Go](https://golang.org/dl/) programming lanugage compiler and set `GOPATH` env variable (`~/go` is used by default) - [see Linux installation manual](https://docs.minio.io/docs/how-to-install-golang).
-
-### Installation in the `GOPATH`
-
-To download code from the repository you could use a terminal (i.e. mingw/gitbash on Windows or preferable: built-in terminal emulator on Linux):
-
-```bash
-mkdir -p $GOPATH/src/github.com/Synaxis/unstable && \
-cd $GOPATH/src/bitbucket.org/openheroes && \
-git clone https://github.com/Synaxis/unstable && \
-cd backend
-```
-
-### Prerequisites
-
 `openheroes/backend`  currently only uses `MySQL` as a backing services. If you are on platform where `docker` is available, you may use following command to quickly download and start container with a MySQL database:
 
 ```bash
@@ -65,18 +48,19 @@ sudo docker-compose start
 ### Start
 
 ===WINDOWS===
-go to cmd/backend/main and do -> go build main.go
+go to root folder and  -> ```go build main.go```
+
+Note: You Must Set your GOPATH at Windows Environment
 
 LINUX
 ```bash
 make run```
-
 Which is alias to:
-
 ```bash
 go build -o main cmd/backend/main.go && sudo -H ./main`
 
-
-## Credits 
-
-This repository is BASED ON `github.com/HeroesAwaken/GoFesl`.# All credits to MakaHost
+## Credits ##
+All The Idea/Project/Prototy Behind Bringing Back Battlefield Heroes was by #Synaxis
+Credits to #MakaHost For being able to translate the code from BF2BC-emulator to golang
+Credits to #Freeze-18, #Spencer and #mDawg From Revive Network.
+Credits to #piotr and #Temp
