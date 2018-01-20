@@ -29,12 +29,6 @@ func main() {
 	startServer(mdb, ldb)
 
 	logrus.Println("Serving..")
-
-	// Use "github.com/google/gops/agent" to analyze resources
-	// if err := agent.Listen(&agent.Options{}); err != nil {
-	// 	log.Fatal(err)
-	// }
-
 	a := make(chan bool)
 	<-a
 }
@@ -60,16 +54,7 @@ func newMySQL() (*sql.DB, error) {
 	return db, err
 }
 
-func newLevelDB() (*level.Level, error) {
-	// Redis Connection
-	// redisClient := redis.NewClient(&redis.Options{
-	// 	Addr: "192.168.33.10:6379",
-	// })
-	// if _, err = redisClient.Ping().Result(); err != nil {
-	// 	log.Fatalln("Error connecting to redis:", err)
-	// }
-
-	// lvl, err := level.New("_data/lvl.db", redisClient)
+func newLevelDB() (*level.Level, error) {	
 	lvl, err := level.New(config.General.LevelDBPath, nil)
 	if err != nil {
 		logrus.Fatal(err)
