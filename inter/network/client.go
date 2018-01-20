@@ -23,7 +23,7 @@ type Clients struct {
 
 func newClients() *Clients {
 	return &Clients{
-		connected: make(map[ClientKey]*Client, 1000),
+		connected: make(map[ClientKey]*Client, 500),
 		mu:        new(sync.Mutex),
 	}
 }
@@ -71,7 +71,7 @@ func newClientTCP(name string, conn net.Conn, fesl bool) *Client {
 		name:      name,
 		conn:      conn,
 		IpAddr:    conn.RemoteAddr(),
-		eventChan: make(chan ClientEvent, 1000),
+		eventChan: make(chan ClientEvent, 500),
 		reader:    bufio.NewReader(conn),
 		IsActive:  true,
 		Options: ClientOptions{
@@ -86,7 +86,7 @@ func newClientTLS(name string, conn *tls.Conn) *Client {
 		conn:      conn,
 		IpAddr:    conn.RemoteAddr(),
 		IsActive:  true,
-		eventChan: make(chan ClientEvent, 1000),
+		eventChan: make(chan ClientEvent, 500),
 		Options: ClientOptions{
 			FESL: true, // Always true
 		},
@@ -140,7 +140,7 @@ func (client *Client) handleRequest() {
 
 		message := strings.TrimSpace(string(client.recvBuffer))
 
-		logrus.Debugln("Got packet:", hex.EncodeToString(client.recvBuffer))
+		logrus.Debugln("Got message:", hex.EncodeToString(client.recvBuffer))
 
 		if strings.Index(message, `\final\`) == -1 {
 			if len(client.recvBuffer) > 1024 {
@@ -197,6 +197,7 @@ type ClientState struct {
 	ServerChallenge string
 	ClientChallenge string
 	ClientResponse  string
+	BattlelogID     int
 	Username        string
 	PlyName         string
 	PlyEmail        string

@@ -26,6 +26,7 @@ type cfg struct {
 	ThtrClientPort int    `envconfig:"THEATER_CLIENT_PORT" default:"18275"`
 	ThtrServerPort int    `envconfig:"THEATER_SERVER_PORT" default:"18056"`
 
+	// An address for clients where theater can be found.
 	// Preferable: domain name without protocol scheme and port
 	ThtrAddr string `envconfig:"THEATER_ADDR" default:"localhost"`
 
@@ -44,8 +45,8 @@ type MySQL struct {
 }
 
 type Fixtures struct {
-	Path       string `envconfig:"CERT_PATH" default:"_cert/cert.pem"`
-	PrivateKey string `envconfig:"PRIVATE_KEY_PATH" default:"_cert/key.pem"`
+	Path       string `envconfig:"CERT_PATH" default:"_fixtures/cert.pem"`
+	PrivateKey string `envconfig:"PRIVATE_KEY_PATH" default:"_fixtures/key.pem"`
 }
 
 func Initialize() {

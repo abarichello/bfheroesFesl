@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/go-redis/redis"
+	"github.com/sirupsen/logrus"
 	"github.com/syndtr/goleveldb/leveldb"
 	"github.com/syndtr/goleveldb/leveldb/util"
 )
@@ -75,28 +76,31 @@ type State struct {
 }
 
 func (lvl *Level) NewState(identifier string) *State {
-	//logrus.WithField("op", "NewState").Debugf("redisState:%s", identifier)
+	logrus.WithField("op", "NewState").Debugf("redisState:%s", identifier)
 	return &State{lvl, fmt.Sprintf("redisState:%s", identifier)}
 }
 
 func (st *State) Get(key string) string {
-	//logrus.WithFields(logrus.Fields{"op": "Get", "meth": "State"}).Debug(key)
+	logrus.WithFields(logrus.Fields{"op": "Get", "meth": "State"}).Debug(key)
 	return st.lvl.Get(st.identifier, key)
 }
 
 func (st *State) Set(key, value string) error {
-	//logrus.WithFields(logrus.Fields{"op": "Set", "meth": "State"}).Debug(key, ":", value)
+	logrus.WithFields(logrus.Fields{"op": "Set", "meth": "State"}).Debug(key, ":", value)
 
 	return st.lvl.Set(st.identifier, key, value)
 }
 
-func (st *State) SetM(hash map[string]interface{}) error {	
+func (st *State) SetM(hash map[string]interface{}) error {
+	for k, v := range hash {
+		logrus.WithFields(logrus.Fields{"op": "SetM", "meth": "State"}).Debug(k, ":", v)
+	}
 
 	return st.lvl.SetM(st.identifier, hash)
 }
 
 func (st *State) Delete() error {
-	//logrus.WithFields(logrus.Fields{"op": "Delete", "meth": "State"}).Debug(st.identifier)
+	logrus.WithFields(logrus.Fields{"op": "Delete", "meth": "State"}).Debug(st.identifier)
 
 	if useRedis {
 		return st.lvl.Legacy.Delete(st.identifier)
@@ -112,24 +116,24 @@ type Object struct {
 }
 
 func (lvl *Level) NewObject(prefix, ident string) *Object {
-	//logrus.WithField("op", "NewObject").Debugf("%s:%s", prefix, ident)
+	logrus.WithField("op", "NewObject").Debugf("%s:%s", prefix, ident)
 	return &Object{lvl, fmt.Sprintf("%s:%s", prefix, ident)}
 }
 
 func (obj *Object) Get(key string) string {
-	//logrus.WithFields(logrus.Fields{"op": "Get", "meth": "Object"}).Debug(key)
+	logrus.WithFields(logrus.Fields{"op": "Get", "meth": "Object"}).Debug(key)
 	return obj.lvl.Get(obj.identifier, key)
 }
 
 func (obj *Object) Set(key, value string) error {
-	//logrus.WithFields(logrus.Fields{"op": "Set", "meth": "Object"}).Debug(key, ":", value)
+	logrus.WithFields(logrus.Fields{"op": "Set", "meth": "Object"}).Debug(key, ":", value)
 	return obj.lvl.Set(obj.identifier, key, value)
 }
 
 func (obj *Object) HKeys() []string {
 	if useRedis {
 		ks := obj.lvl.Legacy.HKeys(obj.identifier)
-		//logrus.WithFields(logrus.Fields{"op": "HKeys", "meth": "Object"}).Debug(ks)
+		logrus.WithFields(logrus.Fields{"op": "HKeys", "meth": "Object"}).Debug(ks)
 		return ks
 	}
 
@@ -141,12 +145,12 @@ func (obj *Object) HKeys() []string {
 	for it.Next() {
 		keys = append(keys, string(it.Key()))
 	}
-	//logrus.WithFields(logrus.Fields{"op": "HKeys", "meth": "Object"}).Debug(keys)
+	logrus.WithFields(logrus.Fields{"op": "HKeys", "meth": "Object"}).Debug(keys)
 	return keys
 }
 
 func (obj *Object) Delete() error {
-	//logrus.WithFields(logrus.Fields{"op": "Delete", "meth": "Object"}).Debug(obj.identifier)
+	logrus.WithFields(logrus.Fields{"op": "Delete", "meth": "Object"}).Debug(obj.identifier)
 
 	if useRedis {
 		return obj.lvl.Legacy.Delete(obj.identifier)
