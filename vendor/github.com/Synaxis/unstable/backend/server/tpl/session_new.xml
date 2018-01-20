@@ -1,0 +1,1 @@
+<success><token code="NEW_TOKEN">{{ .Token }}</token></success>
