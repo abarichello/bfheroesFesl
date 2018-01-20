@@ -607,7 +607,7 @@ A BF2Random of length `n` consists of `n` characters chosen randomly from the fo
 ### Performing a "gamespy XOR"
 
 Given a string with n characters, the string is encoded as follows:
-```
+
 string encode(inputstring):
     m = length of "gameSpy"
 	for i = 0 to n
