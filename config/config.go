@@ -15,7 +15,7 @@ var (
 )
 
 type cfg struct {
-	LogLevel string  `envconfig:"LOG_LEVEL" default:"INFO"`
+	LogLevel string  `envconfig:"LOG_LEVEL" default:"DEBUG"`
 
 	HTTPBind  string `envconfig:"HTTP_BIND" default:"0.0.0.0:8080"`
 	HTTPSBind string `envconfig:"HTTPS_BIND" default:"0.0.0.0:443"`
