@@ -16,6 +16,17 @@ type ansClientConnected struct {
 	Protocol    string `fesl:"PROT"`
 }
 
+type reqCONN struct {
+	Locale     string `fesl:"LOCALE"`     // "en_US",
+	Platform   string `fesl:"PLAT"`       // "PC",
+	Prod       string `fesl:"PROD"`       // "bfwest-pc",
+	Protocol   int    `fesl:"PROT"`       // "2",
+	SdkVersion string `fesl:"SDKVERSION"` // "5.0.0.0.0",
+	Tid        int    `fesl:"TID"`        // "1",
+	Version    string `fesl:"VERS"`       // "1.42.217478.0"
+}
+
+
 // CONN - SHARED (???) called on connection
 func (tm *Theater) CONN(event network.EventClientCommand) {
 	if !event.Client.IsActive {

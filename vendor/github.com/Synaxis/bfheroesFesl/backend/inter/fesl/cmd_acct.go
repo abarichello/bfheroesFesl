@@ -4,7 +4,8 @@ import (
 	"strconv"
 
 	"github.com/Synaxis/bfheroesFesl/backend/inter/network"
-	"github.com/Synaxis/bfheroesFesl/backend/inter/network/codec"
+	codec "github.com/Synaxis/bfheroesFesl/backend/inter/network/codec"
+
 
 	"github.com/sirupsen/logrus"
 )

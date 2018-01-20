@@ -15,7 +15,9 @@ const (
 	charNull    byte = 0x00
 	charEqual   byte = '='
 	charNewLine byte = '\n'
+)
 
+const (
 	tagName = "fesl"
 )
 
@@ -24,8 +26,8 @@ type Encoder struct {
 }
 
 type EncWriter interface {
-	WriteString(s string)
-	WriteByte(b byte)
+	WriteString(string)
+	WriteByte(byte)
 	Len() int
 	Bytes() []byte
 }
@@ -58,14 +60,15 @@ func NewEncoder() *Encoder {
 
 func (e *Encoder) EncodePacket(packet *Packet) (*bytes.Buffer, error) {
 	buf := new(bytes.Buffer)
+
 	// Append type
-	if _, err := buf.Write([]byte(packet.Type)); err != nil {
+	if _, err := buf.Write(packet.Type); err != nil { // 4 bytes
 		return nil, err
 	}
 
 	// Append status
 	t := make([]byte, 4)
-	binary.BigEndian.PutUint32(t, packet.Step)
+	binary.BigEndian.PutUint32(t, packet.PacketNumber)
 	if _, err := buf.Write(t); err != nil {
 		return nil, err
 	}

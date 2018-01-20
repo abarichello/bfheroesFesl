@@ -11,6 +11,7 @@ type ansEGRS struct {
 	TheaterID string `fesl:"TID"`
 }
 
+
 // EGRS - SERVER sent up, tell us if client is 'allowed' to join
 func (tm *Theater) EGRS(event network.EventClientCommand) {
 	if !event.Client.IsActive {

@@ -3,6 +3,8 @@ package main
 import (
 	"database/sql"
 	"flag"
+	"context"
+
 
 	"github.com/Synaxis/bfheroesFesl/backend/config"
 	"github.com/Synaxis/bfheroesFesl/backend/inter/fesl"
@@ -26,11 +28,15 @@ func main() {
 	mdb, _ := newMySQL()
 	ldb, _ := newLevelDB()
 
+	ctx, cancel := context.WithCancel(context.Background())
+	defer func() {
+		cancel()
+	}()
 	startServer(mdb, ldb)
 
 	logrus.Println("Serving..")
-	a := make(chan bool)
-	<-a
+
+	<-ctx.Done()
 }
 
 func initConfig() {

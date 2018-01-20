@@ -144,8 +144,8 @@ func (fm *FeslManager) GetPingSites(event network.EventClientCommand) {
 			Taxon:    fsysGetPingSites,
 			MinPings: 2,
 			PingSites: []pingSite{
-				{"170.81.42.28", pingEUCentral, 0},
-				{"170.81.42.28", pingUSEast, 0},
+				{"127.0.0.1", pingEUCentral, 0},
+				{"127.0.0.1", pingUSEast, 0},
 			},
 		},
 	})
