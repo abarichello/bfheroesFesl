@@ -37,9 +37,10 @@ Note: It is okay to run on default configuration if you run server on your local
 DATABASE_NAME=open-heroes
 DATABASE_HOST=192.168.33.10
 DATABASE_PASSWORD=test
+LOG_LEVEL=debug
 ```
 
-`openheroes/backend`  currently only uses `MySQL` as a backing services. If you are on platform where `docker` is available, you may use following command to quickly download and start container with a MySQL database:
+`nextWave/backend`  currently only uses `MySQL` as a backing services. If you are on platform where `docker` is available, you may use following command to quickly download and start container with a MySQL database:
 
 ```bash
 sudo docker-compose start
@@ -63,4 +64,4 @@ go build -o main cmd/backend/main.go && sudo -H ./main`
 All The Idea/Project/Prototy Behind Bringing Back Battlefield Heroes was by #Synaxis
 Credits to #MakaHost For being able to translate the code from BF2BC-emulator to golang
 Credits to #Freeze-18, #Spencer and #mDawg From Revive Network.
-Credits to #piotr and #Temp
+Credits to #piotr #Temp #M0THERB0ARD 
