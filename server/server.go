@@ -11,7 +11,7 @@ import (
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
 	log "github.com/sirupsen/logrus"
-	"github.com/Synaxis/unstable/backend/config"
+	"github.com/Synaxis/bfheroesFesl/backend/config"
 )
 
 // Server (also called as magma)

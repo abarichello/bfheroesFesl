@@ -4,12 +4,12 @@ import (
 	"database/sql"
 	"flag"
 
-	"github.com/Synaxis/unstable/backend/config"
-	"github.com/Synaxis/unstable/backend/inter/fesl"
-	"github.com/Synaxis/unstable/backend/inter/theater"
-	"github.com/Synaxis/unstable/backend/server"
-	"github.com/Synaxis/unstable/backend/storage/database"
-	"github.com/Synaxis/unstable/backend/storage/level"
+	"github.com/Synaxis/bfheroesFesl/backend/config"
+	"github.com/Synaxis/bfheroesFesl/backend/inter/fesl"
+	"github.com/Synaxis/bfheroesFesl/backend/inter/theater"
+	"github.com/Synaxis/bfheroesFesl/backend/server"
+	"github.com/Synaxis/bfheroesFesl/backend/storage/database"
+	"github.com/Synaxis/bfheroesFesl/backend/storage/level"
 
 	"github.com/sirupsen/logrus"
 	"github.com/subosito/gotenv"

@@ -1,8 +1,8 @@
 package fesl
 
 import (
-	"github.com/Synaxis/unstable/backend/inter/network"
-	"github.com/Synaxis/unstable/backend/inter/network/codec"
+	"github.com/Synaxis/bfheroesFesl/backend/inter/network"
+	"github.com/Synaxis/bfheroesFesl/backend/inter/network/codec"
 )
 
 const (

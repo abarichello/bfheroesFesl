@@ -4,9 +4,9 @@ import (
 	"database/sql"
 	"time"
 
-	"github.com/Synaxis/unstable/backend/inter/matchmaking"
-	"github.com/Synaxis/unstable/backend/inter/network"
-	"github.com/Synaxis/unstable/backend/storage/level"
+	"github.com/Synaxis/bfheroesFesl/backend/inter/matchmaking"
+	"github.com/Synaxis/bfheroesFesl/backend/inter/network"
+	"github.com/Synaxis/bfheroesFesl/backend/storage/level"
 
 	"github.com/sirupsen/logrus"
 )

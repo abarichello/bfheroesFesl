@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net/url"
 
-	"github.com/Synaxis/unstable/backend/config"
+	"github.com/Synaxis/bfheroesFesl/backend/config"
 
 	// Needed since we are using this as driver for MySQL database
 	_ "github.com/go-sql-driver/mysql"

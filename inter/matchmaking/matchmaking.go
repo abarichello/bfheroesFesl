@@ -1,7 +1,7 @@
 package matchmaking
 
 import (
-	"github.com/Synaxis/unstable/backend/inter/network"
+	"github.com/Synaxis/bfheroesFesl/backend/inter/network"
 )
 
 var Games = make(map[string]*network.Client)

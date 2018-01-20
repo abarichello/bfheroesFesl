@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"net"
 
-	"github.com/Synaxis/unstable/backend/inter/matchmaking"
-	"github.com/Synaxis/unstable/backend/inter/network"
-	"github.com/Synaxis/unstable/backend/inter/network/codec"
+	"github.com/Synaxis/bfheroesFesl/backend/inter/matchmaking"
+	"github.com/Synaxis/bfheroesFesl/backend/inter/network"
+	"github.com/Synaxis/bfheroesFesl/backend/inter/network/codec"
 
 	"github.com/sirupsen/logrus"
 )
