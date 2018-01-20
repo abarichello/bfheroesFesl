@@ -52,7 +52,6 @@ type userInfo struct {
 	// CID          string `fesl:"cid"` ??? = "1"
 }
 
-
 // NuLookupUserInfo - Gets basic information about a game user
 func (fm *FeslManager) NuLookupUserInfo(event network.EventClientCommand) {
 	if !event.Client.IsActive {
@@ -205,7 +204,6 @@ func (fm *FeslManager) NuLoginPersonaServer(event network.EventClientCommand) {
 	})
 }
 
-
 type ansNuGetPersonas struct {
 	Taxon    string   `fesl:"TXN"`
 	Personas []string `fesl:"personas"`
@@ -251,7 +249,6 @@ func (fm *FeslManager) NuGetPersonas(event network.EventClientCommand) {
 	})
 }
 
-
 // NuGetPersonasServer - Soldier data lookup call for servers
 func (fm *FeslManager) NuGetPersonasServer(event network.EventClientCommand) {
 	logrus.Println("SERVER CONNECT")
@@ -283,7 +280,6 @@ func (fm *FeslManager) NuGetPersonasServer(event network.EventClientCommand) {
 	})
 }
 
-
 // NuGetAccount - General account information retrieved, based on parameters sent
 func (fm *FeslManager) NuGetAccount(event network.EventClientCommand) {
 	if !event.Client.IsActive {
@@ -293,7 +289,6 @@ func (fm *FeslManager) NuGetAccount(event network.EventClientCommand) {
 
 	fm.acctNuGetAccount(&event)
 }
-
 
 type ansNuGetAccount struct {
 	Taxon          string `fesl:"TXN"`
@@ -308,7 +303,6 @@ type ansNuGetAccount struct {
 	GlobalOptIn    bool   `fesl:"globalOptin"`
 	ThidPartyOptIn bool   `fesl:"thidPartyOptin"`
 }
-
 
 func (fm *FeslManager) acctNuGetAccount(event *network.EventClientCommand) {
 	event.Client.WriteEncode(&codec.Packet{
@@ -330,7 +324,6 @@ func (fm *FeslManager) acctNuGetAccount(event *network.EventClientCommand) {
 	})
 }
 
-
 type ansNuLogin struct {
 	Taxon     string `fesl:"TXN"`
 	ProfileID string `fesl:"profileId"`
@@ -339,7 +332,6 @@ type ansNuLogin struct {
 	Lkey      string `fesl:"lkey"`
 }
 
-
 type ansNuLoginErr struct {
 	Taxon   string                `fesl:"TXN"`
 	Message string                `fesl:"localizedMessage"`
@@ -347,13 +339,11 @@ type ansNuLoginErr struct {
 	Code    int                   `fesl:"errorCode"`
 }
 
-
 type nuLoginContainerErr struct {
 	Value      string `fesl:"value"`
 	FieldError string `fesl:"fieldError"`
 	FieldName  string `fesl:"fieldName"`
 }
-
 
 // NuLogin - master login command
 // TODO: Here we can implement a banlist/permission check if player is allowed to play/join
@@ -411,7 +401,6 @@ func (fm *FeslManager) NuLogin(event network.EventClientCommand) {
 	})
 }
 
-
 // NuLoginServer - login command for servers
 func (fm *FeslManager) NuLoginServer(event network.EventClientCommand) {
 	var id, userID, servername, secretKey, username string
@@ -459,7 +448,6 @@ func (fm *FeslManager) NuLoginServer(event network.EventClientCommand) {
 	})
 }
 
-
 type ansGetTelemetryToken struct {
 	Taxon          string `fesl:"TXN"`
 	TelemetryToken string `fesl:"telemetryToken"`
@@ -467,7 +455,6 @@ type ansGetTelemetryToken struct {
 	Filters        string `fesl:"filters"`
 	Disabled       bool   `fesl:"disabled"`
 }
-
 
 // GetTelemetryToken
 func (fm *FeslManager) GetTelemetryToken(event network.EventClientCommand) {

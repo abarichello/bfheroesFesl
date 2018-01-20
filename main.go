@@ -42,7 +42,7 @@ func initConfig() {
 }
 
 func initLogger() {
-	logrus.SetLevel(config.LogLevel())	 
+	logrus.SetLevel(config.LogLevel())
 }
 
 func newMySQL() (*sql.DB, error) {
@@ -54,7 +54,7 @@ func newMySQL() (*sql.DB, error) {
 	return db, err
 }
 
-func newLevelDB() (*level.Level, error) {	
+func newLevelDB() (*level.Level, error) {
 	lvl, err := level.New(config.General.LevelDBPath, nil)
 	if err != nil {
 		logrus.Fatal(err)
