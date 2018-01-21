@@ -27,7 +27,7 @@ type cfg struct {
 	ThtrServerPort int    `envconfig:"THEATER_SERVER_PORT" default:"18056"`
 
 	// Preferable: domain name without protocol scheme and port
-	ThtrAddr string `envconfig:"THEATER_ADDR" default:"localhost"`
+	ThtrAddr string `envconfig:"THEATER_ADDR" default:"127.0.0.1"`
 
 	TelemetricsIP   string `envconfig:"TELEMETRICS_IP" default:"127.0.0.1"`
 	TelemetricsPort int    `envconfig:"TELEMETRICS_PORT" default:"13505"`
