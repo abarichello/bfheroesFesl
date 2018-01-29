@@ -27,7 +27,7 @@ type cfg struct {
 	ThtrServerPort int    `envconfig:"THEATER_SERVER_PORT" default:"18056"`
 
 	// Preferable: domain name without protocol scheme and port
-	ThtrAddr string `envconfig:"THEATER_ADDR" default:"127.0.0.1"`
+	ThtrAddr string `envconfig:"THEATER_ADDR" default:"128.8.8.8"`
 
 	TelemetricsIP   string `envconfig:"TELEMETRICS_IP" default:"127.0.0.1"`
 	TelemetricsPort int    `envconfig:"TELEMETRICS_PORT" default:"13505"`
@@ -38,7 +38,7 @@ type cfg struct {
 type MySQL struct {
 	UserName string `envconfig:"DATABASE_USERNAME" default:"root"`
 	Password string `envconfig:"DATABASE_PASSWORD"`
-	Host     string `envconfig:"DATABASE_HOST" default:"127.0.0.1"`
+	Host     string `envconfig:"DATABASE_HOST" default:"128.8.8.8"`
 	Port     int    `envconfig:"DATABASE_PORT" default:"3306"`
 	Name     string `envconfig:"DATABASE_NAME" default:"naomi"`
 }
