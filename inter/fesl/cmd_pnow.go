@@ -95,7 +95,7 @@ func (fm *FeslManager) Status(event network.EventClientCommand) {
 	})
 }
 
-func (fM *FeslManager) StatusDenied(event network.EventClientCommand) {
+func (fm *FeslManager) StatusDenied(event network.EventClientCommand) {
 	event.Client.WriteEncode(&codec.Packet{
 		Payload: ansStatus{
 			Taxon:        pnowStatus,

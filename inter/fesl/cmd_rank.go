@@ -51,7 +51,7 @@ func (fm *FeslManager) GetStats(event network.EventClientCommand) {
 		var id, userID, heroName, online string
 		err := fm.db.stmtGetHeroeByID.QueryRow(owner).Scan(&id, &userID, &heroName, &online)
 		if err != nil {
-			logrus.Println("Persona not worthy!")
+			logrus.Println("server clientType!")
 			return
 		}
 
@@ -255,7 +255,7 @@ func (fm *FeslManager) UpdateStats(event network.EventClientCommand) {
 					}
 
 					if intValue <= 0 || event.Client.HashState.Get("clientType") == "server" || key == "c_ltp" || key == "c_sln" || key == "c_ltm" || key == "c_slm" || key == "c_wmid0" || key == "c_wmid1" || key == "c_tut" || key == "c_wmid2" {
-						// Only allow increasing numbers (like HeroPoints) by the server for now
+						// limit keys for the server only(TODO CHANGE THIS )
 						newValue := stats[key].value + intValue
 
 						if key == "c_wallet_hero" && newValue < 0 {
@@ -397,7 +397,7 @@ func (fm *FeslManager) GetStatsForOwners(event network.EventClientCommand) {
 
 		ans.Stats = append(ans.Stats, stContainer)
 	}
-
+	
 	event.Client.WriteEncode(&codec.Packet{
 		Step:    0xC0000007,
 		Type:    rank,

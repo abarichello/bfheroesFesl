@@ -115,7 +115,6 @@ func (fm *FeslManager) hello(event network.EventClientCommand) {
 
 const (
 	pingEUCentral = "iad"
-	pingUSEast    = "nrt"
 )
 
 type ansGetPingSites struct {
@@ -142,10 +141,9 @@ func (fm *FeslManager) GetPingSites(event network.EventClientCommand) {
 		Step: event.Command.PayloadID,
 		Payload: ansGetPingSites{
 			Taxon:    fsysGetPingSites,
-			MinPings: 2,
+			MinPings: 1,
 			PingSites: []pingSite{
-				{"170.81.42.28", pingEUCentral, 0},
-				{"170.81.42.28", pingUSEast, 0},
+				{"8.8.8.8", pingEUCentral, 0},
 			},
 		},
 	})

@@ -2,19 +2,20 @@ package fesl
 
 import (
 	"database/sql"
-
+   	"strings"
 	"github.com/sirupsen/logrus"
 )
 
 type Database struct {
-	db *sql.DB
+	db           *sql.DB
+	name          string
+
 
 	// Database Statements
 	stmtGetUserByGameToken              *sql.Stmt
 	stmtGetServerBySecret               *sql.Stmt
 	stmtGetServerByID                   *sql.Stmt
 	stmtGetServerByName                 *sql.Stmt
-	stmtGetCountOfPermissionByIDAndSlug *sql.Stmt
 	stmtGetHeroesByUserID               *sql.Stmt
 	stmtGetHeroeByName                  *sql.Stmt
 	stmtGetHeroeByID                    *sql.Stmt
@@ -110,7 +111,7 @@ func (d *Database) setStatsStatement(statsAmount int) *sql.Stmt {
 	}
 
 	sql := "INSERT INTO game_stats" +
-		"	(user_id, heroID, statsKey, statsValue)" +
+		"	(user_id, heroID, statsKey, statsValue * -1 )" +
 		"	VALUES " + query + "(?, ?, ?, ?)" +
 		"	ON DUPLICATE KEY UPDATE" +
 		"	statsValue=VALUES(statsValue)"
@@ -164,21 +165,6 @@ func (d *Database) prepareStatements() {
 		logrus.Fatalln("Error preparing stmtGetServerByName.", err.Error())
 	}
 
-	d.stmtGetCountOfPermissionByIDAndSlug, err = d.db.Prepare(
-		"SELECT count(permissions.slug)" +
-			"	FROM users" +
-			"	LEFT JOIN role_user" +
-			"		ON users.id=role_user.user_id" +
-			"	LEFT JOIN permission_role" +
-			"		ON permission_role.role_id=role_user.role_id" +
-			"	LEFT JOIN permissions" +
-			"		ON permissions.id=permission_role.permission_id" +
-			"	WHERE users.id = ?" +
-			"		AND permissions.slug = ?")
-	if err != nil {
-		logrus.Fatalln("Error preparing stmtGetCountOfPermissionByIdAndSlug.", err.Error())
-	}
-
 	d.stmtGetHeroesByUserID, err = d.db.Prepare(
 		"SELECT id, user_id, heroName, online" +
 			"	FROM game_heroes" +
@@ -215,7 +201,6 @@ func (d *Database) closeStatements() {
 	d.stmtGetServerBySecret.Close()
 	d.stmtGetServerByID.Close()
 	d.stmtGetServerByName.Close()
-	d.stmtGetCountOfPermissionByIDAndSlug.Close()
 	d.stmtGetHeroesByUserID.Close()
 	d.stmtGetHeroeByName.Close()
 	d.stmtClearGameServerStats.Close()
@@ -229,4 +214,15 @@ func (d *Database) closeStatements() {
 	for index := range d.mapSetStatsVariableAmount {
 		d.mapSetStatsVariableAmount[index].Close()
 	}
+}
+
+// MysqlRealEscapeString - you know
+func MysqlRealEscapeString(value string) string {
+	replace := map[string]string{"\\": "\\\\", "'": `\'`, "\\0": "\\\\0", "\n": "\\n", "\r": "\\r", `"`: `\"`, "\x1a": "\\Z"}
+
+	for b, a := range replace {
+		value = strings.Replace(value, b, a, -1)
+	}
+
+	return value
 }

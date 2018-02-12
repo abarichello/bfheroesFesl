@@ -96,6 +96,7 @@ func (fm *FeslManager) run() {
 	}
 }
 
+
 // TLS
 func (fm *FeslManager) newClient(event network.EventNewClient) {
 	if !event.Client.IsActive {
@@ -125,6 +126,7 @@ func (fm *FeslManager) newClient(event network.EventNewClient) {
 	logrus.Println("Client Connecting")
 
 }
+
 
 // TLS
 func (fm *FeslManager) close(event network.EventClientClose) {
