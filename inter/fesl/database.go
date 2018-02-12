@@ -111,8 +111,8 @@ func (d *Database) setStatsStatement(statsAmount int) *sql.Stmt {
 	}
 
 	sql := "INSERT INTO game_stats" +
-		"	(user_id, heroID, statsKey, statsValue * -1 )" +
-		"	VALUES " + query + "(?, ?, ?, ?)" +
+		"	(user_id, heroID, statsKey, statsValue)" +
+		"	VALUES " + query + "(?, ?, ?, ? *-1)" +
 		"	ON DUPLICATE KEY UPDATE" +
 		"	statsValue=VALUES(statsValue)"
 
