@@ -107,12 +107,12 @@ func (d *Database) setStatsStatement(statsAmount int) *sql.Stmt {
 
 	var query string
 	for i := 1; i < statsAmount; i++ {
-		query += "(?, ?, ?, ?), "
+		query += "(?, ?, ?, ?), "			
 	}
 
 	sql := "INSERT INTO game_stats" +
 		"	(user_id, heroID, statsKey, statsValue)" +
-		"	VALUES " + query + "(?, ?, ?, ? *-1)" +
+		"	VALUES " + query + "(?, ?, ?, ?)" +
 		"	ON DUPLICATE KEY UPDATE" +
 		"	statsValue=VALUES(statsValue)"
 
