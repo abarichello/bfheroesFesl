@@ -59,7 +59,7 @@ func (fm *FeslManager) NuLookupUserInfo(event network.EventClientCommand) {
 		return
 	}
 
-	if event.Client.HashState.Get("clientType") == "server" && event.Command.Message["userInfo.0.userName"] == "game-server" {
+	if event.Client.HashState.Get("clientType") == "server" && event.Command.Message["userInfo.0.userName"] == "Test-Server" {
 		fm.NuLookupUserInfoServer(event)
 		return
 	}
