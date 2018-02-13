@@ -12,29 +12,22 @@ import (
 const (
 	acct = "acct"
 
-	// acctGameSpyPreAuth         = "GameSpyPreAuth"
 	// acctGetCountryList         = "GetCountryList"
-	// acctGetLockerURL           = "GetLockerURL"
 	acctGetTelemetryToken = "GetTelemetryToken"
-	// acctNuAddAccount           = "NuAddAccount"
 	// acctNuAddPersona           = "NuAddPersona"
 	// acctNuCreateEncryptedToken = "NuCreateEncryptedToken"
-	// acctNuDisablePersona       = "NuDisablePersona"
 	// acctNuEntitleGame          = "NuEntitleGame"
 	// acctNuEntitleUser          = "NuEntitleUser"
 	acctNuGetAccount = "NuGetAccount"
 	// acctNuGetAccountByNuid     = "NuGetAccountByNuid"
 	// acctNuGetEntitlementCount  = "NuGetEntitlementCount"
 	// acctNuGetEntitlements      = "NuGetEntitlements"
-	acctNuGetPersonas = "NuGetPersonas"
-	// acctNuGetTos               = "NuGetTos"
+	acctNuGetPersonas    = "NuGetPersonas"
 	acctNuLogin          = "NuLogin"
 	acctNuLoginPersona   = "NuLoginPersona"
 	acctNuLookupUserInfo = "NuLookupUserInfo"
 	// acctNuSearchOwners         = "NuSearchOwners"
-	// acctNuSuggestPersonas      = "NuSuggestPersonas"
 	// acctNuUpdateAccount        = "NuUpdateAccount"
-	// acctNuUpdatePassword       = "NuUpdatePassword"
 	// acctTransactionException   = "TransactionException"
 )
 
@@ -66,7 +59,7 @@ func (fm *FeslManager) NuLookupUserInfo(event network.EventClientCommand) {
 
 	ans := ansNuLookupUserInfo{Taxon: acctNuLookupUserInfo, UserInfo: []userInfo{}}
 
-	logrus.Println("LookupUserInfo - CLIENT MODE! " + event.Command.Message["userInfo.0.userName"])
+	logrus.Println("LookupUserInfo CLIENT" + event.Command.Message["userInfo.0.userName"])
 
 	keys, _ := strconv.Atoi(event.Command.Message["userInfo.[]"])
 	for i := 0; i < keys; i++ {
@@ -134,7 +127,7 @@ type ansNuLoginPersona struct {
 // NuLoginPersona - soldier login command
 func (fm *FeslManager) NuLoginPersona(event network.EventClientCommand) {
 	if !event.Client.IsActive {
-		logrus.Println("Client Left")
+		logrus.Println("C Left")
 		return
 	}
 
@@ -147,7 +140,7 @@ func (fm *FeslManager) NuLoginPersona(event network.EventClientCommand) {
 	var id, userID, heroName, online string
 	err := fm.db.stmtGetHeroeByName.QueryRow(event.Command.Message["name"]).Scan(&id, &userID, &heroName, &online)
 	if err != nil {
-		logrus.Println("Wrong Client Login")
+		logrus.Println("Wrong Login")
 		return
 	}
 
@@ -175,7 +168,7 @@ func (fm *FeslManager) NuLoginPersona(event network.EventClientCommand) {
 	})
 }
 
-// NuLoginPersonaServer - soldier login command
+// NuLoginPersonaServer Pre-Server Login (out of order ?)
 func (fm *FeslManager) NuLoginPersonaServer(event network.EventClientCommand) {
 	var id, userID, servername, secretKey, username string
 	err := fm.db.stmtGetServerByName.QueryRow(event.Command.Message["name"]).Scan(&id, &userID, &servername, &secretKey, &username)
@@ -362,7 +355,7 @@ func (fm *FeslManager) NuLogin(event network.EventClientCommand) {
 		event.Client.WriteEncode(&codec.Packet{
 			Payload: ansNuLoginErr{
 				Taxon:   acctNuLogin,
-				Message: `"Wrong Login/Spoof?"`,
+				Message: `"Wrong Login/Spoof"`,
 				Code:    120,
 			},
 			Step: event.Command.PayloadID,
@@ -410,7 +403,7 @@ func (fm *FeslManager) NuLoginServer(event network.EventClientCommand) {
 		event.Client.WriteEncode(&codec.Packet{
 			Payload: ansNuLoginErr{
 				Taxon:   acctNuLogin,
-				Message: `"Wrong Server password"`,
+				Message: `"Wrong Server "`,
 				Code:    122,
 			},
 			Step: event.Command.PayloadID,

@@ -4,11 +4,13 @@ import (
 	"github.com/Synaxis/bfheroesFesl/inter/matchmaking"
 	"github.com/Synaxis/bfheroesFesl/inter/network"
 	"github.com/Synaxis/bfheroesFesl/inter/network/codec"
+
 	"github.com/sirupsen/logrus"
 )
 
 const (
 	pnow = "pnow"
+
 	// pnowCancel    = "Cancel"
 	// pnowGetStatus = "GetStatus"
 	pnowStart  = "Start"
@@ -21,10 +23,12 @@ type ansStart struct {
 	ID    statusPartition `fesl:"id"`
 }
 
-//TODO: SYNC WITH DISCORD ROLE AND HWID
+// Start - a method of pnow
+// TODO: Here we can use "uID" (userID) to check if user is allowed to play / join game
+//TODO: SYNC WITH DISCORD ROLE AND BANNED ROLE
 func (fm *FeslManager) Start(event network.EventClientCommand) {
 	if !event.Client.IsActive {
-		logrus.Println("C Left")
+		logrus.Println("Client left")
 		return
 	}
 
@@ -47,11 +51,6 @@ type ansStatus struct {
 	Properties   map[string]interface{} `fesl:"props"`
 }
 
-type statusProperties struct {
-	ResultType string       `fesl:"resultType"`
-	Games      []statusGame `fesl:"games"`
-}
-
 type statusPartition struct {
 	ID        int    `fesl:"id"`
 	Partition string `fesl:"partition"`
@@ -66,15 +65,16 @@ type statusGame struct {
 // Status - Basic fesl call to get overall service status (called before pnow?)
 func (fm *FeslManager) Status(event network.EventClientCommand) {
 	if !event.Client.IsActive {
-		logrus.Println("C Left")
+		logrus.Println("Client left")
 		return
 	}
 
+	//ipint := binary.BigEndian.Uint32(event.Client.IpAddr.(*net.TCPAddr).IP.To4())
 	gameID := matchmaking.FindAvailableGIDs()
-	
+
 	ans := ansStatus{
-		Taxon:  pnowStatus,
-		ID: statusPartition{1, event.Command.Message["partition.partition"]},
+		Taxon:        pnowStatus,
+		ID:           statusPartition{1, event.Command.Message["partition.partition"]},
 		SessionState: "COMPLETE",
 		Properties: map[string]interface{}{
 			"resultType": "JOIN",
