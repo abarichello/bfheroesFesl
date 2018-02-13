@@ -11,10 +11,7 @@ import (
 
 const (
 	acct = "acct"
-
-	// acctGetCountryList         = "GetCountryList"
 	acctGetTelemetryToken = "GetTelemetryToken"
-	// acctNuAddPersona           = "NuAddPersona"
 	// acctNuCreateEncryptedToken = "NuCreateEncryptedToken"
 	// acctNuEntitleGame          = "NuEntitleGame"
 	// acctNuEntitleUser          = "NuEntitleUser"

@@ -193,11 +193,9 @@ func (c *Client) Close() {
 }
 
 type ClientState struct {
-	GameName        string
 	ServerChallenge string
 	ClientChallenge string
 	ClientResponse  string
-	BattlelogID     int
 	Username        string
 	PlyName         string
 	PlyEmail        string
@@ -205,7 +203,6 @@ type ClientState struct {
 	PlyPid          int
 	Sessionkey      int
 	Confirmed       bool
-	Banned          bool
 	IpAddress       net.Addr
 	HasLogin        bool
 	ProfileSent     bool

@@ -18,30 +18,6 @@ const (
 	// pnowUpdate    = "Update"
 )
 
-type ansStart struct {
-	Taxon string          `fesl:"TXN"`
-	ID    statusPartition `fesl:"id"`
-}
-
-//TODO: SYNC W/ Discord & HWID 
-func (fm *FeslManager) Start(event network.EventClientCommand) {
-	if !event.Client.IsActive {
-		logrus.Println("Client left")
-		return
-	}
-
-	event.Client.WriteEncode(&codec.Packet{
-		Payload: ansStart{
-			Taxon: pnowStart,
-			ID:    statusPartition{1, event.Command.Message["partition.partition"]},
-		},
-		Step: event.Command.PayloadID,
-		Type: pnow,
-	})
-
-	fm.Status(event)
-}
-
 type ansStatus struct {
 	Taxon        string                 `fesl:"TXN"`
 	ID           statusPartition        `fesl:"id"`
@@ -60,14 +36,13 @@ type statusGame struct {
 	GameID  string `fesl:"gid"`
 }
 
-// Status - Basic fesl call to get overall service status (called before pnow?)
+// Status - Fesl call to get overall service status (called BEFORE START)
 func (fm *FeslManager) Status(event network.EventClientCommand) {
 	if !event.Client.IsActive {
 		logrus.Println("C Left")
 		return
 	}
 
-	//ipint := binary.BigEndian.Uint32(event.Client.IpAddr.(*net.TCPAddr).IP.To4())
 	gameID := matchmaking.FindAvailableGIDs()
 
 	ans := ansStatus{
@@ -91,4 +66,28 @@ func (fm *FeslManager) Status(event network.EventClientCommand) {
 		Step:    0x80000000,
 		Type:    pnow,
 	})
+}
+
+type ansStart struct {
+	Taxon string          `fesl:"TXN"`
+	ID    statusPartition `fesl:"id"`
+}
+
+//TODO: SYNC W/ Discord & HWID 
+func (fm *FeslManager) Start(event network.EventClientCommand) {
+	if !event.Client.IsActive {
+		logrus.Println("Client left")
+		return
+	}
+
+	event.Client.WriteEncode(&codec.Packet{
+		Payload: ansStart{
+			Taxon: pnowStart,
+			ID:    statusPartition{1, event.Command.Message["partition.partition"]},
+		},
+		Step: event.Command.PayloadID,
+		Type: pnow,
+	})
+
+	fm.Status(event)
 }

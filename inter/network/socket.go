@@ -157,7 +157,7 @@ func (socket *Socket) createClientTLS(conn net.Conn) {
 		return
 	}
 
-	tlscon.SetDeadline(time.Now().Add(time.Second * 10))
+	tlscon.SetDeadline(time.Now().Add(time.Second * 12))
 	err := tlscon.Handshake()
 	if err != nil {
 		logrus.Errorf("%s: A new client connecting threw an error.\n%v\n%v", socket.name, err, tlscon.RemoteAddr())
