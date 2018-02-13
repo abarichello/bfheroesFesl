@@ -81,9 +81,9 @@ func (tm *Theater) Listen() {
 			case "command.ECHO":
 				go tm.ECHO(event)
 			case "command":
-				logrus.Debugf("UDP Got event %s: %v", event.Name, event.Data.(*network.CommandFESL))
+				logrus.Debugf("UDP event %s: %v", event.Name, event.Data.(*network.CommandFESL))
 			default:
-				logrus.Debugf("UDP Got event %s: %v", event.Name, event.Data)
+				logrus.Debugf("UDP event %s: %v", event.Name, event.Data)
 			}
 		case event := <-tm.socket.EventChan:
 			switch event.Name {

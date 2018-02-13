@@ -7,25 +7,21 @@ import (
 
 	"github.com/sirupsen/logrus"
 )
-
 const (
 	pnow = "pnow"
-
 	// pnowCancel    = "Cancel"
-	// pnowGetStatus = "GetStatus"
 	pnowStart  = "Start"
 	pnowStatus = "Status"
-	// pnowUpdate    = "Update"
 )
 
 type ansStatus struct {
 	Taxon        string                 `fesl:"TXN"`
-	ID           statusPartition        `fesl:"id"`
+	ID           stPartition            `fesl:"id"`
 	SessionState string                 `fesl:"sessionState"`
 	Properties   map[string]interface{} `fesl:"props"`
 }
-
-type statusPartition struct {
+//stPartition=statusPartition
+type stPartition struct {
 	ID        int    `fesl:"id"`
 	Partition string `fesl:"partition"`
 }
@@ -36,18 +32,18 @@ type statusGame struct {
 	GameID  string `fesl:"gid"`
 }
 
-// Status - Fesl call to get overall service status (called BEFORE START)
+// Status Call to overall status(BEFORE START)
 func (fm *FeslManager) Status(event network.EventClientCommand) {
 	if !event.Client.IsActive {
 		logrus.Println("C Left")
 		return
 	}
 
-	gameID := matchmaking.FindAvailableGIDs()
+	gameID := matchmaking.FindGIDs()
 
 	ans := ansStatus{
-		Taxon:        pnowStatus,
-		ID:           statusPartition{1, event.Command.Message["partition.partition"]},
+		Taxon: pnowStatus,
+		ID:    stPartition{1, event.Command.Message["partition.partition"]},
 		SessionState: "COMPLETE",
 		Properties: map[string]interface{}{
 			"resultType": "JOIN",
@@ -69,21 +65,17 @@ func (fm *FeslManager) Status(event network.EventClientCommand) {
 }
 
 type ansStart struct {
-	Taxon string          `fesl:"TXN"`
-	ID    statusPartition `fesl:"id"`
+	Taxon string      `fesl:"TXN"`
+	ID    stPartition `fesl:"id"`
 }
 
-//TODO: SYNC W/ Discord & HWID 
+//TODO SYNC W/Discord & HWID 
 func (fm *FeslManager) Start(event network.EventClientCommand) {
-	if !event.Client.IsActive {
-		logrus.Println("Client left")
-		return
-	}
 
 	event.Client.WriteEncode(&codec.Packet{
 		Payload: ansStart{
 			Taxon: pnowStart,
-			ID:    statusPartition{1, event.Command.Message["partition.partition"]},
+			ID:    stPartition{1, event.Command.Message["partition.partition"]},
 		},
 		Step: event.Command.PayloadID,
 		Type: pnow,

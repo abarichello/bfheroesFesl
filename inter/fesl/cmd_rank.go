@@ -65,7 +65,7 @@ func (fm *FeslManager) GetStats(event network.EventClientCommand) {
 		OwnerType: 1,
 	}
 
-	// Generate our argument list for the statement -> heroID, userID, key1, key2, key3, ...
+	// Gen args list for statement -> heroID,userID,key1,key2,key3,..
 	var args []interface{}
 	statsKeys := make(map[string]string)
 	args = append(args, owner)
@@ -114,19 +114,12 @@ type ansUpdateStats struct {
 	Users []userStats `fesl:"u"`
 }
 
-// "u.0.o": "3",
-// "u.0.ot": "1",
 type userStats struct {
 	O     int          `fesl:"o"`
 	Ot    int          `fesl:"ot"`
 	Stats []updateStat `fesl:"s"`
 }
 
-// "u.0.s.0.k": "c_ltp",
-// "u.0.s.0.pt": "0",
-// "u.0.s.0.t": "",
-// "u.0.s.0.ut": "0",
-// "u.0.s.0.v": "9025.0000",
 type updateStat struct {
 	Key   string `fesl:"k"`
 	Pt    int    `fesl:"pt"`

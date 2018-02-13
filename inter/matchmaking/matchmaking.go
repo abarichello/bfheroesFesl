@@ -6,7 +6,7 @@ import (
 
 var Games = make(map[string]*network.Client)
 
-func FindAvailableGIDs() string {
+func FindGIDs() string {
 	var gameID string
 
 	for k := range Games {

@@ -166,7 +166,7 @@ func (socket *Socket) createClientTLS(conn net.Conn) {
 	}
 
 	state := tlscon.ConnectionState()
-	logrus.Debugf("Connection handshake complete %t, %v", state.HandshakeComplete, state)
+	logrus.Debugf("Conn handshake complete %t, %v", state.HandshakeComplete, state)
 
 	// reset deadline after handshake
 	tlscon.SetDeadline(time.Time{})
@@ -230,7 +230,7 @@ func NewSocketUDP(name, bind string, fesl bool) (*SocketUDP, error) {
 }
 
 func (socket *SocketUDP) run() {
-	buf := make([]byte, 4096)
+	buf := make([]byte, 8192)
 
 	for {
 		n, addr, err := socket.listen.ReadFromUDP(buf)
