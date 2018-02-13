@@ -27,9 +27,9 @@ type cfg struct {
 	ThtrServerPort int    `envconfig:"THEATER_SERVER_PORT" default:"18056"`
 
 	// Preferable: domain name without protocol scheme and port
-	ThtrAddr string `envconfig:"THEATER_ADDR" default:"191.232.247.235"`
+	ThtrAddr string `envconfig:"THEATER_ADDR" default:"127.0.0.1"`
 
-	TelemetricsIP   string `envconfig:"TELEMETRICS_IP" default:"191.232.247.235"`
+	TelemetricsIP   string `envconfig:"TELEMETRICS_IP" default:"127.0.0.1"`
 	TelemetricsPort int    `envconfig:"TELEMETRICS_PORT" default:"13505"`
 
 	LevelDBPath string `envconfig:"LEVEL_DB_PATH" default:"_data/lvl.db"`
@@ -44,8 +44,8 @@ type MySQL struct {
 }
 
 type Fixtures struct {
-	Path       string `envconfig:"CERT_PATH" default:"_cert/cert.pem"`
-	PrivateKey string `envconfig:"PRIVATE_KEY_PATH" default:"_cert/key.pem"`
+	Path       string `envconfig:"CERT_PATH" default:"./config/cert.pem"`
+	PrivateKey string `envconfig:"PRIVATE_KEY_PATH" default:"./config/key.pem"`
 }
 
 func Initialize() {
