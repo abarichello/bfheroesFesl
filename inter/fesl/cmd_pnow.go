@@ -23,9 +23,7 @@ type ansStart struct {
 	ID    statusPartition `fesl:"id"`
 }
 
-// Start - a method of pnow
-// TODO: Here we can use "uID" (userID) to check if user is allowed to play / join game
-//TODO: SYNC WITH DISCORD ROLE AND BANNED ROLE
+//TODO: SYNC W/ Discord & HWID 
 func (fm *FeslManager) Start(event network.EventClientCommand) {
 	if !event.Client.IsActive {
 		logrus.Println("Client left")
@@ -65,7 +63,7 @@ type statusGame struct {
 // Status - Basic fesl call to get overall service status (called before pnow?)
 func (fm *FeslManager) Status(event network.EventClientCommand) {
 	if !event.Client.IsActive {
-		logrus.Println("Client left")
+		logrus.Println("C Left")
 		return
 	}
 
