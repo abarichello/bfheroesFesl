@@ -1,6 +1,6 @@
 # nextWave/backend (fesl)
 
-`backend` is an implementation of the `GameSpy` network adapted for Battlefield Heroes use.
+`FESL` is the name of the Backend for Battlefield Heroes.
 
 ## Configuration
 
@@ -12,22 +12,22 @@ Below there is table with all enviroment variables which are used by the `nextWa
 | `LOG_LEVEL`           | `INFO`               |
 | `HTTP_BIND`           | `0.0.0.0:8080`       |
 | `HTTPS_BIND`          | `0.0.0.0:443`        |
+| `THEATER_ADDR`        | `127.0.0.1`          |
+| `TELEMETRICS_IP`      | `127.0.0.1`          |
 | `GAMESPY_IP`          | `0.0.0.0`(auto bind) |
 | `FESL_CLIENT_PORT`    | `18270`              |
 | `FESL_SERVER_PORT`    | `18051`              |
 | `THEATER_CLIENT_PORT` | `18275`              |
-| `THEATER_SERVER_PORT` | `18056`              |
-| `THEATER_ADDR`        | `127.0.0.1`          |
-| `TELEMETRICS_IP`      | `127.0.0.1`          |
+| `THEATER_SERVER_PORT` | `18056`              |          
 | `TELEMETRICS_PORT`    | `13505`              |
 | `LEVEL_DB_PATH`       | `_data/lvl.db`       |
 | `DATABASE_USERNAME`   | `root`               |
-| `DATABASE_PASSWORD`   |                      |
+| `DATABASE_PASSWORD`   | dbpass               |
 | `DATABASE_HOST`       | `127.0.0.1`          |
 | `DATABASE_PORT`       | `3306`               |
 | `DATABASE_NAME`       | `open-heroes`        |
-| `CERT_PATH`           | `_fixtures/cert.pem` |
-| `PRIVATE_KEY_PATH`    | `_fixtures/key.pem`  |
+| `CERT_PATH`           | `/config/cert.pem`   |
+| `PRIVATE_KEY_PATH`    | `/config/key.pem`    |
 
 Note: It is okay to run on default configuration if you run server on your local PC for testing and development. But if you are thinking about exposing your server you probably should change some variables (i.e. `THEATER_ADDR`).
 
@@ -42,33 +42,19 @@ LOG_LEVEL=debug
 
 `nextWave/backend`  currently only uses `MySQL` as a backing services. If you are on platform where `docker` is available, you may use following command to quickly download and start container with a MySQL database:
 
-```bash
-sudo docker-compose start
-```
-
 ### Start
 
 ===WINDOWS===
 go to root folder and  -> ```go build main.go```
 
-Note: You Must Set your GOPATH at Windows Environment
-
-LINUX
-```bash
-make run```
-Which is alias to:
-```bash
-go build -o main cmd/backend/main.go && sudo -H ./main`
+Note: You MUST Set your GOPATH at Windows Environment
 
 ## Credits ##
 All The Idea/Project/Prototype Behind Bringing Back Battlefield Heroes was by Synaxis
-Credits #MakaHost For being able to translate the code from BF2BC-emulator to golang
+Credits #MakaHost
 Credits #Freeze-18,#Spencer and #mDawg From Revive Network
-Credits #piotr #Temp #M0THERB0ARD
-
-
-
-
+Credits #piotr #WarpProductions #Temp 
+#M0THERB0ARD
 =======================================================================================================================================================
 # Battlefield Heroes master server protocol specification
 
