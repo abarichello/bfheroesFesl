@@ -7,6 +7,7 @@ import (
 
 	"github.com/sirupsen/logrus"
 )
+
 const (
 	pnow = "pnow"
 	// pnowCancel    = "Cancel"
@@ -20,6 +21,7 @@ type ansStatus struct {
 	SessionState string                 `fesl:"sessionState"`
 	Properties   map[string]interface{} `fesl:"props"`
 }
+
 //stPartition=statusPartition
 type stPartition struct {
 	ID        int    `fesl:"id"`
@@ -42,8 +44,8 @@ func (fm *FeslManager) Status(event network.EventClientCommand) {
 	gameID := matchmaking.FindGIDs()
 
 	ans := ansStatus{
-		Taxon: pnowStatus,
-		ID:    stPartition{1, event.Command.Message["partition.partition"]},
+		Taxon:        pnowStatus,
+		ID:           stPartition{1, event.Command.Message["partition.partition"]},
 		SessionState: "COMPLETE",
 		Properties: map[string]interface{}{
 			"resultType": "JOIN",
@@ -69,7 +71,7 @@ type ansStart struct {
 	ID    stPartition `fesl:"id"`
 }
 
-//TODO SYNC W/Discord & HWID 
+//Start TODO SYNC W/Discord & HWID
 func (fm *FeslManager) Start(event network.EventClientCommand) {
 
 	event.Client.WriteEncode(&codec.Packet{

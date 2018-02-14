@@ -65,14 +65,14 @@ func (fm *FeslManager) run() {
 				fm.NuGetPersonas(event.Data.(network.EventClientCommand))
 			case "client.command.NuGetAccount":
 				fm.NuGetAccount(event.Data.(network.EventClientCommand))
-			case "client.command.NuLoginPersona":
-				fm.NuLoginPersona(event.Data.(network.EventClientCommand))
-			case "client.command.GetStatsForOwners":
-				fm.GetStatsForOwners(event.Data.(network.EventClientCommand))
 			case "client.command.GetStats":
 				fm.GetStats(event.Data.(network.EventClientCommand))
 			case "client.command.NuLookupUserInfo":
 				fm.NuLookupUserInfo(event.Data.(network.EventClientCommand))
+			case "client.command.NuLoginPersona":
+				fm.NuLoginPersona(event.Data.(network.EventClientCommand))
+			case "client.command.GetStatsForOwners":
+				fm.GetStatsForOwners(event.Data.(network.EventClientCommand))
 			case "client.command.GetPingSites":
 				fm.GetPingSites(event.Data.(network.EventClientCommand))
 			case "client.command.UpdateStats":
