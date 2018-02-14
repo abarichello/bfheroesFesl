@@ -22,8 +22,8 @@ type cfg struct {
 
 
     ThtrAddr string          `envconfig:"THEATER_ADDR" default:"127.0.0.1"`    
-	TelemetricsIP   string `envconfig:"TELEMETRICS_IP" default:"127.0.0.1"`
-	TelemetricsPort int      `envconfig:"TELEMETRICS_PORT" default:"13505"`
+	//TelemetricsIP   string `envconfig:"TELEMETRICS_IP" default:"127.0.0.1"`
+	//TelemetricsPort int      `envconfig:"TELEMETRICS_PORT" default:"13505"`
 
 
 	GameSpyIP    string       `envconfig:"GAMESPY_IP" default:"0.0.0.0"`

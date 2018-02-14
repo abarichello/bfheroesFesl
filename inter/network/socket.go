@@ -230,7 +230,7 @@ func NewSocketUDP(name, bind string, fesl bool) (*SocketUDP, error) {
 }
 
 func (socket *SocketUDP) run() {
-	buf := make([]byte, 8192)
+	buf := make([]byte, 8096)
 
 	for {
 		n, addr, err := socket.listen.ReadFromUDP(buf)

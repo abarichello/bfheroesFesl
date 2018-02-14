@@ -77,8 +77,8 @@ func (fm *FeslManager) run() {
 				fm.GetPingSites(event.Data.(network.EventClientCommand))
 			case "client.command.UpdateStats":
 				fm.UpdateStats(event.Data.(network.EventClientCommand))
-			case "client.command.GetTelemetryToken":
-				fm.GetTelemetryToken(event.Data.(network.EventClientCommand))
+			//case "client.command.GetTelemetryToken":
+			//fm.GetTelemetryToken(event.Data.(network.EventClientCommand))
 			case "client.command.Start":
 				fm.Start(event.Data.(network.EventClientCommand))
 			case "client.close":
@@ -95,7 +95,6 @@ func (fm *FeslManager) run() {
 		}
 	}
 }
-
 
 // TLS
 func (fm *FeslManager) newClient(event network.EventNewClient) {
@@ -126,7 +125,6 @@ func (fm *FeslManager) newClient(event network.EventNewClient) {
 	logrus.Println("New Client")
 
 }
-
 
 // TLS
 func (fm *FeslManager) close(event network.EventClientClose) {

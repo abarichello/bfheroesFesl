@@ -390,7 +390,7 @@ func (fm *FeslManager) GetStatsForOwners(event network.EventClientCommand) {
 
 		ans.Stats = append(ans.Stats, stContainer)
 	}
-	
+
 	event.Client.WriteEncode(&codec.Packet{
 		Step:    0xC0000007,
 		Type:    rank,

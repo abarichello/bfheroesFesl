@@ -2,28 +2,28 @@ package fesl
 
 import (
 	"database/sql"
-   	"strings"
+	"strings"
+
 	"github.com/sirupsen/logrus"
 )
 
 type Database struct {
-	db           *sql.DB
-	name          string
-
+	db   *sql.DB
+	name string
 
 	// Database Statements
-	stmtGetUserByGameToken              *sql.Stmt
-	stmtGetServerBySecret               *sql.Stmt
-	stmtGetServerByID                   *sql.Stmt
-	stmtGetServerByName                 *sql.Stmt
-	stmtGetHeroesByUserID               *sql.Stmt
-	stmtGetHeroeByName                  *sql.Stmt
-	stmtGetHeroeByID                    *sql.Stmt
-	stmtClearGameServerStats            *sql.Stmt
-	mapGetStatsVariableAmount           map[int]*sql.Stmt
-	mapGetServerStatsVariableAmount     map[int]*sql.Stmt
-	mapSetStatsVariableAmount           map[int]*sql.Stmt
-	mapSetServerStatsVariableAmount     map[int]*sql.Stmt
+	stmtGetUserByGameToken          *sql.Stmt
+	stmtGetServerBySecret           *sql.Stmt
+	stmtGetServerByID               *sql.Stmt
+	stmtGetServerByName             *sql.Stmt
+	stmtGetHeroesByUserID           *sql.Stmt
+	stmtGetHeroeByName              *sql.Stmt
+	stmtGetHeroeByID                *sql.Stmt
+	stmtClearGameServerStats        *sql.Stmt
+	mapGetStatsVariableAmount       map[int]*sql.Stmt
+	mapGetServerStatsVariableAmount map[int]*sql.Stmt
+	mapSetStatsVariableAmount       map[int]*sql.Stmt
+	mapSetServerStatsVariableAmount map[int]*sql.Stmt
 }
 
 func NewDatabase(conn *sql.DB) (*Database, error) {
@@ -107,7 +107,7 @@ func (d *Database) setStatsStatement(statsAmount int) *sql.Stmt {
 
 	var query string
 	for i := 1; i < statsAmount; i++ {
-		query += "(?, ?, ?, ?), "			
+		query += "(?, ?, ?, ?), "
 	}
 
 	sql := "INSERT INTO game_stats" +
@@ -133,6 +133,30 @@ func (d *Database) prepareStatements() {
 			"	WHERE game_token = ?")
 	if err != nil {
 		logrus.Fatalln("Error preparing stmtGetUserByGameToken.", err.Error())
+	}
+
+	d.stmtGetHeroesByUserID, err = d.db.Prepare(
+		"SELECT id, user_id, heroName, online" +
+			"	FROM game_heroes" +
+			"	WHERE user_id = ?")
+	if err != nil {
+		logrus.Fatalln("Error preparing stmtGetHeroesByUserID.", err.Error())
+	}
+
+	d.stmtGetHeroeByName, err = d.db.Prepare(
+		"SELECT id, user_id, heroName, online" +
+			"	FROM game_heroes" +
+			"	WHERE heroName = ?")
+	if err != nil {
+		logrus.Fatalln("Error preparing stmtGetHeroesByUserID.", err.Error())
+	}
+
+	d.stmtGetHeroeByID, err = d.db.Prepare(
+		"SELECT id, user_id, heroName, online" +
+			"	FROM game_heroes" +
+			"	WHERE id = ?")
+	if err != nil {
+		logrus.Fatalln("Error preparing stmtGetHeroeByID.", err.Error())
 	}
 
 	d.stmtGetServerBySecret, err = d.db.Prepare(
@@ -163,30 +187,6 @@ func (d *Database) prepareStatements() {
 			"	WHERE game_servers.servername = ?")
 	if err != nil {
 		logrus.Fatalln("Error preparing stmtGetServerByName.", err.Error())
-	}
-
-	d.stmtGetHeroesByUserID, err = d.db.Prepare(
-		"SELECT id, user_id, heroName, online" +
-			"	FROM game_heroes" +
-			"	WHERE user_id = ?")
-	if err != nil {
-		logrus.Fatalln("Error preparing stmtGetHeroesByUserID.", err.Error())
-	}
-
-	d.stmtGetHeroeByName, err = d.db.Prepare(
-		"SELECT id, user_id, heroName, online" +
-			"	FROM game_heroes" +
-			"	WHERE heroName = ?")
-	if err != nil {
-		logrus.Fatalln("Error preparing stmtGetHeroesByUserID.", err.Error())
-	}
-
-	d.stmtGetHeroeByID, err = d.db.Prepare(
-		"SELECT id, user_id, heroName, online" +
-			"	FROM game_heroes" +
-			"	WHERE id = ?")
-	if err != nil {
-		logrus.Fatalln("Error preparing stmtGetHeroeByID.", err.Error())
 	}
 
 	d.stmtClearGameServerStats, err = d.db.Prepare(

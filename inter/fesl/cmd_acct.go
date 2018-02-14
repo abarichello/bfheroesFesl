@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	acct = "acct"
+	acct                  = "acct"
 	acctGetTelemetryToken = "GetTelemetryToken"
 	// acctNuCreateEncryptedToken = "NuCreateEncryptedToken"
 	// acctNuEntitleGame          = "NuEntitleGame"
@@ -446,7 +446,7 @@ type ansGetTelemetryToken struct {
 	Disabled       bool   `fesl:"disabled"`
 }
 
-// GetTelemetryToken
+/* // GetTelemetryToken
 func (fm *FeslManager) GetTelemetryToken(event network.EventClientCommand) {
 	event.Client.WriteEncode(&codec.Packet{
 		Payload: ansGetTelemetryToken{
@@ -458,3 +458,4 @@ func (fm *FeslManager) GetTelemetryToken(event network.EventClientCommand) {
 		Type: acct,
 	})
 }
+*/

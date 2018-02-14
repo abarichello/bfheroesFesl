@@ -14,7 +14,6 @@ const (
 	// gsumAddPlayerInfo          = "AddPlayerInfo"
 	// gsumAddStats               = "AddStats"
 	// gsumAddTeamInfo            = "AddTeamInfo"
-	// gsumEndReport              = "EndReport"
 	// gsumGameSummaryUpdateState = "GameSummaryUpdateState"
 	// gsumGetGameData            = "GetGameData"
 	// gsumGetGameEvents          = "GetGameEvents"
@@ -23,7 +22,6 @@ const (
 	// gsumGetPlayerInfo          = "GetPlayerInfo"
 	gsumGetSessionID = "GetSessionId"
 	// gsumGetTeamInfo            = "GetTeamInfo"
-	// gsumStartReport            = "StartReport"
 )
 
 type ansGetSessionID struct {
