@@ -41,7 +41,7 @@ func (tm *Theater) LLST(event network.EventClientCommand) {
 			Locale:          "en_US",
 			MaxGames:        "10000",
 			Name:            "bfwestPC02",
-			NumGames:        "1",
+			NumGames:        "2",
 			Passing:         "0",
 		},
 	})

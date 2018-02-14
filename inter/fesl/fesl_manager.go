@@ -77,8 +77,6 @@ func (fm *FeslManager) run() {
 				fm.GetPingSites(event.Data.(network.EventClientCommand))
 			case "client.command.UpdateStats":
 				fm.UpdateStats(event.Data.(network.EventClientCommand))
-			//case "client.command.GetTelemetryToken":
-			//fm.GetTelemetryToken(event.Data.(network.EventClientCommand))
 			case "client.command.Start":
 				fm.Start(event.Data.(network.EventClientCommand))
 			case "client.close":
@@ -106,7 +104,7 @@ func (fm *FeslManager) newClient(event network.EventNewClient) {
 	fm.fsysMemCheck(&event)
 
 	// Start Heartbeat
-	event.Client.State.HeartTicker = time.NewTicker(time.Second * 6)
+	event.Client.State.HeartTicker = time.NewTicker(time.Second * 14)
 	go func() {
 		for {
 			if !event.Client.IsActive {
