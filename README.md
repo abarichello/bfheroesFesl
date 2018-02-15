@@ -1,10 +1,10 @@
 # nextWave/backend (fesl)
 
-`backend` is an implementation of the `GameSpy` network adapted for Battlefield Heroes use.
+`fesl`  the implementation of `GameSpy` network adapted for Battlefield Heroes & Educational Purposes Only
 
 ## Configuration
 
-Below there is table with all enviroment variables which are used by the `nextWave/backend`. You can refer to `config/config.go` file if you need more information about specific variable.
+Below there is table with all enviroment variables which are used by the `Open Source Heroes`. You can refer to `config/config.go` file if you need more information about specific variable.
 
 
 | Name                  | Default value        |
@@ -13,13 +13,11 @@ Below there is table with all enviroment variables which are used by the `nextWa
 | `HTTP_BIND`           | `0.0.0.0:8080`       |
 | `HTTPS_BIND`          | `0.0.0.0:443`        |
 | `GAMESPY_IP`          | `0.0.0.0`(auto bind) |
-| `FESL_CLIENT_PORT`    | `18270`              |
-| `FESL_SERVER_PORT`    | `18051`              |
-| `THEATER_CLIENT_PORT` | `18275`              |
-| `THEATER_SERVER_PORT` | `18056`              |
+| `FESL_CLIENT_PORT`    | `18270`              |//cannot be changed
+| `FESL_SERVER_PORT`    | `18051`              |//cannot be changed
+| `THEATER_CLIENT_PORT` | `18275`              |//cannot be changed
+| `THEATER_SERVER_PORT` | `18056`              |//cannot be changed
 | `THEATER_ADDR`        | `127.0.0.1`          |
-| `TELEMETRICS_IP`      | `127.0.0.1`          |
-| `TELEMETRICS_PORT`    | `13505`              |
 | `LEVEL_DB_PATH`       | `_data/lvl.db`       |
 | `DATABASE_USERNAME`   | `root`               |
 | `DATABASE_PASSWORD`   |                      |
@@ -42,10 +40,6 @@ LOG_LEVEL=debug
 
 `nextWave/backend`  currently only uses `MySQL` as a backing services. If you are on platform where `docker` is available, you may use following command to quickly download and start container with a MySQL database:
 
-```bash
-sudo docker-compose start
-```
-
 ### Start
 
 ===WINDOWS===
@@ -53,21 +47,12 @@ go to root folder and  -> ```go build main.go```
 
 Note: You Must Set your GOPATH at Windows Environment
 
-LINUX
-```bash
-make run```
-Which is alias to:
-```bash
-go build -o main cmd/backend/main.go && sudo -H ./main`
 
 ## Credits ##
 All The Idea/Project/Prototype Behind Bringing Back Battlefield Heroes was by Synaxis
 Credits #MakaHost 
 Credits #Freeze-18,#Spencer and #mDawg From revive net
 Credits #neqnill #WarpProductions #Temp #M0THERB0ARD
-
-
-
 
 =======================================================================================================================================================
 # Battlefield Heroes master server protocol specification
@@ -105,6 +90,7 @@ Known offsets of the FESL server address are:
 |--------------|------------|-----------|
 |1.46.222034.0 |Game client |0x00951EA4 |
 |1.42.217478.0 |Game server |0x0067329B |
+##this is not so important since you can connect any .exe that uses Magma(see fesl patch)
 
 The default value is "bfwest-server.fesl.ea.com".
 The default port is 18270 for the game client and 18051 for the game server.
@@ -143,15 +129,15 @@ This is the first packet that is sent when a FESL connection is made.
 
 |Key                       |Example value              |Note                           |
 |--------------------------|---------------------------|-------------------------------|
-|SDKVersion                |5.0.0.0.0                  |                               |
+|SDKVersion                |5.0.0.0.0                  |magma sdk                      |
 |clientPlatform            |PC                         |                               |
 |clientString              |bfwest-pc                  |                               |
-|clientType                |server                     |                               |
+|clientType                |server                     |server.exe                     |
 |clientVersion             |1.46.222034                |                               |
 |locale                    |en_US                      |                               |
 |sku                       |125170                     |                               |
 |protocolVersion           |2.0                        |                               |
-|fragmentSize              |8096                       |                               |
+|fragmentSize              |8096                       |max buffer size                |
 
 #### TXN = Hello, FESL server => game client/server
 
@@ -163,7 +149,7 @@ This is the first packet that is sent when a FESL connection is made.
 |curTime                   |Nov-02-2017 22:29:00 UTC   |                                                 |
 |activityTimeoutSecs       |3600                       |                                                 |
 |messengerIp               |messaging.ea.com           |This server is not required to play the game.    |
-|messengerPort             |13505                      |                                                 |
+|messengerPort             |13505                      |this was used by EA in the past                  |
 |theaterIp                 |bfwest-pc.theater.ea.com   |                                                 |
 |theaterPort               |18056                      |By default, 18056 is for game servers and        |
 |                          |                           |18275 for game clients                           |
@@ -247,10 +233,10 @@ This message retrieves general account information, based on the parameters sent
 |nuid                      |email@account.com          |                               |
 |DOBDay                    |1                          |Date Of Birth                  |
 |DOBMonth                  |1                          |                               |
-|DOBYear                   |2017                       |                               |
+|DOBYear                   |1992                       |                               |
 |userId                    |1                          |                               |
-|globalOptin               |0                          |                               |
-|thidPartyOptin            |0                          |                               |
+|globalOptin               |0                          |always 0                       |
+|thidPartyOptin            |0                          |always 0                       |
 |language                  |enUS                       |                               |
 |country                   |US                         |                               |
 
@@ -352,11 +338,11 @@ This message is a query for a list of endpoints to test for the lowest latency o
 
 |Key                       |Example value              |Note                           |
 |--------------------------|---------------------------|-------------------------------|
-|minPingSitesToPing        |2                          |                               |
-|pingSites.*i*.addr        |45.77.66.233               |                               |
-|pingSites.*i*.name        |gva                        |                               |
-|pingSites.*i*.type        |0                          |                               |
-|pingSites.[]              |4                          |                               |
+|minPingSitesToPing        |1                          |this was used in the past tho  |
+|pingSites.*i*.addr        |8.8.8.8                    |it doesnt seem to work. check  | 
+|pingSites.*i*.name        |iad                        | valid response ?              |
+|pingSites.*i*.type        |0                          | or it's just telemetric shit  |
+|pingSites.[]              |1                          |                               |
 
 
 #### TXN = UpdateStats, game client/server => FESL server
@@ -396,7 +382,7 @@ Returns a unique token for game telemetry.
 |                          |                           |                               |
 
 #### TXN = GetTelemetryToken, FESL server => game client/server
-
+#### only requested in 2009 client
 |Key                       |Example value              |Note                           |
 |--------------------------|---------------------------|-------------------------------|
 |telemetryToken            |MTU5LjE1My4yMzUuMjYsOTk0Nix|                               |
