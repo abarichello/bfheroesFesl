@@ -62,8 +62,8 @@ go build -o main cmd/backend/main.go && sudo -H ./main`
 
 ## Credits ##
 All The Idea/Project/Prototype Behind Bringing Back Battlefield Heroes was by Synaxis
-Credits #MakaHost For being able to translate the code from BF2BC-emulator to golang
-Credits #Freeze-18,#Spencer and #mDawg From Revive Network
+Credits #MakaHost 
+Credits #Freeze-18,#Spencer and #mDawg From revive net
 Credits #neqnill #WarpProductions #Temp #M0THERB0ARD
 
 
