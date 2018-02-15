@@ -20,19 +20,13 @@ type cfg struct {
 	HTTPBind  string `envconfig:"HTTP_BIND" default:"0.0.0.0:8080"`
 	HTTPSBind string `envconfig:"HTTPS_BIND" default:"0.0.0.0:443"`
 
-
     ThtrAddr string          `envconfig:"THEATER_ADDR" default:"127.0.0.1"`    
-	//TelemetricsIP   string `envconfig:"TELEMETRICS_IP" default:"127.0.0.1"`
-	//TelemetricsPort int      `envconfig:"TELEMETRICS_PORT" default:"13505"`
-
 
 	GameSpyIP    string       `envconfig:"GAMESPY_IP" default:"0.0.0.0"`
 	FeslClientPort int    `envconfig:"FESL_CLIENT_PORT" default:"18270"`
 	FeslServerPort int    `envconfig:"FESL_SERVER_PORT" default:"18051"`
 	ThtrClientPort int `envconfig:"THEATER_CLIENT_PORT" default:"18275"`
 	ThtrServerPort int `envconfig:"THEATER_SERVER_PORT" default:"18056"`
-
-
 
 	LevelDBPath string `envconfig:"LEVEL_DB_PATH" default:"_data/lvl.db"`
 }

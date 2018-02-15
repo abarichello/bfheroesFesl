@@ -27,7 +27,6 @@ func newMySQL(dsnAddr string) (*sql.DB, error) {
 	}
 
 	if err = conn.Ping(); err != nil {
-		logrus.Fatal(err)
 		return nil, err
 	}
 
