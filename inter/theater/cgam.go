@@ -4,10 +4,9 @@ import (
 	"fmt"
 	"net"
 
-	"github.com/Synaxis/bfheroesFesl/inter/matchmaking"
+	"github.com/Synaxis/bfheroesFesl/inter/mm"
 	"github.com/Synaxis/bfheroesFesl/inter/network"
 	"github.com/Synaxis/bfheroesFesl/inter/network/codec"
-
 	"github.com/sirupsen/logrus"
 )
 
@@ -47,7 +46,7 @@ func (tm *Theater) CGAM(event network.EventClientCommand) {
 	gameID := fmt.Sprintf("%d", id)
 
 	// Store our server for easy access later
-	matchmaking.Games[gameID] = event.Client
+	mm.Games[gameID] = event.Client
 
 	var args []interface{}
 

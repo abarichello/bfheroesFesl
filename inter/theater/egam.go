@@ -4,7 +4,7 @@ import (
 	"net"
 	"strconv"
 
-	"github.com/Synaxis/bfheroesFesl/inter/matchmaking"
+	"github.com/Synaxis/bfheroesFesl/inter/mm"
 	"github.com/Synaxis/bfheroesFesl/inter/network"
 	"github.com/Synaxis/bfheroesFesl/inter/network/codec"
 
@@ -100,7 +100,7 @@ func (tm *Theater) EGAM(event network.EventClientCommand) {
 		stats[statsKey] = statsValue
 	}
 
-	if gameServer, ok := matchmaking.Games[gameID]; ok {
+	if gameServer, ok := mm.Games[gameID]; ok {
 		gsData := tm.level.NewObject("gdata", gameID)
 
 		// Server

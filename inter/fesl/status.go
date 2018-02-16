@@ -1,7 +1,7 @@
 package fesl
 
 import (
-	"github.com/Synaxis/bfheroesFesl/inter/matchmaking"
+	"github.com/Synaxis/bfheroesFesl/inter/mm"
 	"github.com/Synaxis/bfheroesFesl/inter/network"
 	"github.com/Synaxis/bfheroesFesl/inter/network/codec"
 	"github.com/sirupsen/logrus"
@@ -40,12 +40,17 @@ type statusPartition struct {
 
 // Status pnow.Status command
 func (fm *FeslManager) Status(event network.EventClientCommand) {
-	logrus.Println("==Status==")
-	gameID := matchmaking.FindGIDs()
+	logrus.Println("=Status=")
+	//infinite search
+	var gameID string
+	for z := range mm.Games {
+		gameID = z
+	}
 
 	ans := ansStatus{
-		Txn:          pnowStatus,
-		ID:           stPartition{1, event.Command.Message["partition.partition"]},
+		Txn: pnowStatus,
+		ID: stPartition{1,
+			event.Command.Message[partition]},
 		SessionState: "COMPLETE",
 		Properties: map[string]interface{}{
 			"resultType": "JOIN",
@@ -58,7 +63,6 @@ func (fm *FeslManager) Status(event network.EventClientCommand) {
 			},
 		},
 	}
-
 	event.Client.WriteEncode(&codec.Packet{
 		Payload: ans,
 		Step:    0x80000000,

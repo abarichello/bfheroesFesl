@@ -10,10 +10,9 @@ import (
 
 	"github.com/sirupsen/logrus"
 )
-
+//THIS IS THE HELLO PACKET ;)
 const (
 	fsys = "fsys"
-
 	fsysGetPingSites = "GetPingSites"
 	// fsysGoodbye      = "Goodbye"
 	fsysHello    = "Hello"
@@ -62,7 +61,7 @@ type domainPartition struct {
 
 func (fm *FeslManager) hello(event network.EventClientCommand) {
 	if !event.Client.IsActive {
-		logrus.Println("Client left")
+		logrus.Println("Cli Left")
 		return
 	}
 
@@ -112,8 +111,9 @@ func (fm *FeslManager) hello(event network.EventClientCommand) {
 }
 
 const (
-	pingEUCentral = "iad"
+	location = "iad"
 )
+//is this usefull ? added google dns to test
 
 type ansGetPingSites struct {
 	Taxon     string     `fesl:"TXN"`
@@ -127,7 +127,7 @@ type pingSite struct {
 	Type int    `fesl:"type"`
 }
 
-// GetPingSites - returns a list of endpoints to test for the lowest latency on a client
+// GetPingSites - Get Pings for something
 func (fm *FeslManager) GetPingSites(event network.EventClientCommand) {
 	if !event.Client.IsActive {
 		logrus.Println("Client left")
@@ -141,7 +141,9 @@ func (fm *FeslManager) GetPingSites(event network.EventClientCommand) {
 			Taxon:    fsysGetPingSites,
 			MinPings: 1,
 			PingSites: []pingSite{
-				{"8.8.8.8", pingEUCentral, 0},
+				{"8.8.8.8", 
+				location,
+				 0}, //0 = MS
 			},
 		},
 	})

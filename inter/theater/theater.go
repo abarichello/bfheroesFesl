@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"time"
 
-	"github.com/Synaxis/bfheroesFesl/inter/matchmaking"
+	"github.com/Synaxis/bfheroesFesl/inter/mm"
 	"github.com/Synaxis/bfheroesFesl/inter/network"
 	"github.com/Synaxis/bfheroesFesl/storage/level"
 
@@ -176,7 +176,7 @@ func (tm *Theater) close(event network.EventClientClose) {
 			}
 
 			// Delete game out of matchmaking array
-			delete(matchmaking.Games, event.Client.HashState.Get("gdata:GID"))
+			delete(mm.Games, event.Client.HashState.Get("gdata:GID"))
 
 			gameServer := tm.level.NewObject("gdata", event.Client.HashState.Get("gdata:GID"))
 			gameServer.Delete()

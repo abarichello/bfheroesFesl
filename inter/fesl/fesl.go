@@ -13,7 +13,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-// FeslManager - handles incoming and outgoing FESL data
+// Fesl - handles incoming and outgoing FESL data
 type FeslManager struct {
 	name   string
 	db     *Database
