@@ -6,27 +6,23 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-const (
-	partition = "partition.partition"
-)
-
 type ansStart struct {
-	Txn string      `fesl:"TXN"`
-	ID  stPartition `fesl:"id"`
+	Txn    string `fesl:"TXN"`
+	ID     string `fesl:"id.id"`
+	idpart string `fesl:"id.partition"`
 }
 
 // Start handles pnow.Start
 func (fm *FeslManager) Start(event network.EventClientCommand) {
 	event.Client.WriteEncode(&codec.Packet{
 		Payload: ansStart{
-			Txn: pnowStart,
-			ID: stPartition{1,
-				event.Command.Message[partition]},
+			Txn:    "Start",
+			ID:     "1",
+			idpart: event.Command.Message["partition.partition"],
 		},
-		Step: event.Command.PayloadID,
 		Type: pnow,
 	})
 
 	fm.Status(event)
-	logrus.Println("=PNOW=")
+	logrus.Println("=START=")
 }

@@ -8,15 +8,16 @@ import (
 )
 
 const (
-	pnow = "pnow"
-	// pnowCancel    = "Cancel"
+	partition = "partition.partition"
+	pnow      = "pnow"
+	//pnowCancel = "Cancel"
 	pnowStart  = "Start"
 	pnowStatus = "Status"
 )
 
 type ansStatus struct {
 	Txn          string                 `fesl:"TXN"`
-	ID           stPartition            `fesl:"id"`
+	ID           stPartition            `fesl:"id.id"`
 	SessionState string                 `fesl:"sessionState"`
 	Properties   map[string]interface{} `fesl:"props"`
 }
@@ -33,11 +34,6 @@ type statusGame struct {
 	GameID  string `fesl:"gid"`
 }
 
-type statusPartition struct {
-	ID        int    `fesl:"id"`
-	Partition string `fesl:"partition"`
-}
-
 // Status pnow.Status command
 func (fm *FeslManager) Status(event network.EventClientCommand) {
 	logrus.Println("=Status=")
@@ -48,9 +44,8 @@ func (fm *FeslManager) Status(event network.EventClientCommand) {
 	}
 
 	ans := ansStatus{
-		Txn: pnowStatus,
-		ID: stPartition{1,
-			event.Command.Message[partition]},
+		Txn:          pnowStatus,
+		ID:           stPartition{1, event.Command.Message[partition]},
 		SessionState: "COMPLETE",
 		Properties: map[string]interface{}{
 			"resultType": "JOIN",
