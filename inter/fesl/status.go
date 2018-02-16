@@ -8,8 +8,7 @@ import (
 )
 
 const (
-	partition = "partition.partition"
-	pnow      = "pnow"
+	pnow = "pnow"
 	//pnowCancel = "Cancel"
 	pnowStart  = "Start"
 	pnowStatus = "Status"
@@ -17,12 +16,15 @@ const (
 
 type ansStatus struct {
 	Txn          string                 `fesl:"TXN"`
-	ID           stPartition            `fesl:"id.id"`
+	ID           stPartition            `fesl:"id"`
 	SessionState string                 `fesl:"sessionState"`
 	Properties   map[string]interface{} `fesl:"props"`
 }
 
-//statusPartition
+const (
+	partition = "partition.partition"
+)
+
 type stPartition struct {
 	ID        int    `fesl:"id"`
 	Partition string `fesl:"partition"`
