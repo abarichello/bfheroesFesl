@@ -28,7 +28,7 @@ type stPartition struct {
 }
 
 type statusGame struct {
-	LobbyID int    `fesl:"lit"`
+	LobbyID int    `fesl:"lid"`
 	Fit     int    `fesl:"fit"`
 	GameID  string `fesl:"gid"`
 }
@@ -40,11 +40,7 @@ type statusPartition struct {
 
 // Status pnow.Status command
 func (fm *FeslManager) Status(event network.EventClientCommand) {
-	if !event.Client.IsActive {
-		logrus.Println("C Left")
-		return
-	}
-
+	logrus.Println("==Status==")
 	gameID := matchmaking.FindGIDs()
 
 	ans := ansStatus{

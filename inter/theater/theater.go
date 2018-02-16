@@ -81,9 +81,9 @@ func (tm *Theater) Listen() {
 			case "command.ECHO":
 				go tm.ECHO(event)
 			case "command":
-				logrus.Debugf("UDP event %s: %v", event.Name, event.Data.(*network.CommandFESL))
+				logrus.Debugf("UDP %s: %v", event.Name, event.Data.(*network.CommandFESL))
 			default:
-				logrus.Debugf("UDP event %s: %v", event.Name, event.Data)
+				logrus.Debugf("UDP %s: %v", event.Name, event.Data)
 			}
 		case event := <-tm.socket.EventChan:
 			switch event.Name {
@@ -137,7 +137,7 @@ func (tm *Theater) newClient(event network.EventNewClient) {
 		logrus.Println("Client left")
 		return
 	}
-	logrus.Println("Client connecting")
+	logrus.Println("CLiJoinGame")
 
 	// Start Heartbeat
 	event.Client.State.HeartTicker = time.NewTicker(time.Second * 30)

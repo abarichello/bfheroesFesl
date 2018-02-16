@@ -15,32 +15,32 @@ var (
 )
 
 type cfg struct {
-	LogLevel string         `envconfig:"LOG_LEVEL" default:"DEBUG"`
+	LogLevel string `envconfig:"LOG_LEVEL" default:"DEBUG"`
 
 	HTTPBind  string `envconfig:"HTTP_BIND" default:"0.0.0.0:8080"`
 	HTTPSBind string `envconfig:"HTTPS_BIND" default:"0.0.0.0:443"`
 
-    ThtrAddr string          `envconfig:"THEATER_ADDR" default:"127.0.0.1"`    
+	ThtrAddr string `envconfig:"THEATER_ADDR" default:"127.0.0.1"`
 
-	GameSpyIP    string       `envconfig:"GAMESPY_IP" default:"0.0.0.0"`
+	GameSpyIP      string `envconfig:"GAMESPY_IP" default:"0.0.0.0"`
 	FeslClientPort int    `envconfig:"FESL_CLIENT_PORT" default:"18270"`
 	FeslServerPort int    `envconfig:"FESL_SERVER_PORT" default:"18051"`
-	ThtrClientPort int `envconfig:"THEATER_CLIENT_PORT" default:"18275"`
-	ThtrServerPort int `envconfig:"THEATER_SERVER_PORT" default:"18056"`
+	ThtrClientPort int    `envconfig:"THEATER_CLIENT_PORT" default:"18275"`
+	ThtrServerPort int    `envconfig:"THEATER_SERVER_PORT" default:"18056"`
 
 	LevelDBPath string `envconfig:"LEVEL_DB_PATH" default:"_data/lvl.db"`
 }
 
 type MySQL struct {
-	UserName string  `envconfig:"DATABASE_USERNAME" default:"root"`
-	Password string                 `envconfig:"DATABASE_PASSWORD"`
+	UserName string `envconfig:"DATABASE_USERNAME" default:"root"`
+	Password string `envconfig:"DATABASE_PASSWORD"`
 	Host     string `envconfig:"DATABASE_HOST" default:"127.0.0.1"`
-	Port     int         `envconfig:"DATABASE_PORT" default:"3306"`
-	Name     string     `envconfig:"DATABASE_NAME" default:"naomi"`
+	Port     int    `envconfig:"DATABASE_PORT" default:"3306"`
+	Name     string `envconfig:"DATABASE_NAME" default:"naomi"`
 }
 
 type Fixtures struct {
-	Path            string `envconfig:"CERT_PATH" default:"./config/cert.pem"`
+	Path       string `envconfig:"CERT_PATH" default:"./config/cert.pem"`
 	PrivateKey string `envconfig:"PRIVATE_KEY_PATH" default:"./config/key.pem"`
 }
 

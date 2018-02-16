@@ -15,12 +15,10 @@ type ansECNL struct {
 
 // ECNL - CLIENT calls when they want to leave
 func (tm *Theater) ECNL(event network.EventClientCommand) {
-	if !event.Client.IsActive {
-		logrus.Println("Client left")
-		return
-	}
+	logrus.Println("Left Q")
 
 	event.Client.WriteEncode(&codec.Packet{
+		Step: 0x0,
 		Type: thtrENCL,
 		Payload: ansECNL{
 			event.Command.Message["TID"],

@@ -66,9 +66,9 @@ type ansEGEG struct {
 
 // EGAM - CLIENT called when a client wants to join a gameserver
 func (tm *Theater) EGAM(event network.EventClientCommand) {
+	gameID := event.Command.Message["GID"]
 	externalIP := event.Client.IpAddr.(*net.TCPAddr).IP.String()
 	lobbyID := event.Command.Message["LID"]
-	gameID := event.Command.Message["GID"]
 	pid := event.Client.HashState.Get("id")
 
 	event.Client.WriteEncode(&codec.Packet{

@@ -20,7 +20,7 @@ func (tm *Theater) EGRS(event network.EventClientCommand) {
 	if event.Command.Message["ALLOWED"] == "1" {
 		_, err := tm.db.stmtGameIncreaseJoining.Exec(event.Command.Message["GID"])
 		if err != nil {
-			logrus.Error("EGRS ", err)
+			logrus.Error("NOT Allowed ", err)
 		}
 	}
 
