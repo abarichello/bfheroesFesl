@@ -8,54 +8,51 @@ import (
 )
 
 const (
-	pnow = "pnow"
+	Complete = "COMPLETE"
+	pnow     = "pnow"
 	//pnowCancel = "Cancel"
 	pnowStart  = "Start"
 	pnowStatus = "Status"
+	partition  = "partition.partition"
+	Join       = "JOIN"
 )
 
 type ansStatus struct {
-	Txn          string                 `fesl:"TXN"`
-	ID           stPartition            `fesl:"id"`
-	SessionState string                 `fesl:"sessionState"`
-	Properties   map[string]interface{} `fesl:"props"`
+	Txn        string                 `fesl:"TXN"`
+	ID         stPartition            `fesl:"id"`
+	State      string                 `fesl:"sessionState"`
+	Properties map[string]interface{} `fesl:"props"`
 }
-
-const (
-	partition = "partition.partition"
-)
 
 type stPartition struct {
 	ID        int    `fesl:"id"`
 	Partition string `fesl:"partition"`
 }
 
-type statusGame struct {
+type stGame struct {
 	LobbyID int    `fesl:"lid"`
-	Fit     int    `fesl:"fit"`
-	GameID  string `fesl:"gid"`
+	Fit     int    `fesl:"fit"` // ELO ?
+	GAME    string `fesl:"gid"`
 }
 
 // Status pnow.Status command
 func (fm *FeslManager) Status(event network.EventClientCommand) {
 	logrus.Println("=Status=")
-	//infinite search
-	var gameID string
-	for z := range mm.Games {
-		gameID = z
-	}
+	//Infinite Search
+	gameID := mm.FindGIDs()
 
 	ans := ansStatus{
-		Txn:          pnowStatus,
-		ID:           stPartition{1, event.Command.Message[partition]},
-		SessionState: "COMPLETE",
+		Txn: pnowStatus,
+		ID: stPartition{1,
+			event.Command.Message[partition]},
+		State: Complete,
 		Properties: map[string]interface{}{
-			"resultType": "JOIN",
-			"games": []statusGame{
+			"resultType": Join,
+			"games": []stGame{
 				{
 					LobbyID: 1,
-					Fit:     1001,
-					GameID:  gameID,
+					Fit:     1500,
+					GAME:    gameID,
 				},
 			},
 		},

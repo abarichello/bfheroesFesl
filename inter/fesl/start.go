@@ -15,11 +15,11 @@ func (fm *FeslManager) Start(event network.EventClientCommand) {
 	event.Client.WriteEncode(&codec.Packet{
 		Payload: ansStart{
 			Txn: pnowStart,
-			ID:  stPartition{1, event.Command.Message["partition.partition"]},
+			ID: stPartition{1,
+				event.Command.Message[partition]},
 		},
 		Step: event.Command.PayloadID,
 		Type: pnow,
 	})
-
 	fm.Status(event)
 }
