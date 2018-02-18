@@ -24,7 +24,7 @@ func logRequest(r *http.Request) {
 
 	logrus.
 		WithFields(logrus.Fields{
-			"url": r.URL.Path,
 			"req": string(dump),
-		}).Debug("Magma request")
+		}).
+		Debugf("Dump %s", r.URL.Path)
 }

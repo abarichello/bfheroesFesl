@@ -57,7 +57,7 @@ func (rdr *renderer) renderXML(w http.ResponseWriter, r *http.Request, name stri
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	// logrus.Info("Response", buf.String())
+	logrus.Info("Response", buf.String())
 	respondXML(w, r, buf.Bytes())
 }
 

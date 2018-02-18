@@ -1,1 +1,1 @@
-<success><token>{{ .ServerKey }}</token></success>"
+<success><token>{{ .ServerKey }}</token></success>
