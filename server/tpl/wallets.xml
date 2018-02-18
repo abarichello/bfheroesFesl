@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <billingAccounts>
     <walletAccount>
-        <currency>HP</currency>
+        <currency>hp</currency>
         <balance>1</balance>
     </walletAccount>
 </billingAccounts>

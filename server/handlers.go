@@ -28,12 +28,13 @@ func (s *Server) nucleusAuthToken(w http.ResponseWriter, r *http.Request) {
 	s.rdr.renderXML(w, r, tplSessionNew, dtSession{userKey.Value})
 }
 
+
 // nucleusCheckUser is requested by both: game-server and game-client.
 //
 // See also TestServer_nucleusCheckUser as an example request
 // made by game-client.
 func (s *Server) nucleusCheckUser(w http.ResponseWriter, r *http.Request) {
-	// userID := chi.URLParam("userID")
+	//userID := chi.URLParam("userID")
 }
 
 type dtHero struct {

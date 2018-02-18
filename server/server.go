@@ -4,7 +4,6 @@ import (
 	"net/http"
 
 	"github.com/sirupsen/logrus"
-
 	"github.com/Synaxis/bfheroesFesl/config"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
