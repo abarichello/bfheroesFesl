@@ -11,21 +11,11 @@ import (
 
 const (
 	acct                  = "acct"
-	acctGetTelemetryToken = "GetTelemetryToken"
-	// acctNuCreateEncryptedToken = "NuCreateEncryptedToken"
-	// acctNuEntitleGame          = "NuEntitleGame"
-	// acctNuEntitleUser          = "NuEntitleUser"
 	acctNuGetAccount = "NuGetAccount"
-	// acctNuGetAccountByNuid     = "NuGetAccountByNuid"
-	// acctNuGetEntitlementCount  = "NuGetEntitlementCount"
-	// acctNuGetEntitlements      = "NuGetEntitlements"
 	acctNuGetPersonas    = "NuGetPersonas"
 	acctNuLogin          = "NuLogin"
 	acctNuLoginPersona   = "NuLoginPersona"
 	acctNuLookupUserInfo = "NuLookupUserInfo"
-	// acctNuSearchOwners         = "NuSearchOwners"
-	// acctNuUpdateAccount        = "NuUpdateAccount"
-	// acctTransactionException   = "TransactionException"
 )
 
 type ansNuLookupUserInfo struct {
@@ -39,15 +29,10 @@ type userInfo struct {
 	MasterUserID string `fesl:"masterUserId"`
 	UserID       string `fesl:"userId"`
 	UserName     string `fesl:"userName"`
-	// CID          string `fesl:"cid"` ??? = "1"
 }
 
 // NuLookupUserInfo - Gets basic information about a game user
 func (fm *FeslManager) NuLookupUserInfo(event network.EventClientCommand) {
-	if !event.Client.IsActive {
-		logrus.Println("Client left")
-		return
-	}
 
 	if event.Client.HashState.Get("clientType") == "server" && event.Command.Message["userInfo.0.userName"] == "Test-Server" {
 		fm.NuLookupUserInfoServer(event)
