@@ -45,10 +45,10 @@ func (fm *FeslManager) NuLookupUserInfo(event network.EventClientCommand) {
 
 	keys, _ := strconv.Atoi(event.Command.Msg["userInfo.[]"])
 	for i := 0; i < keys; i++ {
-		heroNamePacket := event.Command.Msg["userInfo."+strconv.Itoa(i)+".userName"]
+		heroNamePkt := event.Command.Msg["userInfo."+strconv.Itoa(i)+".userName"]
 
 		var id, userID, heroName, online string
-		err := fm.db.stmtGetHeroeByName.QueryRow(heroNamePacket).Scan(&id, &userID, &heroName, &online)
+		err := fm.db.stmtGetHeroeByName.QueryRow(heroNamePkt).Scan(&id, &userID, &heroName, &online)
 		if err != nil {
 			return
 		}
@@ -62,9 +62,9 @@ func (fm *FeslManager) NuLookupUserInfo(event network.EventClientCommand) {
 		})
 	}
 
-	event.Client.Answer(&codec.Packet{
-		Payload: ans,
-		Step:    event.Command.PayloadID,
+	event.Client.Answer(&codec.Pkt{
+		Content: ans,
+		Send:    event.Command.HEX,
 		Type:    acct,
 	})
 
@@ -81,8 +81,8 @@ func (fm *FeslManager) NuLookupUserInfoServer(event network.EventClientCommand) 
 		return
 	}
 
-	event.Client.Answer(&codec.Packet{
-		Payload: ansNuLookupUserInfo{
+	event.Client.Answer(&codec.Pkt{
+		Content: ansNuLookupUserInfo{
 			Taxon: acctNuLookupUserInfo,
 			UserInfo: []userInfo{
 				{
@@ -94,7 +94,7 @@ func (fm *FeslManager) NuLookupUserInfoServer(event network.EventClientCommand) 
 				},
 			},
 		},
-		Step: event.Command.PayloadID,
+		Send: event.Command.HEX,
 		Type: acct,
 	})
 }
@@ -138,14 +138,14 @@ func (fm *FeslManager) NuLoginPersona(event network.EventClientCommand) {
 	event.Client.HashState.SetM(saveRedis)
 
 	event.Client.HashState.Set("lkeys", event.Client.HashState.Get("lkeys")+";"+lkey)
-	event.Client.Answer(&codec.Packet{
-		Payload: ansNuLogin{
+	event.Client.Answer(&codec.Pkt{
+		Content: ansNuLogin{
 			Taxon:     acctNuLoginPersona,
 			ProfileID: userID,
 			UserID:    userID,
 			Lkey:      lkey,
 		},
-		Step: event.Command.PayloadID,
+		Send: event.Command.HEX,
 		Type: acct,
 	})
 }
@@ -167,14 +167,14 @@ func (fm *FeslManager) NuLoginPersonaServer(event network.EventClientCommand) {
 	lkeyRedis.Set("name", servername)
 
 	event.Client.HashState.Set("lkeys", event.Client.HashState.Get("lkeys")+";"+lkey)
-	event.Client.Answer(&codec.Packet{
-		Payload: ansNuLogin{
+	event.Client.Answer(&codec.Pkt{
+		Content: ansNuLogin{
 			Taxon:     acctNuLoginPersona,
 			ProfileID: id,
 			UserID:    id,
 			Lkey:      lkey,
 		},
-		Step: event.Command.PayloadID,
+		Send: event.Command.HEX,
 		Type: acct,
 	})
 }
@@ -217,10 +217,10 @@ func (fm *FeslManager) NuGetPersonas(event network.EventClientCommand) {
 
 	event.Client.HashState.Set("numOfHeroes", strconv.Itoa(len(ans.Personas)))
 
-	event.Client.Answer(&codec.Packet{
-		Step:    event.Command.PayloadID,
+	event.Client.Answer(&codec.Pkt{
+		Send:    event.Command.HEX,
 		Type:    acct,
-		Payload: ans,
+		Content: ans,
 	})
 }
 
@@ -248,10 +248,10 @@ func (fm *FeslManager) NuGetPersonasServer(event network.EventClientCommand) {
 		event.Client.HashState.Set("ownerId."+strconv.Itoa(len(ans.Personas)), id)
 	}
 
-	event.Client.Answer(&codec.Packet{
-		Step:    event.Command.PayloadID,
+	event.Client.Answer(&codec.Pkt{
+		Send:    event.Command.HEX,
 		Type:    acct,
-		Payload: ans,
+		Content: ans,
 	})
 }
 
@@ -280,9 +280,9 @@ type ansNuGetAccount struct {
 }
 
 func (fm *FeslManager) acctNuGetAccount(event *network.EventClientCommand) {
-	event.Client.Answer(&codec.Packet{
+	event.Client.Answer(&codec.Pkt{
 		Type: acct,
-		Payload: ansNuGetAccount{
+		Content: ansNuGetAccount{
 			Taxon:          acctNuGetAccount,
 			Country:        "US",
 			Language:       "en_US",
@@ -295,7 +295,7 @@ func (fm *FeslManager) acctNuGetAccount(event *network.EventClientCommand) {
 			HeroName:       event.Client.HashState.Get("username"),
 			UserID:         event.Client.HashState.Get("uID"),
 		},
-		Step: event.Command.PayloadID,
+		Send: event.Command.HEX,
 	})
 }
 
@@ -334,13 +334,13 @@ func (fm *FeslManager) NuLogin(event network.EventClientCommand) {
 
 	err := fm.db.stmtGetUserByGameToken.QueryRow(event.Command.Msg["encryptedInfo"]).Scan(&id, &username, &email, &birthday, &language, &country, &gameToken)
 	if err != nil {
-		event.Client.Answer(&codec.Packet{
-			Payload: ansNuLoginErr{
+		event.Client.Answer(&codec.Pkt{
+			Content: ansNuLoginErr{
 				Taxon:   acctNuLogin,
 				Message: `"Wrong Login/Spoof"`,
 				Code:    120,
 			},
-			Step: event.Command.PayloadID,
+			Send: event.Command.HEX,
 			Type: event.Command.Query,
 		})
 		return
@@ -363,15 +363,15 @@ func (fm *FeslManager) NuLogin(event network.EventClientCommand) {
 	lkeyRedis.Set("name", username)
 
 	event.Client.HashState.Set("lkeys", event.Client.HashState.Get("lkeys")+";"+lkey)
-	event.Client.Answer(&codec.Packet{
-		Payload: ansNuLogin{
+	event.Client.Answer(&codec.Pkt{
+		Content: ansNuLogin{
 			Taxon:     acctNuLogin,
 			ProfileID: id,
 			UserID:    id,
 			NucleusID: username,
 			Lkey:      lkey,
 		},
-		Step: event.Command.PayloadID,
+		Send: event.Command.HEX,
 		Type: acct,
 	})
 }
@@ -382,13 +382,13 @@ func (fm *FeslManager) NuLoginServer(event network.EventClientCommand) {
 
 	err := fm.db.stmtGetServerBySecret.QueryRow(event.Command.Msg["password"]).Scan(&id, &userID, &servername, &secretKey, &username)
 	if err != nil {
-		event.Client.Answer(&codec.Packet{
-			Payload: ansNuLoginErr{
+		event.Client.Answer(&codec.Pkt{
+			Content: ansNuLoginErr{
 				Taxon:   acctNuLogin,
 				Message: `"Wrong Server "`,
 				Code:    122,
 			},
-			Step: event.Command.PayloadID,
+			Send: event.Command.HEX,
 			Type: acct,
 		})
 		return
@@ -410,15 +410,15 @@ func (fm *FeslManager) NuLoginServer(event network.EventClientCommand) {
 	lkeyRedis.Set("name", username)
 
 	event.Client.HashState.Set("lkeys", event.Client.HashState.Get("lkeys")+";"+lkey)
-	event.Client.Answer(&codec.Packet{
-		Payload: ansNuLogin{
+	event.Client.Answer(&codec.Pkt{
+		Content: ansNuLogin{
 			Taxon:     acctNuLogin,
 			ProfileID: userID,
 			UserID:    userID,
 			NucleusID: username,
 			Lkey:      lkey,
 		},
-		Step: event.Command.PayloadID,
+		Send: event.Command.HEX,
 		Type: acct,
 	})
 }

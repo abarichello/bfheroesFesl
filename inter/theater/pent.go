@@ -52,9 +52,9 @@ func (tM *Theater) PENT(event network.EventClientCommand) {
 		logrus.Errorln("Invalid team " + stats["c_team"] + " for " + pid)
 	}
 
-	event.Client.Answer(&codec.Packet{
+	event.Client.Answer(&codec.Pkt{
 		Type: thtrPENT,
-		Payload: ansPENT{
+		Content: ansPENT{
 			event.Command.Msg["TID"],
 			event.Command.Msg["PID"],
 		},

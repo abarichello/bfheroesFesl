@@ -10,7 +10,7 @@ import (
 
 func (tM *Theater) UGAM(event network.EventClientCommand) {
 	if !event.Client.IsActive {
-		logrus.Println("Client left")
+		logrus.Println("Cli Left")
 		return
 	}
 

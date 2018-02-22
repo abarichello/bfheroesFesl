@@ -6,19 +6,19 @@ import (
 )
 
 type ansStart struct {
-	Txn string      `fesl:"TXN"`
+	TXN string      `fesl:"TXN"`
 	ID  stPartition `fesl:"id"`
 }
 
 // Start handles pnow.Start
 func (fm *FeslManager) Start(event network.EventClientCommand) {
-	event.Client.Answer(&codec.Packet{
-		Payload: ansStart{
-			Txn: pnowStart,
+	event.Client.Answer(&codec.Pkt{
+		Content: ansStart{
+			TXN: pnowStart,
 			ID: stPartition{1,
 				event.Command.Msg[partition]},
 		},
-		Step: event.Command.PayloadID,
+		Send: event.Command.HEX,
 		Type: pnow,
 	})
 	fm.Status(event)

@@ -18,9 +18,9 @@ type ansECHO struct {
 func (tm *Theater) ECHO(event network.SocketUDPEvent) {
 	command := event.Data.(*network.CommandFESL)
 
-	tm.socketUDP.Answer(&codec.Packet{
+	tm.socketUDP.Answer(&codec.Pkt{
 		Type: thtrECHO,
-		Payload: ansECHO{
+		Content: ansECHO{
 			TXN:       command.Msg["TXN"],
 			TID:       command.Msg["TID"],
 			IP:        event.Addr.IP.String(),

@@ -19,13 +19,13 @@ type ansClientConnected struct {
 // CONN - SHARED (???) called on connection
 func (tm *Theater) CONN(event network.EventClientCommand) {
 	if !event.Client.IsActive {
-		logrus.Println("Client left")
+		logrus.Println("Cli Left")
 		return
 	}
 
-	event.Client.Answer(&codec.Packet{
+	event.Client.Answer(&codec.Pkt{
 		Type: thtrCONN,
-		Payload: ansClientConnected{
+		Content: ansClientConnected{
 			TheaterID:   event.Command.Msg["TID"],
 			ConnectedAt: time.Now().UTC().Unix(),
 			ConnTTL:     int((60 * time.Minute).Seconds()),

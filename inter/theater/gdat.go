@@ -103,16 +103,16 @@ type ansGDAT struct {
 // GDAT - CLIENT called to get data about the server
 func (tm *Theater) GDAT(event network.EventClientCommand) {
 	if !event.Client.IsActive {
-		logrus.Println("Client left")
+		logrus.Println("Cli Left")
 		return
 	}
 
 	gameID := event.Command.Msg["GID"]
 	gameServer := tm.level.NewObject("gdata", gameID)
 
-	event.Client.Answer(&codec.Packet{
+	event.Client.Answer(&codec.Pkt{
 		Type: thtrGDAT,
-		Payload: ansGDAT{
+		Content: ansGDAT{
 			TheaterID:            event.Command.Msg["TID"],
 			Ap:                   gameServer.Get("AP"),
 			ArmyDistribution:     gameServer.Get("B-U-army_distribution"),

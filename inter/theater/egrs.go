@@ -24,8 +24,8 @@ func (tm *Theater) EGRS(event network.EventClientCommand) {
 		}
 	}
 
-	event.Client.Answer(&codec.Packet{
+	event.Client.Answer(&codec.Pkt{
 		Type:    thtrEGRS,
-		Payload: ansEGRS{event.Command.Msg["TID"]},
+		Content: ansEGRS{event.Command.Msg["TID"]},
 	})
 }

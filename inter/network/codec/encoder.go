@@ -11,7 +11,7 @@ import (
 )
 
 const (
-	// charNull is a "null" character from ASCII table, it ends a packet
+	// charNull is a "null" character from ASCII table, it ends a Pkt
 	charNull    byte = 0x00
 	charEqual   byte = '='
 	charNewLine byte = '\n'
@@ -58,34 +58,34 @@ func NewEncoder() *Encoder {
 	}
 }
 
-func (e *Encoder) EncodePacket(packet *Packet) (*bytes.Buffer, error) {
+func (e *Encoder) EncodePkt(Pkt *Pkt) (*bytes.Buffer, error) {
 	buf := new(bytes.Buffer)
 
 	// Append type
-	if _, err := buf.Write([]byte(packet.Type)); err != nil { // 4 bytes
+	if _, err := buf.Write([]byte(Pkt.Type)); err != nil { // 4 bytes
 		return nil, err
 	}
 
 	// Append status
 	t := make([]byte, 4)
-	binary.BigEndian.PutUint32(t, packet.Step)
+	binary.BigEndian.PutUint32(t, Pkt.Send)
 	if _, err := buf.Write(t); err != nil {
 		return nil, err
 	}
 
-	// Encode payload
-	if err := e.Encode(packet.Payload); err != nil {
+	// Encode Content
+	if err := e.Encode(Pkt.Content); err != nil {
 		return nil, err
 	}
 
-	// Append packet length
+	// Append Pkt length
 	c := make([]byte, 4)
 	binary.BigEndian.PutUint32(c, uint32(e.wr.Len()+12))
 	if _, err := buf.Write(c); err != nil {
 		return nil, err
 	}
 
-	// Append payload
+	// Append Content
 	if _, err := buf.Write(e.wr.Bytes()); err != nil {
 		return nil, err
 	}

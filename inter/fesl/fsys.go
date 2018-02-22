@@ -11,7 +11,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-//THIS IS THE HELLO PACKET ;)
+//THIS IS THE HELLO Pkt ;)
 const (
 	fsys             = "fsys"
 	fsysGetPingSites = "GetPingSites"
@@ -23,7 +23,7 @@ const (
 )
 
 type ansMemCheck struct {
-	Taxon     string     `fesl:"TXN"`
+	TXN       string     `fesl:"TXN"`
 	MemChecks []memCheck `fesl:"memcheck"`
 	Salt      string     `fesl:"salt"`
 }
@@ -34,18 +34,18 @@ type memCheck struct {
 }
 
 func (fm *FeslManager) fsysMemCheck(event *network.EventNewClient) {
-	event.Client.Answer(&codec.Packet{
+	event.Client.Answer(&codec.Pkt{
 		Type: fsys,
-		Payload: ansMemCheck{
-			Taxon: fsysMemCheck,
-			Salt:  "5",
+		Content: ansMemCheck{
+			TXN:  fsysMemCheck,
+			Salt: "5",
 		},
-		Step: 0xC0000000,
+		Send: 0xC0000000,
 	})
 }
 
 type ansHello struct {
-	Taxon         string          `fesl:"TXN"`
+	TXN           string          `fesl:"TXN"`
 	Domain        domainPartition `fesl:"domainPartition"`
 	ConnTTL       int             `fesl:"activityTimeoutSecs"`
 	ConnectedAt   string          `fesl:"curTime"`
@@ -90,7 +90,7 @@ func (fm *FeslManager) hello(event network.EventClientCommand) {
 	event.Client.HashState.SetM(saveRedis)
 
 	ans := ansHello{
-		Taxon:       fsysHello,
+		TXN:         fsysHello,
 		ConnTTL:     int((1 * time.Hour).Seconds()),
 		ConnectedAt: time.Now().Format("Jan-02-2006 15:04:05 MST"),
 		TheaterIP:   config.General.ThtrAddr,
@@ -104,10 +104,10 @@ func (fm *FeslManager) hello(event network.EventClientCommand) {
 		ans.TheaterPort = config.General.ThtrClientPort
 	}
 
-	event.Client.Answer(&codec.Packet{
-		Payload: ans,
+	event.Client.Answer(&codec.Pkt{
+		Content: ans,
 		Type:    fsys,
-		Step:    0xC0000001,
+		Send:    0xC0000001,
 	})
 }
 
@@ -118,7 +118,7 @@ const (
 //is this usefull ? added google dns to test
 
 type ansGetPingSites struct {
-	Taxon     string     `fesl:"TXN"`
+	TXN       string     `fesl:"TXN"`
 	MinPings  int        `fesl:"minPingSitesToPing"`
 	PingSites []pingSite `fesl:"pingSites"`
 }
@@ -132,15 +132,15 @@ type pingSite struct {
 // GetPingSites - Get Pings for something
 func (fm *FeslManager) GetPingSites(event network.EventClientCommand) {
 	if !event.Client.IsActive {
-		logrus.Println("Client left")
+		logrus.Println("Cli Left")
 		return
 	}
 
-	event.Client.Answer(&codec.Packet{
+	event.Client.Answer(&codec.Pkt{
 		Type: event.Command.Query,
-		Step: event.Command.PayloadID,
-		Payload: ansGetPingSites{
-			Taxon:    fsysGetPingSites,
+		Send: event.Command.HEX,
+		Content: ansGetPingSites{
+			TXN:      fsysGetPingSites,
 			MinPings: 1,
 			PingSites: []pingSite{
 				{"8.8.8.8",

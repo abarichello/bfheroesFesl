@@ -134,7 +134,7 @@ func (tM *Theater) error(event network.EventClientError) {
 
 func (tm *Theater) newClient(event network.EventNewClient) {
 	if !event.Client.IsActive {
-		logrus.Println("Client left")
+		logrus.Println("Cli Left")
 		return
 	}
 	logrus.Println("CLiJoinGame")

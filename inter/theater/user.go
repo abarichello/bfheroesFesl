@@ -23,7 +23,7 @@ func (tm *Theater) NewState(ident string) *level.State {
 // USER - SHARED Called to get user data about client? No idea
 func (tm *Theater) USER(event network.EventClientCommand) {
 	if !event.Client.IsActive {
-		logrus.Println("Client left")
+		logrus.Println("Cli Left")
 		return
 	}
 
@@ -40,9 +40,9 @@ func (tm *Theater) USER(event network.EventClientCommand) {
 	redisState.Set("userID", lkeyRedis.Get("userID"))
 	redisState.Set("name", lkeyRedis.Get("name"))
 
-	event.Client.Answer(&codec.Packet{
+	event.Client.Answer(&codec.Pkt{
 		Type: thtrUSER,
-		Payload: answerUSER{
+		Content: answerUSER{
 			TheaterID: event.Command.Msg["TID"],
 			Name:      lkeyRedis.Get("name"),
 		},

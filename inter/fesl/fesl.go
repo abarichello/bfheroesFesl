@@ -82,10 +82,10 @@ func (fm *FeslManager) run() {
 			case "client.close":
 				fm.close(event.Data.(network.EventClientClose)) // TLS
 			case "client.command":
-				txn := event.Data.(network.EventClientCommand).Command.Msg["TXN"]
+				TXN := event.Data.(network.EventClientCommand).Command.Msg["TXN"]
 				logrus.WithFields(logrus.Fields{
 					"srv": fm.name,
-					"cmd": fmt.Sprintf("%s/TXN:%s", event.Name, txn),
+					"cmd": fmt.Sprintf("%s/TXN:%s", event.Name, TXN),
 				}).Debugf("Event")
 			default:
 				logrus.WithFields(logrus.Fields{"srv": fm.name, "event": event.Name}).Debugf("Event")

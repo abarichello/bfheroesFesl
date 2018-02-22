@@ -12,17 +12,17 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-type eventReadFesl func(outCommand *CommandFESL, payloadType string)
+type eventReadFesl func(outCommand *CommandFESL, ContentType string)
 
 func (client *Client) readFESL(data []byte) []byte {
-	return readFesl(data, func(cmd *CommandFESL, payloadType string) {
-		client.eventChan <- ClientEvent{Name: "command." + payloadType, Data: cmd}
+	return readFesl(data, func(cmd *CommandFESL, ContentType string) {
+		client.eventChan <- ClientEvent{Name: "command." + ContentType, Data: cmd}
 		client.eventChan <- ClientEvent{Name: "command", Data: cmd}
 	})
 }
 
 func (client *Client) readFESLTLS(data []byte) []byte {
-	return readFesl(data, func(cmd *CommandFESL, payloadType string) {
+	return readFesl(data, func(cmd *CommandFESL, ContentType string) {
 		client.eventChan <- ClientEvent{Name: "command." + cmd.Msg["TXN"], Data: cmd}
 		client.eventChan <- ClientEvent{Name: "command", Data: cmd}
 	})
@@ -30,72 +30,72 @@ func (client *Client) readFESLTLS(data []byte) []byte {
 
 func (socket *SocketUDP) readFESL(data []byte, addr *net.UDPAddr) {
 	p := bytes.NewBuffer(data)
-	var payloadID uint32
-	var payloadLen uint32
+	var HEX uint32
+	var length uint32
 
-	payloadType := string(data[:4])
+	ContentType := string(data[:4])
 	p.Next(4)
 
-	binary.Read(p, binary.BigEndian, &payloadID)
-	binary.Read(p, binary.BigEndian, &payloadLen)
+	binary.Read(p, binary.BigEndian, &HEX)
+	binary.Read(p, binary.BigEndian, &length)
 
-	payloadRaw := data[12:]
-	payload := codec.DecodeFESL(payloadRaw)
+	ContentRaw := data[12:]
+	Content := codec.DecodeFESL(ContentRaw)
 
 	out := &CommandFESL{
-		Query:     payloadType,
-		PayloadID: payloadID,
-		Msg:       payload,
+		Query: ContentType,
+		HEX:   HEX,
+		Msg:   Content,
 	}
 
-	socket.EventChan <- SocketUDPEvent{Name: "command." + payloadType, Addr: addr, Data: out}
+	socket.EventChan <- SocketUDPEvent{Name: "command." + ContentType, Addr: addr, Data: out}
 	socket.EventChan <- SocketUDPEvent{Name: "command", Addr: addr, Data: out}
 }
 
 func readFesl(data []byte, fireEvent eventReadFesl) []byte {
 	p := bytes.NewBuffer(data)
 	i := 0
-	var payloadRaw []byte
+	var ContentRaw []byte
 	for {
 		// Create a copy at this point in case we have to abort later
-		// And send back the packet to get the rest
+		// And send back the Pkt to get the rest
 		curData := p
 
-		var payloadID uint32
-		var payloadLen uint32
+		var HEX uint32
+		var length uint32
 
-		payloadTypeRaw := make([]byte, 4)
-		_, err := p.Read(payloadTypeRaw)
+		ContentTypeRaw := make([]byte, 4)
+		_, err := p.Read(ContentTypeRaw)
 		if err != nil {
 			return nil
 		}
 
-		payloadType := string(payloadTypeRaw)
+		ContentType := string(ContentTypeRaw)
 
-		binary.Read(p, binary.BigEndian, &payloadID)
+		binary.Read(p, binary.BigEndian, &HEX)
 
 		if p.Len() < 4 {
 			return nil
 		}
 
-		binary.Read(p, binary.BigEndian, &payloadLen)
+		binary.Read(p, binary.BigEndian, &length)
 
-		if (payloadLen - 12) > uint32(len(p.Bytes())) {
-			logrus.Println("Packet not fully read")
+		if (length - 12) > uint32(len(p.Bytes())) {
+			logrus.Println("Pkt not fully read")
 			return curData.Bytes()
 		}
 
-		payloadRaw = make([]byte, (payloadLen - 12))
-		p.Read(payloadRaw)
+		ContentRaw = make([]byte, (length - 12))
+		p.Read(ContentRaw)
 
-		payload := codec.DecodeFESL(payloadRaw)
+		Content := codec.DecodeFESL(ContentRaw)
 
 		out := &CommandFESL{
-			Query:     payloadType,
-			PayloadID: payloadID,
-			Msg:       payload,
+			Query: ContentType,
+			HEX:   HEX,
+			Msg:   Content,
 		}
-		fireEvent(out, payloadType)
+		fireEvent(out, ContentType)
 
 		i++
 	}
@@ -104,9 +104,9 @@ func readFesl(data []byte, fireEvent eventReadFesl) []byte {
 }
 
 type CommandFESL struct {
-	Msg       map[string]string
-	Query     string
-	PayloadID uint32
+	Msg   map[string]string
+	Query string
+	HEX   uint32
 }
 
 // processCommand turns gamespy's command string to the
@@ -142,25 +142,25 @@ func processCommand(msg string) (*CommandFESL, error) {
 }
 
 func (client *Client) processCommand(command string) {
-	gsPacket, err := processCommand(command)
+	gsPkt, err := processCommand(command)
 	if err != nil {
 		logrus.Errorf("%s: Error processing command %s.\n%v", client.name, command, err)
 		client.eventChan <- client.FireError(err)
 		return
 	}
 
-	client.eventChan <- ClientEvent{Name: "command." + gsPacket.Query, Data: gsPacket}
-	client.eventChan <- ClientEvent{Name: "command", Data: gsPacket}
+	client.eventChan <- ClientEvent{Name: "command." + gsPkt.Query, Data: gsPkt}
+	client.eventChan <- ClientEvent{Name: "command", Data: gsPkt}
 }
 
 func (socket *SocketUDP) processCommand(command string, addr *net.UDPAddr) {
-	gsPacket, err := processCommand(command)
+	gsPkt, err := processCommand(command)
 	if err != nil {
 		logrus.Errorf("%s: Error processing command %s.\n%v", socket.name, command, err)
 		socket.EventChan <- SocketUDPEvent{Name: "error", Addr: addr, Data: err}
 		return
 	}
 
-	socket.EventChan <- SocketUDPEvent{Name: "command." + gsPacket.Query, Addr: addr, Data: gsPacket}
-	socket.EventChan <- SocketUDPEvent{Name: "command", Addr: addr, Data: gsPacket}
+	socket.EventChan <- SocketUDPEvent{Name: "command." + gsPkt.Query, Addr: addr, Data: gsPkt}
+	socket.EventChan <- SocketUDPEvent{Name: "command", Addr: addr, Data: gsPkt}
 }

@@ -19,9 +19,9 @@ type ansLDAT struct {
 }
 
 func (tm *Theater) LobbyData(event network.EventClientCommand) {
-	event.Client.Answer(&codec.Packet{
+	event.Client.Answer(&codec.Pkt{
 		Type: thtrLDAT,
-		Payload: ansLDAT{
+		Content: ansLDAT{
 			TID:             "1",
 			FavoriteGames:   "0",
 			FavoritePlayers: "0",

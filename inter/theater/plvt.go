@@ -57,17 +57,17 @@ func (tM *Theater) PLVT(event network.EventClientCommand) {
 		logrus.Errorln("Invalid team " + stats["c_team"] + " for " + pid)
 	}
 
-	event.Client.Answer(&codec.Packet{
+	event.Client.Answer(&codec.Pkt{
 		Type: thtrKICK,
-		Payload: ansKICK{
+		Content: ansKICK{
 			event.Command.Msg["PID"],
 			event.Command.Msg["LID"],
 			event.Command.Msg["GID"],
 		},
 	})
 
-	event.Client.Answer(&codec.Packet{
+	event.Client.Answer(&codec.Pkt{
 		Type:    thtrPLVT,
-		Payload: ansPLVT{event.Command.Msg["TID"]},
+		Content: ansPLVT{event.Command.Msg["TID"]},
 	})
 }

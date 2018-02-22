@@ -18,7 +18,7 @@ const (
 )
 
 type ansStatus struct {
-	Txn        string                 `fesl:"TXN"`
+	TXN        string                 `fesl:"TXN"`
 	ID         stPartition            `fesl:"id"`
 	State      string                 `fesl:"sessionState"`
 	Properties map[string]interface{} `fesl:"props"`
@@ -42,7 +42,7 @@ func (fm *FeslManager) Status(event network.EventClientCommand) {
 	gameID := mm.FindGIDs()
 
 	ans := ansStatus{
-		Txn: pnowStatus,
+		TXN: pnowStatus,
 		ID: stPartition{1,
 			event.Command.Msg[partition]},
 		State: Complete,
@@ -57,9 +57,9 @@ func (fm *FeslManager) Status(event network.EventClientCommand) {
 			},
 		},
 	}
-	event.Client.Answer(&codec.Packet{
-		Payload: ans,
-		Step:    0x80000000,
+	event.Client.Answer(&codec.Pkt{
+		Content: ans,
+		Send:    0x80000000,
 		Type:    pnow,
 	})
 }

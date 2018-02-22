@@ -14,13 +14,13 @@ type ansUBRA struct {
 // UBRA - SERVER Called to  update server data
 func (tM *Theater) UBRA(event network.EventClientCommand) {
 	if !event.Client.IsActive {
-		logrus.Println("Client left")
+		logrus.Println("Cli Left")
 		return
 	}
 
-	event.Client.Answer(&codec.Packet{
+	event.Client.Answer(&codec.Pkt{
 		Type: thtrUBRA,
-		Payload: ansUBRA{
+		Content: ansUBRA{
 			TheaterID: event.Command.Msg["TID"],
 		},
 	})

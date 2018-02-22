@@ -1,7 +1,7 @@
 package codec
 
-type Packet struct {
+type Pkt struct {
 	Type    string
-	Step    uint32
-	Payload interface{}
+	Send    uint32
+	Content interface{}
 }

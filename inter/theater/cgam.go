@@ -91,9 +91,9 @@ func (tm *Theater) CGAM(event network.EventClientCommand) {
 		return
 	}
 
-	event.Client.Answer(&codec.Packet{
+	event.Client.Answer(&codec.Pkt{
 		Type: thtrCGAM,
-		Payload: ansCGAM{
+		Content: ansCGAM{
 			TheaterID:  event.Command.Msg["TID"],
 			LobbyID:    "1",
 			UGID:       event.Command.Msg["UGID"],

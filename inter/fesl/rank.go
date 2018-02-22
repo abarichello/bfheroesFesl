@@ -24,7 +24,7 @@ const (
 )
 
 type ansGetStats struct {
-	Taxon     string      `fesl:"TXN"`
+	TXN       string      `fesl:"TXN"`
 	OwnerID   string      `fesl:"ownerId"`
 	OwnerType int         `fesl:"ownerType"`
 	Stats     []statsPair `fesl:"stats"`
@@ -39,7 +39,7 @@ type statsPair struct {
 // GetStats - Get basic stats about a soldier/owner (account holder)
 func (fm *FeslManager) GetStats(event network.EventClientCommand) {
 	if !event.Client.IsActive {
-		logrus.Println("Client left")
+		logrus.Println("Cli Left")
 		return
 	}
 
@@ -60,7 +60,7 @@ func (fm *FeslManager) GetStats(event network.EventClientCommand) {
 	}
 
 	ans := ansGetStats{
-		Taxon:     rankGetStats,
+		TXN:       rankGetStats,
 		OwnerID:   owner,
 		OwnerType: 1,
 	}
@@ -97,9 +97,9 @@ func (fm *FeslManager) GetStats(event network.EventClientCommand) {
 		ans.Stats = append(ans.Stats, statsPair{Key: key})
 	}
 
-	event.Client.Answer(&codec.Packet{
-		Payload: ans,
-		Step:    event.Command.PayloadID,
+	event.Client.Answer(&codec.Pkt{
+		Content: ans,
+		Send:    event.Command.HEX,
 		Type:    rank,
 	})
 }
@@ -110,7 +110,7 @@ type stat struct {
 }
 
 type ansUpdateStats struct {
-	Taxon string      `fesl:"TXN"`
+	TXN   string      `fesl:"TXN"`
 	Users []userStats `fesl:"u"`
 }
 
@@ -131,11 +131,11 @@ type updateStat struct {
 // UpdateStats - updates stats about a soldier
 func (fm *FeslManager) UpdateStats(event network.EventClientCommand) {
 	if !event.Client.IsActive {
-		logrus.Println("Client left")
+		logrus.Println("Cli Left")
 		return
 	}
 
-	ans := ansUpdateStats{Taxon: rankUpdateStats, Users: []userStats{}}
+	ans := ansUpdateStats{TXN: rankUpdateStats, Users: []userStats{}}
 
 	userId := event.Client.HashState.Get("uID")
 
@@ -239,10 +239,10 @@ func (fm *FeslManager) UpdateStats(event network.EventClientCommand) {
 					if err != nil {
 						// Couldn't transfer it to a number, skip updating this stat
 						logrus.Errorln("Skipping stat "+key, err)
-						event.Client.Answer(&codec.Packet{
-							Step:    event.Command.PayloadID,
+						event.Client.Answer(&codec.Pkt{
+							Send:    event.Command.HEX,
 							Type:    rank,
-							Payload: ansUpdateStats{Taxon: rankUpdateStats},
+							Content: ansUpdateStats{TXN: rankUpdateStats},
 						})
 						return
 					}
@@ -253,10 +253,10 @@ func (fm *FeslManager) UpdateStats(event network.EventClientCommand) {
 
 						if key == "c_wallet_hero" && newValue < 0 {
 							logrus.Errorln("Not allowed to process stat. c_wallet_hero lower than 0", key)
-							event.Client.Answer(&codec.Packet{
-								Step:    event.Command.PayloadID,
+							event.Client.Answer(&codec.Pkt{
+								Send:    event.Command.HEX,
 								Type:    rank,
-								Payload: ansUpdateStats{Taxon: rankUpdateStats},
+								Content: ansUpdateStats{TXN: rankUpdateStats},
 							})
 							return
 						}
@@ -264,10 +264,10 @@ func (fm *FeslManager) UpdateStats(event network.EventClientCommand) {
 						value = strconv.FormatFloat(newValue, 'f', 4, 64)
 					} else {
 						logrus.Errorln("Not allowed to process stat", key)
-						event.Client.Answer(&codec.Packet{
-							Step:    event.Command.PayloadID,
+						event.Client.Answer(&codec.Pkt{
+							Send:    event.Command.HEX,
 							Type:    rank,
-							Payload: ansUpdateStats{Taxon: rankUpdateStats},
+							Content: ansUpdateStats{TXN: rankUpdateStats},
 						})
 						return
 					}
@@ -289,15 +289,15 @@ func (fm *FeslManager) UpdateStats(event network.EventClientCommand) {
 		}
 	}
 
-	event.Client.Answer(&codec.Packet{
-		Step:    event.Command.PayloadID,
+	event.Client.Answer(&codec.Pkt{
+		Send:    event.Command.HEX,
 		Type:    rank,
-		Payload: ans,
+		Content: ans,
 	})
 }
 
 type ansGetStatsForOwners struct {
-	Taxon string           `fesl:"TXN"`
+	TXN   string           `fesl:"TXN"`
 	Stats []statsContainer `fesl:"stats"`
 }
 
@@ -310,12 +310,12 @@ type statsContainer struct {
 // GetStatsForOwners - Gives a bunch of info for the Hero selection screen?
 func (fm *FeslManager) GetStatsForOwners(event network.EventClientCommand) {
 	if !event.Client.IsActive {
-		logrus.Println("Client left")
+		logrus.Println("Cli Left")
 		return
 	}
 
 	ans := ansGetStatsForOwners{
-		Taxon: rankGetStats, // really? is it a typo? GetStatsForOwners?
+		TXN:   rankGetStats, // really? is it a typo? GetStatsForOwners?
 		Stats: []statsContainer{},
 	}
 
@@ -391,9 +391,9 @@ func (fm *FeslManager) GetStatsForOwners(event network.EventClientCommand) {
 		ans.Stats = append(ans.Stats, stContainer)
 	}
 
-	event.Client.Answer(&codec.Packet{
-		Step:    0xC0000007,
+	event.Client.Answer(&codec.Pkt{
+		Send:    0xC0000007,
 		Type:    rank,
-		Payload: ans,
+		Content: ans,
 	})
 }

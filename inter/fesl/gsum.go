@@ -17,15 +17,15 @@ const (
 )
 
 type ansGetSessionID struct {
-	Taxon string `fesl:"TXN"`
+	TXN string `fesl:"TXN"`
 	// Games  []Game  `fesl:"games"`
 	// Events []Event `fesl:"events"`
 }
 
 func (fm *FeslManager) gsumGetSessionID(event network.EventClientCommand) {
-	event.Client.Answer(&codec.Packet{
-		Payload: ansGetSessionID{
-			Taxon: gsumGetSessionID},
+	event.Client.Answer(&codec.Pkt{
+		Content: ansGetSessionID{
+			TXN: gsumGetSessionID},
 		Type: gsum,
 	})
 }

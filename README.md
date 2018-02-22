@@ -101,7 +101,7 @@ After the patch, the game client/server will accept more but not all certificate
 
 During the TLS handshake, both parties agree on a cipher suite and SSL version. Known good values for these are TLS_RSA_WITH_RC4_128_SHA and SSL 3.0 respectively.
 
-### Packet structure
+### Pkt structure
 After the TLS handshake, FESL messages are exchanged over the encrypted line. 
 The format for these messages is as follows:
 
@@ -109,8 +109,8 @@ The format for these messages is as follows:
 |---------------|-------------------|-----------------------------------|--------------|
 |0x0            |4                  |ASCII string (no null terminator)  |Type          |
 |0x4            |4                  |32-bit big-endian unsigned integer |ID            |
-|0x8            |4                  |32-bit big-endian unsigned integer |Packet length |
-|0xC            |Packet length - 12 |ASCII string (no null terminator)  |FESLData      |
+|0x8            |4                  |32-bit big-endian unsigned integer |Pkt length |
+|0xC            |Pkt length - 12 |ASCII string (no null terminator)  |FESLData      |
 
 The FESLData field is a key-value map where each pair is seperated by a newline (\n), and the key and value are seperated by '='.
 For example:
@@ -122,10 +122,10 @@ Key2=Value2
 ### Message types
 One of the keys in the FESLData key-value store is 'TXN'. This entry determines the message type.
 Depending on the message type, and whether the message is to or from the FESL server, other fields may be present in the FESLData.
-Response packets are always sent with the same Type and ID values as the query packet.
+Response Pkts are always sent with the same Type and ID values as the query Pkt.
 
 #### TXN = Hello, game client/server => FESL server
-This is the first packet that is sent when a FESL connection is made.
+This is the first Pkt that is sent when a FESL connection is made.
 
 |Key                       |Example value              |Note                           |
 |--------------------------|---------------------------|-------------------------------|
@@ -155,7 +155,7 @@ This is the first packet that is sent when a FESL connection is made.
 |                          |                           |18275 for game clients                           |
 
 #### TXN = MemCheck, FESL server => game client/server
-This message is sent every 10 seconds, and acts a heartbeat packet. 
+This message is sent every 10 seconds, and acts a heartbeat Pkt. 
 If either party stops receiving the MemCheck messages, connection loss is assumed.
 Maybe an anti-tampering measure?
 
@@ -583,7 +583,7 @@ A seperate set of network sockets is made for the game servers and the game clie
 Theater connections are mostly in plaintext.
 The Theater network address and port is received by the game server/client through the FESL Hello message.
 
-Packets received or sent from the UDP port are decoded/encoded using the "gamespy XOR"
+Pkts received or sent from the UDP port are decoded/encoded using the "gamespy XOR"
 
 ### Generating a BF2Random
 

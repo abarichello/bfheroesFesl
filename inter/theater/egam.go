@@ -71,9 +71,9 @@ func (tm *Theater) EGAM(event network.EventClientCommand) {
 	lobbyID := event.Command.Msg["LID"]
 	pid := event.Client.HashState.Get("id")
 
-	event.Client.Answer(&codec.Packet{
+	event.Client.Answer(&codec.Pkt{
 		Type: thtrEGAM,
-		Payload: ansEGAM{
+		Content: ansEGAM{
 			event.Command.Msg["TID"],
 			lobbyID,
 			gameID,
@@ -104,9 +104,9 @@ func (tm *Theater) EGAM(event network.EventClientCommand) {
 		gsData := tm.level.NewObject("gdata", gameID)
 
 		// Server
-		gameServer.Answer(&codec.Packet{
+		gameServer.Answer(&codec.Pkt{
 			Type: thtrEGRQ,
-			Payload: ansEGRQ{
+			Content: ansEGRQ{
 				TheaterID:    "0",
 				Name:         stats["heroName"],
 				UserID:       stats["userID"],
@@ -138,9 +138,9 @@ func (tm *Theater) EGAM(event network.EventClientCommand) {
 		})
 
 		// Client
-		event.Client.Answer(&codec.Packet{
+		event.Client.Answer(&codec.Pkt{
 			Type: thtrEGEG,
-			Payload: ansEGEG{
+			Content: ansEGEG{
 				TheaterID: event.Command.Msg["TID"],
 				Platform:  "pc",
 				Ticket:    "2018751182",

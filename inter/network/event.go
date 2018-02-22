@@ -49,7 +49,7 @@ type EventClientError struct {
 }
 type EventClientCommand struct {
 	Client  *Client
-	Command *CommandFESL // If TLS (theater then we ignore payloadID - it is always 0x0)
+	Command *CommandFESL // If TLS (theater then we ignore HEX - it is always 0x0)
 }
 
 type EventClientData struct {
