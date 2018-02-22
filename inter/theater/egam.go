@@ -66,15 +66,15 @@ type ansEGEG struct {
 
 // EGAM - CLIENT called when a client wants to join a gameserver
 func (tm *Theater) EGAM(event network.EventClientCommand) {
-	gameID := event.Command.Message["GID"]
+	gameID := event.Command.Msg["GID"]
 	externalIP := event.Client.IpAddr.(*net.TCPAddr).IP.String()
-	lobbyID := event.Command.Message["LID"]
+	lobbyID := event.Command.Msg["LID"]
 	pid := event.Client.HashState.Get("id")
 
-	event.Client.WriteEncode(&codec.Packet{
+	event.Client.Answer(&codec.Packet{
 		Type: thtrEGAM,
 		Payload: ansEGAM{
-			event.Command.Message["TID"],
+			event.Command.Msg["TID"],
 			lobbyID,
 			gameID,
 		},
@@ -104,7 +104,7 @@ func (tm *Theater) EGAM(event network.EventClientCommand) {
 		gsData := tm.level.NewObject("gdata", gameID)
 
 		// Server
-		gameServer.WriteEncode(&codec.Packet{
+		gameServer.Answer(&codec.Packet{
 			Type: thtrEGRQ,
 			Payload: ansEGRQ{
 				TheaterID:    "0",
@@ -114,8 +114,8 @@ func (tm *Theater) EGAM(event network.EventClientCommand) {
 				Ticket:       "2018751182",
 				IP:           externalIP,
 				Port:         strconv.Itoa(event.Client.IpAddr.(*net.TCPAddr).Port),
-				IntIP:        event.Command.Message["R-INT-IP"],
-				IntPort:      event.Command.Message["R-INT-PORT"],
+				IntIP:        event.Command.Msg["R-INT-IP"],
+				IntPort:      event.Command.Msg["R-INT-PORT"],
 				Ptype:        "P",
 				RUser:        stats["heroName"],
 				RUid:         stats["userID"],
@@ -126,10 +126,10 @@ func (tm *Theater) EGAM(event network.EventClientCommand) {
 				RULvl:        stats["level"],
 				RUDataCenter: "iad",
 				RUExternalIP: externalIP,
-				RUInternalIP: event.Command.Message["R-INT-IP"],
-				RUCategory:   event.Command.Message["R-U-category"],
-				RIntIP:       event.Command.Message["R-INT-IP"],
-				RIntPort:     event.Command.Message["R-INT-PORT"],
+				RUInternalIP: event.Command.Msg["R-INT-IP"],
+				RUCategory:   event.Command.Msg["R-U-category"],
+				RIntIP:       event.Command.Msg["R-INT-IP"],
+				RIntPort:     event.Command.Msg["R-INT-PORT"],
 				Xuid:         "24",
 				RXuid:        "24",
 				LobbyID:      lobbyID,
@@ -138,10 +138,10 @@ func (tm *Theater) EGAM(event network.EventClientCommand) {
 		})
 
 		// Client
-		event.Client.WriteEncode(&codec.Packet{
+		event.Client.Answer(&codec.Packet{
 			Type: thtrEGEG,
 			Payload: ansEGEG{
-				TheaterID: event.Command.Message["TID"],
+				TheaterID: event.Command.Msg["TID"],
 				Platform:  "pc",
 				Ticket:    "2018751182",
 				PlayerID:  pid,

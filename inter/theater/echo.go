@@ -6,8 +6,8 @@ import (
 )
 
 type ansECHO struct {
-	TheaterID string `fesl:"TID"`
-	Taxon     string `fesl:"TXN"`
+	TID       string `fesl:"TID"`
+	TXN       string `fesl:"TXN"`
 	IP        string `fesl:"IP"`
 	Port      int    `fesl:"PORT"`
 	ErrStatus int    `fesl:"ERR"`
@@ -18,11 +18,11 @@ type ansECHO struct {
 func (tm *Theater) ECHO(event network.SocketUDPEvent) {
 	command := event.Data.(*network.CommandFESL)
 
-	tm.socketUDP.WriteEncode(&codec.Packet{
+	tm.socketUDP.Answer(&codec.Packet{
 		Type: thtrECHO,
 		Payload: ansECHO{
-			Taxon:     command.Message["TXN"],
-			TheaterID: command.Message["TID"],
+			TXN:       command.Msg["TXN"],
+			TID:       command.Msg["TID"],
 			IP:        event.Addr.IP.String(),
 			Port:      event.Addr.Port,
 			ErrStatus: 0,

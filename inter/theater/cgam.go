@@ -31,11 +31,11 @@ func (tm *Theater) CGAM(event network.EventClientCommand) {
 	}
 
 	res, err := tm.db.stmtCreateServer.Exec(
-		event.Command.Message["NAME"],
-		event.Command.Message["B-U-community_name"],
-		event.Command.Message["INT-IP"],
-		event.Command.Message["INT-PORT"],
-		event.Command.Message["B-version"],
+		event.Command.Msg["NAME"],
+		event.Command.Msg["B-U-community_name"],
+		event.Command.Msg["INT-IP"],
+		event.Command.Msg["INT-PORT"],
+		event.Command.Msg["B-version"],
 	)
 	if err != nil {
 		logrus.Error("Cannot create New server", err)
@@ -56,7 +56,7 @@ func (tm *Theater) CGAM(event network.EventClientCommand) {
 	keys := 0
 
 	// Stores what we know about this game in the redis db
-	for index, value := range event.Command.Message {
+	for index, value := range event.Command.Msg {
 		if index == "TID" {
 			continue
 		}
@@ -91,23 +91,23 @@ func (tm *Theater) CGAM(event network.EventClientCommand) {
 		return
 	}
 
-	event.Client.WriteEncode(&codec.Packet{
+	event.Client.Answer(&codec.Packet{
 		Type: thtrCGAM,
 		Payload: ansCGAM{
-			TheaterID:  event.Command.Message["TID"],
+			TheaterID:  event.Command.Msg["TID"],
 			LobbyID:    "1",
-			UGID:       event.Command.Message["UGID"],
-			MaxPlayers: event.Command.Message["MAX-PLAYERS"],
+			UGID:       event.Command.Msg["UGID"],
+			MaxPlayers: event.Command.Msg["MAX-PLAYERS"],
 			EKEY:       `O65zZ2D2A58mNrZw1hmuJw%3d%3d`,
 			Secret:     `2587913`,
-			JOIN:       event.Command.Message["JOIN"],
-			J:          event.Command.Message["JOIN"],
+			JOIN:       event.Command.Msg["JOIN"],
+			J:          event.Command.Msg["JOIN"],
 			GameID:     gameID,
 		},
 	})
 
 	// Create game in database
-	_, err = tm.db.stmtAddGame.Exec(gameID, addr.IP.String(), event.Command.Message["PORT"], event.Command.Message["B-version"], event.Command.Message["JOIN"], event.Command.Message["B-U-map"], 0, 0, event.Command.Message["MAX-PLAYERS"], 0, 0, "")
+	_, err = tm.db.stmtAddGame.Exec(gameID, addr.IP.String(), event.Command.Msg["PORT"], event.Command.Msg["B-version"], event.Command.Msg["JOIN"], event.Command.Msg["B-U-map"], 0, 0, event.Command.Msg["MAX-PLAYERS"], 0, 0, "")
 	if err != nil {
 		logrus.Errorf("Failed to add game: %v", err)
 	}

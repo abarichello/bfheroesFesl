@@ -43,7 +43,7 @@ func (fm *FeslManager) GetStats(event network.EventClientCommand) {
 		return
 	}
 
-	owner := event.Command.Message["owner"]
+	owner := event.Command.Msg["owner"]
 	userId := event.Client.HashState.Get("uID")
 
 	if event.Client.HashState.Get("clientType") == "server" {
@@ -70,10 +70,10 @@ func (fm *FeslManager) GetStats(event network.EventClientCommand) {
 	statsKeys := make(map[string]string)
 	args = append(args, owner)
 	args = append(args, userId)
-	keys, _ := strconv.Atoi(event.Command.Message["keys.[]"])
+	keys, _ := strconv.Atoi(event.Command.Msg["keys.[]"])
 	for i := 0; i < keys; i++ {
-		args = append(args, event.Command.Message["keys."+strconv.Itoa(i)+""])
-		statsKeys[event.Command.Message["keys."+strconv.Itoa(i)+""]] = strconv.Itoa(i)
+		args = append(args, event.Command.Msg["keys."+strconv.Itoa(i)+""])
+		statsKeys[event.Command.Msg["keys."+strconv.Itoa(i)+""]] = strconv.Itoa(i)
 	}
 
 	rows, err := fm.db.getStatsStatement(keys).Query(args...)
@@ -97,7 +97,7 @@ func (fm *FeslManager) GetStats(event network.EventClientCommand) {
 		ans.Stats = append(ans.Stats, statsPair{Key: key})
 	}
 
-	event.Client.WriteEncode(&codec.Packet{
+	event.Client.Answer(&codec.Packet{
 		Payload: ans,
 		Step:    event.Command.PayloadID,
 		Type:    rank,
@@ -139,7 +139,7 @@ func (fm *FeslManager) UpdateStats(event network.EventClientCommand) {
 
 	userId := event.Client.HashState.Get("uID")
 
-	users, _ := strconv.Atoi(event.Command.Message["u.[]"])
+	users, _ := strconv.Atoi(event.Command.Msg["u.[]"])
 
 	if users == 0 {
 		logrus.Warning("No u.[], defaulting to 1")
@@ -147,7 +147,7 @@ func (fm *FeslManager) UpdateStats(event network.EventClientCommand) {
 	}
 
 	for i := 0; i < users; i++ {
-		owner, ok := event.Command.Message["u."+strconv.Itoa(i)+".o"]
+		owner, ok := event.Command.Msg["u."+strconv.Itoa(i)+".o"]
 		if event.Client.HashState.Get("clientType") == "server" {
 
 			var id, userIDhero, heroName, online string
@@ -173,10 +173,10 @@ func (fm *FeslManager) UpdateStats(event network.EventClientCommand) {
 		statsKeys := make(map[string]string)
 		argsGet = append(argsGet, owner)
 		argsGet = append(argsGet, userId)
-		keys, _ := strconv.Atoi(event.Command.Message["u."+strconv.Itoa(i)+".s.[]"])
+		keys, _ := strconv.Atoi(event.Command.Msg["u."+strconv.Itoa(i)+".s.[]"])
 		for j := 0; j < keys; j++ {
-			argsGet = append(argsGet, event.Command.Message["u."+strconv.Itoa(i)+".s."+strconv.Itoa(j)+".k"])
-			statsKeys[event.Command.Message["u."+strconv.Itoa(i)+".s."+strconv.Itoa(j)+".k"]] = strconv.Itoa(j)
+			argsGet = append(argsGet, event.Command.Msg["u."+strconv.Itoa(i)+".s."+strconv.Itoa(j)+".k"])
+			statsKeys[event.Command.Msg["u."+strconv.Itoa(i)+".s."+strconv.Itoa(j)+".k"]] = strconv.Itoa(j)
 		}
 
 		rows, err := fm.db.getStatsStatement(keys).Query(argsGet...)
@@ -218,28 +218,28 @@ func (fm *FeslManager) UpdateStats(event network.EventClientCommand) {
 
 		// Generate our argument list for the statement -> userId, owner, key1, value1, userId, owner, key2, value2, userId, owner, ...
 		var args []interface{}
-		keys, _ = strconv.Atoi(event.Command.Message["u."+strconv.Itoa(i)+".s.[]"])
+		keys, _ = strconv.Atoi(event.Command.Msg["u."+strconv.Itoa(i)+".s.[]"])
 		for j := 0; j < keys; j++ {
 
-			if event.Command.Message["u."+strconv.Itoa(i)+".s."+strconv.Itoa(j)+".ut"] != "3" {
-				logrus.Println("Update new Type:", event.Command.Message["u."+strconv.Itoa(i)+".s."+strconv.Itoa(j)+".k"], event.Command.Message["u."+strconv.Itoa(i)+".s."+strconv.Itoa(j)+".t"], event.Command.Message["u."+strconv.Itoa(i)+".s."+strconv.Itoa(j)+".ut"], event.Command.Message["u."+strconv.Itoa(i)+".s."+strconv.Itoa(j)+".v"], event.Command.Message["u."+strconv.Itoa(i)+".s."+strconv.Itoa(j)+".pt"])
+			if event.Command.Msg["u."+strconv.Itoa(i)+".s."+strconv.Itoa(j)+".ut"] != "3" {
+				logrus.Println("Update new Type:", event.Command.Msg["u."+strconv.Itoa(i)+".s."+strconv.Itoa(j)+".k"], event.Command.Msg["u."+strconv.Itoa(i)+".s."+strconv.Itoa(j)+".t"], event.Command.Msg["u."+strconv.Itoa(i)+".s."+strconv.Itoa(j)+".ut"], event.Command.Msg["u."+strconv.Itoa(i)+".s."+strconv.Itoa(j)+".v"], event.Command.Msg["u."+strconv.Itoa(i)+".s."+strconv.Itoa(j)+".pt"])
 			}
 
-			key := event.Command.Message["u."+strconv.Itoa(i)+".s."+strconv.Itoa(j)+".k"]
-			value := event.Command.Message["u."+strconv.Itoa(i)+".s."+strconv.Itoa(j)+".t"]
+			key := event.Command.Msg["u."+strconv.Itoa(i)+".s."+strconv.Itoa(j)+".k"]
+			value := event.Command.Msg["u."+strconv.Itoa(i)+".s."+strconv.Itoa(j)+".t"]
 
 			if value == "" {
-				logrus.Println("Updating stat", key+":", event.Command.Message["u."+strconv.Itoa(i)+".s."+strconv.Itoa(j)+".v"], "+", stats[key].value)
+				logrus.Println("Updating stat", key+":", event.Command.Msg["u."+strconv.Itoa(i)+".s."+strconv.Itoa(j)+".v"], "+", stats[key].value)
 				// We are dealing with a number
-				value = event.Command.Message["u."+strconv.Itoa(i)+".s."+strconv.Itoa(j)+".v"]
+				value = event.Command.Msg["u."+strconv.Itoa(i)+".s."+strconv.Itoa(j)+".v"]
 
 				// ut seems to be 3 when we need to add up (xp has ut 0 when you level'ed up, otherwise 3)
-				if event.Command.Message["u."+strconv.Itoa(i)+".s."+strconv.Itoa(j)+".ut"] == "3" {
+				if event.Command.Msg["u."+strconv.Itoa(i)+".s."+strconv.Itoa(j)+".ut"] == "3" {
 					intValue, err := strconv.ParseFloat(value, 64)
 					if err != nil {
 						// Couldn't transfer it to a number, skip updating this stat
 						logrus.Errorln("Skipping stat "+key, err)
-						event.Client.WriteEncode(&codec.Packet{
+						event.Client.Answer(&codec.Packet{
 							Step:    event.Command.PayloadID,
 							Type:    rank,
 							Payload: ansUpdateStats{Taxon: rankUpdateStats},
@@ -253,7 +253,7 @@ func (fm *FeslManager) UpdateStats(event network.EventClientCommand) {
 
 						if key == "c_wallet_hero" && newValue < 0 {
 							logrus.Errorln("Not allowed to process stat. c_wallet_hero lower than 0", key)
-							event.Client.WriteEncode(&codec.Packet{
+							event.Client.Answer(&codec.Packet{
 								Step:    event.Command.PayloadID,
 								Type:    rank,
 								Payload: ansUpdateStats{Taxon: rankUpdateStats},
@@ -264,7 +264,7 @@ func (fm *FeslManager) UpdateStats(event network.EventClientCommand) {
 						value = strconv.FormatFloat(newValue, 'f', 4, 64)
 					} else {
 						logrus.Errorln("Not allowed to process stat", key)
-						event.Client.WriteEncode(&codec.Packet{
+						event.Client.Answer(&codec.Packet{
 							Step:    event.Command.PayloadID,
 							Type:    rank,
 							Payload: ansUpdateStats{Taxon: rankUpdateStats},
@@ -289,7 +289,7 @@ func (fm *FeslManager) UpdateStats(event network.EventClientCommand) {
 		}
 	}
 
-	event.Client.WriteEncode(&codec.Packet{
+	event.Client.Answer(&codec.Packet{
 		Step:    event.Command.PayloadID,
 		Type:    rank,
 		Payload: ans,
@@ -353,10 +353,10 @@ func (fm *FeslManager) GetStatsForOwners(event network.EventClientCommand) {
 		statsKeys := make(map[string]string)
 		args = append(args, ownerID)
 		args = append(args, userID)
-		keys, _ := strconv.Atoi(event.Command.Message["keys.[]"])
+		keys, _ := strconv.Atoi(event.Command.Msg["keys.[]"])
 		for i := 0; i < keys; i++ {
-			args = append(args, event.Command.Message["keys."+strconv.Itoa(i)+""])
-			statsKeys[event.Command.Message["keys."+strconv.Itoa(i)+""]] = strconv.Itoa(i)
+			args = append(args, event.Command.Msg["keys."+strconv.Itoa(i)+""])
+			statsKeys[event.Command.Msg["keys."+strconv.Itoa(i)+""]] = strconv.Itoa(i)
 		}
 
 		rows, err := fm.db.getStatsStatement(keys).Query(args...)
@@ -391,7 +391,7 @@ func (fm *FeslManager) GetStatsForOwners(event network.EventClientCommand) {
 		ans.Stats = append(ans.Stats, stContainer)
 	}
 
-	event.Client.WriteEncode(&codec.Packet{
+	event.Client.Answer(&codec.Packet{
 		Step:    0xC0000007,
 		Type:    rank,
 		Payload: ans,

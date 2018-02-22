@@ -27,12 +27,12 @@ func (tm *Theater) USER(event network.EventClientCommand) {
 		return
 	}
 
-	lkeyRedis := tm.level.NewObject("lkeys", event.Command.Message["LKEY"])
+	lkeyRedis := tm.level.NewObject("lkeys", event.Command.Msg["LKEY"])
 
 	redisState := tm.NewState(fmt.Sprintf(
 		"%s:%s",
 		"mm",
-		event.Command.Message["LKEY"],
+		event.Command.Msg["LKEY"],
 	))
 	event.Client.HashState = redisState
 
@@ -40,10 +40,10 @@ func (tm *Theater) USER(event network.EventClientCommand) {
 	redisState.Set("userID", lkeyRedis.Get("userID"))
 	redisState.Set("name", lkeyRedis.Get("name"))
 
-	event.Client.WriteEncode(&codec.Packet{
+	event.Client.Answer(&codec.Packet{
 		Type: thtrUSER,
 		Payload: answerUSER{
-			TheaterID: event.Command.Message["TID"],
+			TheaterID: event.Command.Msg["TID"],
 			Name:      lkeyRedis.Get("name"),
 		},
 	})

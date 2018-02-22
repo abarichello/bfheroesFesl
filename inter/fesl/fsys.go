@@ -10,9 +10,10 @@ import (
 
 	"github.com/sirupsen/logrus"
 )
+
 //THIS IS THE HELLO PACKET ;)
 const (
-	fsys = "fsys"
+	fsys             = "fsys"
 	fsysGetPingSites = "GetPingSites"
 	// fsysGoodbye      = "Goodbye"
 	fsysHello    = "Hello"
@@ -33,7 +34,7 @@ type memCheck struct {
 }
 
 func (fm *FeslManager) fsysMemCheck(event *network.EventNewClient) {
-	event.Client.WriteEncode(&codec.Packet{
+	event.Client.Answer(&codec.Packet{
 		Type: fsys,
 		Payload: ansMemCheck{
 			Taxon: fsysMemCheck,
@@ -67,7 +68,7 @@ func (fm *FeslManager) hello(event network.EventClientCommand) {
 
 	redisState := fm.createState(fmt.Sprintf(
 		"%s-%s",
-		event.Command.Message["clientType"],
+		event.Command.Msg["clientType"],
 		event.Client.IpAddr.String(),
 	))
 
@@ -78,13 +79,13 @@ func (fm *FeslManager) hello(event network.EventClientCommand) {
 	}
 
 	saveRedis := map[string]interface{}{
-		"SDKVersion":     event.Command.Message["SDKVersion"],
-		"clientPlatform": event.Command.Message["clientPlatform"],
-		"clientString":   event.Command.Message["clientString"],
-		"clientType":     event.Command.Message["clientType"],
-		"clientVersion":  event.Command.Message["clientVersion"],
-		"locale":         event.Command.Message["locale"],
-		"sku":            event.Command.Message["sku"],
+		"SDKVersion":     event.Command.Msg["SDKVersion"],
+		"clientPlatform": event.Command.Msg["clientPlatform"],
+		"clientString":   event.Command.Msg["clientString"],
+		"clientType":     event.Command.Msg["clientType"],
+		"clientVersion":  event.Command.Msg["clientVersion"],
+		"locale":         event.Command.Msg["locale"],
+		"sku":            event.Command.Msg["sku"],
 	}
 	event.Client.HashState.SetM(saveRedis)
 
@@ -103,7 +104,7 @@ func (fm *FeslManager) hello(event network.EventClientCommand) {
 		ans.TheaterPort = config.General.ThtrClientPort
 	}
 
-	event.Client.WriteEncode(&codec.Packet{
+	event.Client.Answer(&codec.Packet{
 		Payload: ans,
 		Type:    fsys,
 		Step:    0xC0000001,
@@ -113,6 +114,7 @@ func (fm *FeslManager) hello(event network.EventClientCommand) {
 const (
 	location = "iad"
 )
+
 //is this usefull ? added google dns to test
 
 type ansGetPingSites struct {
@@ -134,16 +136,16 @@ func (fm *FeslManager) GetPingSites(event network.EventClientCommand) {
 		return
 	}
 
-	event.Client.WriteEncode(&codec.Packet{
+	event.Client.Answer(&codec.Packet{
 		Type: event.Command.Query,
 		Step: event.Command.PayloadID,
 		Payload: ansGetPingSites{
 			Taxon:    fsysGetPingSites,
 			MinPings: 1,
 			PingSites: []pingSite{
-				{"8.8.8.8", 
-				location,
-				 0}, //0 = MS
+				{"8.8.8.8",
+					location,
+					0}, //0 = MS
 			},
 		},
 	})

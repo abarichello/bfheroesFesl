@@ -14,7 +14,7 @@ func (tM *Theater) UGAM(event network.EventClientCommand) {
 		return
 	}
 
-	gameID := event.Command.Message["GID"]
+	gameID := event.Command.Msg["GID"]
 
 	gdata := tM.level.NewObject("gdata", gameID)
 
@@ -23,7 +23,7 @@ func (tM *Theater) UGAM(event network.EventClientCommand) {
 	var args []interface{}
 
 	keys := 0
-	for index, value := range event.Command.Message {
+	for index, value := range event.Command.Msg {
 		if index == "TID" {
 			continue
 		}

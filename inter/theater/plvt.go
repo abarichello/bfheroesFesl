@@ -23,7 +23,7 @@ func (tM *Theater) PLVT(event network.EventClientCommand) {
 		return
 	}
 
-	pid := event.Command.Message["PID"]
+	pid := event.Command.Msg["PID"]
 
 	// Get 4 stats for PID
 	rows, err := tM.db.getStatsStatement(4).Query(pid, "c_kit", "c_team", "elo", "level")
@@ -44,12 +44,12 @@ func (tM *Theater) PLVT(event network.EventClientCommand) {
 
 	switch stats["c_team"] {
 	case "1":
-		_, err = tM.db.stmtGameDecreaseTeam1.Exec(event.Command.Message["GID"])
+		_, err = tM.db.stmtGameDecreaseTeam1.Exec(event.Command.Msg["GID"])
 		if err != nil {
 			logrus.Error("PLVT ", err)
 		}
 	case "2":
-		_, err = tM.db.stmtGameDecreaseTeam2.Exec(event.Command.Message["GID"])
+		_, err = tM.db.stmtGameDecreaseTeam2.Exec(event.Command.Msg["GID"])
 		if err != nil {
 			logrus.Error("PLVT ", err)
 		}
@@ -57,17 +57,17 @@ func (tM *Theater) PLVT(event network.EventClientCommand) {
 		logrus.Errorln("Invalid team " + stats["c_team"] + " for " + pid)
 	}
 
-	event.Client.WriteEncode(&codec.Packet{
+	event.Client.Answer(&codec.Packet{
 		Type: thtrKICK,
 		Payload: ansKICK{
-			event.Command.Message["PID"],
-			event.Command.Message["LID"],
-			event.Command.Message["GID"],
+			event.Command.Msg["PID"],
+			event.Command.Msg["LID"],
+			event.Command.Msg["GID"],
 		},
 	})
 
-	event.Client.WriteEncode(&codec.Packet{
+	event.Client.Answer(&codec.Packet{
 		Type:    thtrPLVT,
-		Payload: ansPLVT{event.Command.Message["TID"]},
+		Payload: ansPLVT{event.Command.Msg["TID"]},
 	})
 }

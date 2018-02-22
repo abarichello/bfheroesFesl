@@ -17,13 +17,13 @@ type ansECNL struct {
 func (tm *Theater) ECNL(event network.EventClientCommand) {
 	logrus.Println("Left Q")
 
-	event.Client.WriteEncode(&codec.Packet{
+	event.Client.Answer(&codec.Packet{
 		Step: 0x0,
 		Type: thtrENCL,
 		Payload: ansECNL{
-			event.Command.Message["TID"],
-			event.Command.Message["GID"],
-			event.Command.Message["LID"],
+			event.Command.Msg["TID"],
+			event.Command.Msg["GID"],
+			event.Command.Msg["LID"],
 		},
 	})
 }

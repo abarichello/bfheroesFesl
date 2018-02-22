@@ -17,10 +17,10 @@ func (tM *Theater) UPLA(event network.EventClientCommand) {
 
 	keys := 0
 
-	pid := event.Command.Message["PID"]
-	gid := event.Command.Message["GID"]
+	pid := event.Command.Msg["PID"]
+	gid := event.Command.Msg["GID"]
 
-	for index, value := range event.Command.Message {
+	for index, value := range event.Command.Msg {
 		if index == "TID" || index == "PID" || index == "GID" {
 			continue
 		}
@@ -47,7 +47,7 @@ func (tM *Theater) UPLA(event network.EventClientCommand) {
 		logrus.Errorln("Failed to update stats for player "+pid, err.Error())
 	}
 
-	gdata := tM.level.NewObject("gdata", event.Command.Message["GID"])
+	gdata := tM.level.NewObject("gdata", event.Command.Msg["GID"])
 
 	num, _ := strconv.Atoi(gdata.Get("AP"))
 

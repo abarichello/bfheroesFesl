@@ -44,7 +44,7 @@ func (fm *FeslManager) Status(event network.EventClientCommand) {
 	ans := ansStatus{
 		Txn: pnowStatus,
 		ID: stPartition{1,
-			event.Command.Message[partition]},
+			event.Command.Msg[partition]},
 		State: Complete,
 		Properties: map[string]interface{}{
 			"resultType": Join,
@@ -57,7 +57,7 @@ func (fm *FeslManager) Status(event network.EventClientCommand) {
 			},
 		},
 	}
-	event.Client.WriteEncode(&codec.Packet{
+	event.Client.Answer(&codec.Packet{
 		Payload: ans,
 		Step:    0x80000000,
 		Type:    pnow,

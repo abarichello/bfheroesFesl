@@ -3,11 +3,15 @@ package server
 import (
 	"net/http"
 
-	"github.com/sirupsen/logrus"
 	"github.com/Synaxis/bfheroesFesl/config"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
+	"github.com/sirupsen/logrus"
 	log "github.com/sirupsen/logrus"
+)
+
+var (
+	logger = logrus.WithField("pkg", "server")
 )
 
 // Server (also called as magma)

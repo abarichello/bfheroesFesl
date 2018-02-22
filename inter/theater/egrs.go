@@ -17,15 +17,15 @@ func (tm *Theater) EGRS(event network.EventClientCommand) {
 		return
 	}
 
-	if event.Command.Message["ALLOWED"] == "1" {
-		_, err := tm.db.stmtGameIncreaseJoining.Exec(event.Command.Message["GID"])
+	if event.Command.Msg["ALLOWED"] == "1" {
+		_, err := tm.db.stmtGameIncreaseJoining.Exec(event.Command.Msg["GID"])
 		if err != nil {
 			logrus.Error("NOT Allowed ", err)
 		}
 	}
 
-	event.Client.WriteEncode(&codec.Packet{
+	event.Client.Answer(&codec.Packet{
 		Type:    thtrEGRS,
-		Payload: ansEGRS{event.Command.Message["TID"]},
+		Payload: ansEGRS{event.Command.Msg["TID"]},
 	})
 }

@@ -10,8 +10,8 @@ import (
 )
 
 const (
-	acct                  = "acct"
-	acctNuGetAccount = "NuGetAccount"
+	acct                 = "acct"
+	acctNuGetAccount     = "NuGetAccount"
 	acctNuGetPersonas    = "NuGetPersonas"
 	acctNuLogin          = "NuLogin"
 	acctNuLoginPersona   = "NuLoginPersona"
@@ -34,18 +34,18 @@ type userInfo struct {
 // NuLookupUserInfo - Gets basic information about a game user
 func (fm *FeslManager) NuLookupUserInfo(event network.EventClientCommand) {
 
-	if event.Client.HashState.Get("clientType") == "server" && event.Command.Message["userInfo.0.userName"] == "Test-Server" {
+	if event.Client.HashState.Get("clientType") == "server" && event.Command.Msg["userInfo.0.userName"] == "Test-Server" {
 		fm.NuLookupUserInfoServer(event)
 		return
 	}
 
 	ans := ansNuLookupUserInfo{Taxon: acctNuLookupUserInfo, UserInfo: []userInfo{}}
 
-	logrus.Println("LookupUserInfo CLIENT" + event.Command.Message["userInfo.0.userName"])
+	logrus.Println("LookupUserInfo CLIENT" + event.Command.Msg["userInfo.0.userName"])
 
-	keys, _ := strconv.Atoi(event.Command.Message["userInfo.[]"])
+	keys, _ := strconv.Atoi(event.Command.Msg["userInfo.[]"])
 	for i := 0; i < keys; i++ {
-		heroNamePacket := event.Command.Message["userInfo."+strconv.Itoa(i)+".userName"]
+		heroNamePacket := event.Command.Msg["userInfo."+strconv.Itoa(i)+".userName"]
 
 		var id, userID, heroName, online string
 		err := fm.db.stmtGetHeroeByName.QueryRow(heroNamePacket).Scan(&id, &userID, &heroName, &online)
@@ -62,7 +62,7 @@ func (fm *FeslManager) NuLookupUserInfo(event network.EventClientCommand) {
 		})
 	}
 
-	event.Client.WriteEncode(&codec.Packet{
+	event.Client.Answer(&codec.Packet{
 		Payload: ans,
 		Step:    event.Command.PayloadID,
 		Type:    acct,
@@ -81,7 +81,7 @@ func (fm *FeslManager) NuLookupUserInfoServer(event network.EventClientCommand) 
 		return
 	}
 
-	event.Client.WriteEncode(&codec.Packet{
+	event.Client.Answer(&codec.Packet{
 		Payload: ansNuLookupUserInfo{
 			Taxon: acctNuLookupUserInfo,
 			UserInfo: []userInfo{
@@ -120,7 +120,7 @@ func (fm *FeslManager) NuLoginPersona(event network.EventClientCommand) {
 	}
 
 	var id, userID, heroName, online string
-	err := fm.db.stmtGetHeroeByName.QueryRow(event.Command.Message["name"]).Scan(&id, &userID, &heroName, &online)
+	err := fm.db.stmtGetHeroeByName.QueryRow(event.Command.Msg["name"]).Scan(&id, &userID, &heroName, &online)
 	if err != nil {
 		logrus.Println("Wrong Login")
 		return
@@ -138,7 +138,7 @@ func (fm *FeslManager) NuLoginPersona(event network.EventClientCommand) {
 	event.Client.HashState.SetM(saveRedis)
 
 	event.Client.HashState.Set("lkeys", event.Client.HashState.Get("lkeys")+";"+lkey)
-	event.Client.WriteEncode(&codec.Packet{
+	event.Client.Answer(&codec.Packet{
 		Payload: ansNuLogin{
 			Taxon:     acctNuLoginPersona,
 			ProfileID: userID,
@@ -153,7 +153,7 @@ func (fm *FeslManager) NuLoginPersona(event network.EventClientCommand) {
 // NuLoginPersonaServer Pre-Server Login (out of order ?)
 func (fm *FeslManager) NuLoginPersonaServer(event network.EventClientCommand) {
 	var id, userID, servername, secretKey, username string
-	err := fm.db.stmtGetServerByName.QueryRow(event.Command.Message["name"]).Scan(&id, &userID, &servername, &secretKey, &username)
+	err := fm.db.stmtGetServerByName.QueryRow(event.Command.Msg["name"]).Scan(&id, &userID, &servername, &secretKey, &username)
 	if err != nil {
 		logrus.Println("Wrong Server Login")
 		return
@@ -167,7 +167,7 @@ func (fm *FeslManager) NuLoginPersonaServer(event network.EventClientCommand) {
 	lkeyRedis.Set("name", servername)
 
 	event.Client.HashState.Set("lkeys", event.Client.HashState.Get("lkeys")+";"+lkey)
-	event.Client.WriteEncode(&codec.Packet{
+	event.Client.Answer(&codec.Packet{
 		Payload: ansNuLogin{
 			Taxon:     acctNuLoginPersona,
 			ProfileID: id,
@@ -217,7 +217,7 @@ func (fm *FeslManager) NuGetPersonas(event network.EventClientCommand) {
 
 	event.Client.HashState.Set("numOfHeroes", strconv.Itoa(len(ans.Personas)))
 
-	event.Client.WriteEncode(&codec.Packet{
+	event.Client.Answer(&codec.Packet{
 		Step:    event.Command.PayloadID,
 		Type:    acct,
 		Payload: ans,
@@ -248,7 +248,7 @@ func (fm *FeslManager) NuGetPersonasServer(event network.EventClientCommand) {
 		event.Client.HashState.Set("ownerId."+strconv.Itoa(len(ans.Personas)), id)
 	}
 
-	event.Client.WriteEncode(&codec.Packet{
+	event.Client.Answer(&codec.Packet{
 		Step:    event.Command.PayloadID,
 		Type:    acct,
 		Payload: ans,
@@ -280,7 +280,7 @@ type ansNuGetAccount struct {
 }
 
 func (fm *FeslManager) acctNuGetAccount(event *network.EventClientCommand) {
-	event.Client.WriteEncode(&codec.Packet{
+	event.Client.Answer(&codec.Packet{
 		Type: acct,
 		Payload: ansNuGetAccount{
 			Taxon:          acctNuGetAccount,
@@ -332,9 +332,9 @@ func (fm *FeslManager) NuLogin(event network.EventClientCommand) {
 
 	var id, username, email, birthday, language, country, gameToken string
 
-	err := fm.db.stmtGetUserByGameToken.QueryRow(event.Command.Message["encryptedInfo"]).Scan(&id, &username, &email, &birthday, &language, &country, &gameToken)
+	err := fm.db.stmtGetUserByGameToken.QueryRow(event.Command.Msg["encryptedInfo"]).Scan(&id, &username, &email, &birthday, &language, &country, &gameToken)
 	if err != nil {
-		event.Client.WriteEncode(&codec.Packet{
+		event.Client.Answer(&codec.Packet{
 			Payload: ansNuLoginErr{
 				Taxon:   acctNuLogin,
 				Message: `"Wrong Login/Spoof"`,
@@ -351,7 +351,7 @@ func (fm *FeslManager) NuLogin(event network.EventClientCommand) {
 		"username":  username,
 		"sessionID": gameToken,
 		"email":     email,
-		"keyHash":   event.Command.Message["encryptedInfo"],
+		"keyHash":   event.Command.Msg["encryptedInfo"],
 	}
 	event.Client.HashState.SetM(saveRedis)
 
@@ -363,7 +363,7 @@ func (fm *FeslManager) NuLogin(event network.EventClientCommand) {
 	lkeyRedis.Set("name", username)
 
 	event.Client.HashState.Set("lkeys", event.Client.HashState.Get("lkeys")+";"+lkey)
-	event.Client.WriteEncode(&codec.Packet{
+	event.Client.Answer(&codec.Packet{
 		Payload: ansNuLogin{
 			Taxon:     acctNuLogin,
 			ProfileID: id,
@@ -380,9 +380,9 @@ func (fm *FeslManager) NuLogin(event network.EventClientCommand) {
 func (fm *FeslManager) NuLoginServer(event network.EventClientCommand) {
 	var id, userID, servername, secretKey, username string
 
-	err := fm.db.stmtGetServerBySecret.QueryRow(event.Command.Message["password"]).Scan(&id, &userID, &servername, &secretKey, &username)
+	err := fm.db.stmtGetServerBySecret.QueryRow(event.Command.Msg["password"]).Scan(&id, &userID, &servername, &secretKey, &username)
 	if err != nil {
-		event.Client.WriteEncode(&codec.Packet{
+		event.Client.Answer(&codec.Packet{
 			Payload: ansNuLoginErr{
 				Taxon:   acctNuLogin,
 				Message: `"Wrong Server "`,
@@ -398,8 +398,8 @@ func (fm *FeslManager) NuLoginServer(event network.EventClientCommand) {
 	saveRedis["uID"] = userID
 	saveRedis["sID"] = id
 	saveRedis["username"] = username
-	saveRedis["apikey"] = event.Command.Message["encryptedInfo"]
-	saveRedis["keyHash"] = event.Command.Message["password"]
+	saveRedis["apikey"] = event.Command.Msg["encryptedInfo"]
+	saveRedis["keyHash"] = event.Command.Msg["password"]
 	event.Client.HashState.SetM(saveRedis)
 
 	// Setup a new key for new persona
@@ -410,7 +410,7 @@ func (fm *FeslManager) NuLoginServer(event network.EventClientCommand) {
 	lkeyRedis.Set("name", username)
 
 	event.Client.HashState.Set("lkeys", event.Client.HashState.Get("lkeys")+";"+lkey)
-	event.Client.WriteEncode(&codec.Packet{
+	event.Client.Answer(&codec.Packet{
 		Payload: ansNuLogin{
 			Taxon:     acctNuLogin,
 			ProfileID: userID,

@@ -18,16 +18,16 @@ func (tM *Theater) UBRA(event network.EventClientCommand) {
 		return
 	}
 
-	event.Client.WriteEncode(&codec.Packet{
+	event.Client.Answer(&codec.Packet{
 		Type: thtrUBRA,
 		Payload: ansUBRA{
-			TheaterID: event.Command.Message["TID"],
+			TheaterID: event.Command.Msg["TID"],
 		},
 	})
 
-	gdata := tM.level.NewObject("gdata", event.Command.Message["GID"])
+	gdata := tM.level.NewObject("gdata", event.Command.Msg["GID"])
 
-	if event.Command.Message["START"] == "1" {
+	if event.Command.Msg["START"] == "1" {
 		gdata.Set("AP", "0")
 	}
 

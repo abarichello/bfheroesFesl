@@ -11,26 +11,26 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-func (client *Client) WriteEncode(packet *codec.Packet) error {
+func (client *Client) Answer(packet *codec.Packet) error {
 	if !client.IsActive {
 		logrus.Printf("%s: Trying to write to inactive Client.\n%v", client.name, packet.Type)
 		return errors.New("Client NOT active.Can't send message")
 	}
 
-	return writeEncode(packet, func(buf *bytes.Buffer) error {
+	return Answer(packet, func(buf *bytes.Buffer) error {
 		_, err := io.Copy(client.conn, buf)
 		return err
 	})
 }
 
-func (socket *SocketUDP) WriteEncode(packet *codec.Packet, addr *net.UDPAddr) error {
-	return writeEncode(packet, func(buf *bytes.Buffer) error {
+func (socket *SocketUDP) Answer(packet *codec.Packet, addr *net.UDPAddr) error {
+	return Answer(packet, func(buf *bytes.Buffer) error {
 		_, err := socket.listen.WriteToUDP(buf.Bytes(), addr)
 		return err
 	})
 }
 
-func writeEncode(packet *codec.Packet, writer func(*bytes.Buffer) error) error {
+func Answer(packet *codec.Packet, writer func(*bytes.Buffer) error) error {
 	logger := logrus.WithFields(logrus.Fields{"type": packet.Type, "payloadID": packet.Step})
 
 	encoder := codec.NewEncoder()

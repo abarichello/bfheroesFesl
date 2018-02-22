@@ -14,10 +14,10 @@ const (
 	tplEntitlements = "entitlements.xml"
 	tplProducts     = "products.xml"
 	tplRelationship = "relationship.xml"
-	tplSessionNew   = "session_new.xml"
 	tplSession      = "session.xml"
-	tplWallets      = "wallets.xml"
+	tplSessionNew   = "session_new.xml"
 	tplStore        = "store.xml"
+	tplWallets      = "wallets.xml"
 )
 
 type renderer struct {
@@ -57,7 +57,7 @@ func (rdr *renderer) renderXML(w http.ResponseWriter, r *http.Request, name stri
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	logrus.Info("Answer", buf.String())
+	// logrus.Info("Response", buf.String())
 	respondXML(w, r, buf.Bytes())
 }
 

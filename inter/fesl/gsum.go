@@ -6,7 +6,7 @@ import (
 )
 
 const (
-	gsum = "gsum"
+	gsum             = "gsum"
 	gsumGetSessionID = "GetSessionId"
 	// gsumAddGameData            = "AddGameData"
 	// gsumAddStats               = "AddStats"
@@ -23,9 +23,9 @@ type ansGetSessionID struct {
 }
 
 func (fm *FeslManager) gsumGetSessionID(event network.EventClientCommand) {
-	event.Client.WriteEncode(&codec.Packet{
+	event.Client.Answer(&codec.Packet{
 		Payload: ansGetSessionID{
-		Taxon: gsumGetSessionID},
-		Type:    gsum,
+			Taxon: gsumGetSessionID},
+		Type: gsum,
 	})
 }

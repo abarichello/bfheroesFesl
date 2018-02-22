@@ -23,13 +23,13 @@ func (tm *Theater) CONN(event network.EventClientCommand) {
 		return
 	}
 
-	event.Client.WriteEncode(&codec.Packet{
+	event.Client.Answer(&codec.Packet{
 		Type: thtrCONN,
 		Payload: ansClientConnected{
-			TheaterID:   event.Command.Message["TID"],
+			TheaterID:   event.Command.Msg["TID"],
 			ConnectedAt: time.Now().UTC().Unix(),
 			ConnTTL:     int((60 * time.Minute).Seconds()),
-			Protocol:    event.Command.Message["PROT"],
+			Protocol:    event.Command.Msg["PROT"],
 		},
 	})
 }

@@ -23,7 +23,7 @@ func (client *Client) readFESL(data []byte) []byte {
 
 func (client *Client) readFESLTLS(data []byte) []byte {
 	return readFesl(data, func(cmd *CommandFESL, payloadType string) {
-		client.eventChan <- ClientEvent{Name: "command." + cmd.Message["TXN"], Data: cmd}
+		client.eventChan <- ClientEvent{Name: "command." + cmd.Msg["TXN"], Data: cmd}
 		client.eventChan <- ClientEvent{Name: "command", Data: cmd}
 	})
 }
@@ -45,7 +45,7 @@ func (socket *SocketUDP) readFESL(data []byte, addr *net.UDPAddr) {
 	out := &CommandFESL{
 		Query:     payloadType,
 		PayloadID: payloadID,
-		Message:   payload,
+		Msg:       payload,
 	}
 
 	socket.EventChan <- SocketUDPEvent{Name: "command." + payloadType, Addr: addr, Data: out}
@@ -93,7 +93,7 @@ func readFesl(data []byte, fireEvent eventReadFesl) []byte {
 		out := &CommandFESL{
 			Query:     payloadType,
 			PayloadID: payloadID,
-			Message:   payload,
+			Msg:       payload,
 		}
 		fireEvent(out, payloadType)
 
@@ -104,7 +104,7 @@ func readFesl(data []byte, fireEvent eventReadFesl) []byte {
 }
 
 type CommandFESL struct {
-	Message   map[string]string
+	Msg       map[string]string
 	Query     string
 	PayloadID uint32
 }
@@ -113,29 +113,29 @@ type CommandFESL struct {
 // command struct
 func processCommand(msg string) (*CommandFESL, error) {
 	outCommand := new(CommandFESL) // Command not a CommandFESL
-	outCommand.Message = make(map[string]string)
+	outCommand.Msg = make(map[string]string)
 	data := strings.Split(msg, `\`)
 
 	// TODO:
 	// Should maybe return an emtpy Command struct instead
 	if len(data) < 1 {
-		logrus.Errorln("Command message invalid")
-		return nil, errors.New("Command message invalid")
+		logrus.Errorln("Command Msg invalid")
+		return nil, errors.New("Command Msg invalid")
 	}
 
 	// TODO:
 	// Check if that makes any sense? Kinda just translated from the js-code
 	//		if (data.length < 2) { return out; }
 	if len(data) == 1 {
-		outCommand.Message["__query"] = data[0]
+		outCommand.Msg["__query"] = data[0]
 		outCommand.Query = data[0]
 		return outCommand, nil
 	}
 
 	outCommand.Query = data[1]
-	outCommand.Message["__query"] = data[1]
+	outCommand.Msg["__query"] = data[1]
 	for i := 1; i < len(data)-1; i = i + 2 {
-		outCommand.Message[strings.ToLower(data[i])] = data[i+1]
+		outCommand.Msg[strings.ToLower(data[i])] = data[i+1]
 	}
 
 	return outCommand, nil

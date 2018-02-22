@@ -18,7 +18,7 @@ func (tM *Theater) PENT(event network.EventClientCommand) {
 		return
 	}
 
-	pid := event.Command.Message["PID"]
+	pid := event.Command.Msg["PID"]
 
 	// Get 4 stats for PID
 	rows, err := tM.db.getStatsStatement(4).Query(pid, "c_kit", "c_team", "elo", "level")
@@ -39,12 +39,12 @@ func (tM *Theater) PENT(event network.EventClientCommand) {
 
 	switch stats["c_team"] {
 	case "1":
-		_, err = tM.db.stmtGameIncreaseTeam1.Exec(event.Command.Message["GID"])
+		_, err = tM.db.stmtGameIncreaseTeam1.Exec(event.Command.Msg["GID"])
 		if err != nil {
 			logrus.Error("PENT ", err)
 		}
 	case "2":
-		_, err = tM.db.stmtGameIncreaseTeam2.Exec(event.Command.Message["GID"])
+		_, err = tM.db.stmtGameIncreaseTeam2.Exec(event.Command.Msg["GID"])
 		if err != nil {
 			logrus.Error("PENT ", err)
 		}
@@ -52,11 +52,11 @@ func (tM *Theater) PENT(event network.EventClientCommand) {
 		logrus.Errorln("Invalid team " + stats["c_team"] + " for " + pid)
 	}
 
-	event.Client.WriteEncode(&codec.Packet{
+	event.Client.Answer(&codec.Packet{
 		Type: thtrPENT,
 		Payload: ansPENT{
-			event.Command.Message["TID"],
-			event.Command.Message["PID"],
+			event.Command.Msg["TID"],
+			event.Command.Msg["PID"],
 		},
 	})
 }

@@ -107,13 +107,13 @@ func (tm *Theater) GDAT(event network.EventClientCommand) {
 		return
 	}
 
-	gameID := event.Command.Message["GID"]
+	gameID := event.Command.Msg["GID"]
 	gameServer := tm.level.NewObject("gdata", gameID)
 
-	event.Client.WriteEncode(&codec.Packet{
+	event.Client.Answer(&codec.Packet{
 		Type: thtrGDAT,
 		Payload: ansGDAT{
-			TheaterID:            event.Command.Message["TID"],
+			TheaterID:            event.Command.Msg["TID"],
 			Ap:                   gameServer.Get("AP"),
 			ArmyDistribution:     gameServer.Get("B-U-army_distribution"),
 			AvailableVipsNation:  gameServer.Get("B-U-avail_vips_national"),

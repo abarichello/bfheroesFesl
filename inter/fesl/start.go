@@ -12,11 +12,11 @@ type ansStart struct {
 
 // Start handles pnow.Start
 func (fm *FeslManager) Start(event network.EventClientCommand) {
-	event.Client.WriteEncode(&codec.Packet{
+	event.Client.Answer(&codec.Packet{
 		Payload: ansStart{
 			Txn: pnowStart,
 			ID: stPartition{1,
-				event.Command.Message[partition]},
+				event.Command.Msg[partition]},
 		},
 		Step: event.Command.PayloadID,
 		Type: pnow,
