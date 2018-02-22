@@ -33,8 +33,8 @@ Note: It is okay to run on default configuration if you run server on your local
 
 ```ini
 DATABASE_NAME=open-heroes
-DATABASE_HOST=192.168.33.10
-DATABASE_PASSWORD=test
+DATABASE_HOST=127.0.0.1
+DATABASE_PASSWORD=dbPass
 LOG_LEVEL=debug
 ```
 
@@ -51,7 +51,7 @@ Note: You Must Set your GOPATH at Windows Environment
 ## Credits ##
 All The Idea/Project/Prototype Behind Bringing Back Battlefield Heroes was by Synaxis
 Credits #MakaHost 
-Credits #Freeze-18,#Spencer and #mDawg From revive net
+Credits #Freeze,#Spencer and #mDawg From revive
 Credits #neqnill #WarpProductions #Temp #M0THERB0ARD
 
 =======================================================================================================================================================
