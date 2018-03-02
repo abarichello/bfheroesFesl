@@ -1,5 +1,13 @@
 # nextWave/backend (fesl)
 
+```CODE IS UNFINISHED```
+
+Download Vendor Package
+```glide install```
+
+Remember to configure your GOPATH and type
+```go build``` 
+
 `fesl`  the implementation of `GameSpy` network adapted for Battlefield Heroes & Educational Purposes Only
 
 ## Configuration
@@ -35,17 +43,8 @@ Note: It is okay to run on default configuration if you run server on your local
 DATABASE_NAME=open-heroes
 DATABASE_HOST=127.0.0.1
 DATABASE_PASSWORD=dbPass
-LOG_LEVEL=debug
+LOG_LEVEL=DEBUG //INFO.. //WARNING..
 ```
-
-`nextWave/backend`  currently only uses `MySQL` as a backing services. If you are on platform where `docker` is available, you may use following command to quickly download and start container with a MySQL database:
-
-### Start
-
-===WINDOWS===
-go to root folder and  -> ```go build main.go```
-
-Note: You Must Set your GOPATH at Windows Environment
 
 
 ## Credits ##
@@ -132,8 +131,8 @@ This is the first Pkt that is sent when a FESL connection is made.
 |SDKVersion                |5.0.0.0.0                  |magma sdk                      |
 |clientPlatform            |PC                         |                               |
 |clientString              |bfwest-pc                  |                               |
-|clientType                |server                     |server.exe                     |
-|clientVersion             |1.46.222034                |                               |
+|clientType                |server                     |GameServer.exe                 |
+|clientVersion             |1.46.222034                |Static only                    |
 |locale                    |en_US                      |                               |
 |sku                       |125170                     |                               |
 |protocolVersion           |2.0                        |                               |
