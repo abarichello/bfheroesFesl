@@ -1,4 +1,4 @@
-# nextWave/backend (fesl)
+# Open Source Heroes Backend (FESL)
 
 ```CODE IS UNFINISHED```
 
@@ -12,7 +12,7 @@ Remember to configure your GOPATH and type
 
 ## Configuration
 
-Below there is table with all enviroment variables which are used by the `Open Source Heroes`. You can refer to `config/config.go` file if you need more information about specific variable.
+Below is a table with all enviroment (.env) variables used You can refer to `config/config.go` if you need more information about specific variable.
 
 
 | Name                  | Default value        |
@@ -35,7 +35,7 @@ Below there is table with all enviroment variables which are used by the `Open S
 | `CERT_PATH`           | `_fixtures/cert.pem` |
 | `PRIVATE_KEY_PATH`    | `_fixtures/key.pem`  |
 
-Note: It is okay to run on default configuration if you run server on your local PC for testing and development. But if you are thinking about exposing your server you probably should change some variables (i.e. `THEATER_ADDR`).
+Warn for testing environment and production environment!!,use safe values!
 
 ### Example `.env` file
 
@@ -44,8 +44,6 @@ DATABASE_NAME=open-heroes
 DATABASE_HOST=127.0.0.1
 DATABASE_PASSWORD=dbPass
 LOG_LEVEL=DEBUG //INFO.. //WARNING..
-```
-
 
 ## Credits ##
 All The Idea/Project/Prototype Behind Bringing Back Battlefield Heroes was by Synaxis
@@ -53,15 +51,16 @@ Credits #MakaHost
 Credits #Freeze,#Spencer and #mDawg From revive
 Credits #neqnill #WarpProductions #Temp #M0THERB0ARD
 
-=======================================================================================================================================================
-# Battlefield Heroes master server protocol specification
+=======================================================================================================================================
+# Battlefield Heroes protocol specification
 
 This provides a better info about the Backend or FESL . Between the Master server , Fesl Server and Theather Server
 
-## General infrastructure overview
+## General  overview
 
-Battlefield Heroes has a network structure similar to many other online games. It is based on previous games that also used the Refractor 2 game engine, such as Battlefield 2 or Battlefield 2142.
-The general stack consists of the following components:
+Battlefield Heroes has a network structure similar to many other online games. It is based on previous games that also used the Refractor 2 game engine, such as Battlefield 2 or Battlefield 2142. Need For Speed World , and others
+
+The general  consists of the following components:
 1. Game client: the front-end software that runs on the player's computer. Consists mainly of a graphical userinterface and some game-logic.
 2. Game server: the back-end server that acts as a central game coordinator for the players in a match. Consists mainly of game logic and connections to game clients.
 3. Master server: the back-end server that stores player and server data and does match-making. This server provides persistance in between matches.
@@ -70,10 +69,10 @@ This specification provides details on the communication between the game client
 
 ## Master server overview
 
-The master server has 3 main components:
+The master server has 3 components:
 1. Two FESL servers: a message based protocol server that handles authentication, quering account info, ...
-2. The Magma server: a HTTPS based server for more account info
-3. Two Theater servers: a message based protocol server that handles querying, joining, leaving, ... of game servers and clients
+2. The Magma server: a HTTPS based server for more account info and addons(Store,Entitlements,friend list ,Bookmark)
+3. Two Theater servers: a message based protocol server that handles querying, joining, leaving, ... For Both game servers and clients
 
 A game client will first connect to the FESL server, then the HTTP server, then the Theater server and finally the game server.
 -> game server  = BFHeroes_w32ded.exe
@@ -82,7 +81,7 @@ A game client will first connect to the FESL server, then the HTTP server, then 
 
 ### TLS
 On startup, both the game client and the game server will first connect to their respective, seperate FESL server. 
-The address and port of the FESL server is baked into the game client/server executable.
+The address and port of the FESL server is inside the game client/server exe HEX. these values can be changed with Hex editor , or redirected with hosts file
 Known offsets of the FESL server address are:
 
 |Version       |Product     |Offset     |
@@ -94,7 +93,7 @@ Known offsets of the FESL server address are:
 The default value is "bfwest-server.fesl.ea.com".
 The default port is 18270 for the game client and 18051 for the game server.
 
-Communication over this connection is encrypted using TLS. By default, the game client/server checks the FESL server TLS certificate and disconnects if it does not match a preset EA certificate.
+Communication is encrypted using TLS. By default, the game checks if the TLS certificate and disconnects if it does not match a preset EA certificate.
 This check can be disabled using a patch to executable. (See Appendix: "FESL certificate patch")
 After the patch, the game client/server will accept more but not all certificates.
 
@@ -108,8 +107,8 @@ The format for these messages is as follows:
 |---------------|-------------------|-----------------------------------|--------------|
 |0x0            |4                  |ASCII string (no null terminator)  |Type          |
 |0x4            |4                  |32-bit big-endian unsigned integer |ID            |
-|0x8            |4                  |32-bit big-endian unsigned integer |Pkt length |
-|0xC            |Pkt length - 12 |ASCII string (no null terminator)  |FESLData      |
+|0x8            |4                  |32-bit big-endian unsigned integer |              |
+|0xC            |Pkt length - 12    |ASCII string (no null terminator)  |FESLData      |
 
 The FESLData field is a key-value map where each pair is seperated by a newline (\n), and the key and value are seperated by '='.
 For example:
@@ -119,9 +118,9 @@ Key2=Value2
 ```
 
 ### Message types
-One of the keys in the FESLData key-value store is 'TXN'. This entry determines the message type.
+One of the keys in the FESLData key-value store is 'TXN'. This entry determines the message type , and Order
 Depending on the message type, and whether the message is to or from the FESL server, other fields may be present in the FESLData.
-Response Pkts are always sent with the same Type and ID values as the query Pkt.
+Response Packets are always sent with the same Type and ID values as the query Packet.
 
 #### TXN = Hello, game client/server => FESL server
 This is the first Pkt that is sent when a FESL connection is made.
@@ -154,9 +153,8 @@ This is the first Pkt that is sent when a FESL connection is made.
 |                          |                           |18275 for game clients                           |
 
 #### TXN = MemCheck, FESL server => game client/server
-This message is sent every 10 seconds, and acts a heartbeat Pkt. 
-If either party stops receiving the MemCheck messages, connection loss is assumed.
-Maybe an anti-tampering measure?
+This message is sent every 10 seconds, and acts a heartbeat Packet. 
+If either stops receiving the MemCheck messages, connection loss is assumed. (Like a ping)
 
 |Key                       |Example value              |Note                           |
 |--------------------------|---------------------------|-------------------------------|
@@ -169,7 +167,6 @@ This message is always a response to a MemCheck query message by the FESL server
 |Key                       |Example value              |Note                           |
 |--------------------------|---------------------------|-------------------------------|
 |result                    |*empty*                    |                               |
-
 
 #### TXN = NuLogin, game client/server => FESL server
 This message is sent by clients/servers to authenticate.
@@ -225,7 +222,6 @@ This message retrieves general account information, based on the parameters sent
 
 #### TXN = NuGetAccount, FESL server => game client/server
 
-
 |Key                       |Example value              |Note                           |
 |--------------------------|---------------------------|-------------------------------|
 |heroName                  |xXx_1337Sn1per_xXx         |                               |
@@ -245,7 +241,7 @@ This message is sent to login to a character/server.
 
 |Key                       |Example value              |Note                           |
 |--------------------------|---------------------------|-------------------------------|
-|name                      |My-Awesome-Server          |                               |
+|name                      |Hero2                      |                               |
 
 #### TXN = NuLoginPersona, FESL server => game client/server
 
@@ -254,7 +250,6 @@ This message is sent to login to a character/server.
 |lkey                      |OwPcFq[xA338SppTjx0Ybw4c   |A 24 character BF2Random (see Appendix) |
 |profileId                 |1                          |                                        |
 |userId                    |1                          |                                        |
-
 
 #### TXN = GetStatsForOwners, game client/server => FESL server
 This message is sent to retrieve info for the character selection screen.
@@ -280,7 +275,6 @@ This message is sent to retrieve info for the character selection screen.
 |stats.*i*.stats.[]        |1                          |                               |
 |stats.[]                  |1                          |                               |
 
-
 #### TXN = GetStats, game client/server => FESL server
 This message is sent to retrieve info about a character/user.
 
@@ -290,7 +284,7 @@ This message is sent to retrieve info about a character/user.
 |ownerType                 |1                          |                                         |
 |periodId                  |0                          |                                         |
 |periodPast                |0                          |                                         |
-|keys.*i*                  |c_items                    |One entry for every stat to be retrieved |
+|keys.*i*                  |c_items(abilities)         |One entry for every stat to be retrieved |
 |keys.[]                   |1                          |Amount of stats to be retrieved          |
 
 #### TXN = GetStats, FESL server => game client/server
@@ -322,17 +316,12 @@ This message is sent to retrieve basic information about a user.
 |userInfo.*i*.masterUserId |1                          |                                  |
 |userInfo.*i*.namespace    |MAIN                       |                                  |
 |userInfo.*i*.xuid         |24                         |                                  |
-|userInfo.*i*.cid          |1                          |                                  |
+|userInfo.*i*.cid          |1                          |client it                         |
 |userInfo.[]               |3                          |Amount of users to lookup info of |
 
-
-#### TXN = GetPingSites, game client/server => FESL server
-This message is a query for a list of endpoints to test for the lowest latency on a game client.
-
-|Key                       |Example value              |Note                           |
-|--------------------------|---------------------------|-------------------------------|
-|                          |                           |                               |
-
+This is a query for a list of endpoints to test for the lowest latency on a game client.
+This is not working at the moment, maybe EA used it to change from DataCenters , based on Ping
+like LoadBalancer
 #### TXN = GetPingSites, FESL server => game client/server
 
 |Key                       |Example value              |Note                           |
@@ -375,6 +364,7 @@ This message is sent to update character stats.
 
 #### TXN = GetTelemetryToken, game client/server => FESL server
 Returns a unique token for game telemetry.
+This is only used in 2009 client ?
 
 |Key                       |Example value              |Note                           |
 |--------------------------|---------------------------|-------------------------------|
@@ -394,7 +384,6 @@ Returns a unique token for game telemetry.
 |enabled                   |US                         |                               |
 |filters                   |*empty*                    |                               |
 |disabled                  |*empty*                    |                               |
-
 
 #### TXN = Start, game client/server => FESL server
 This message is sent to initiate a "playnow".
@@ -417,14 +406,9 @@ This message is sent to initiate a "playnow".
 
 ## Magma server
 
-On startup, the game will connect to an HTTPS server. Like the FESL server, this connection is encrypted using TLS. After patching, the same certificate can be used that is used on the FESL server. Multiple Magma server domains are baked in the game executable. A command line argument can be used to switch between these domains, however this option seems to be disabled.
+On start, the game will connect to an HTTPS server. called MAGMA, this connection is encrypted using TLS. Multiple Magma server domains are in the game executable.
 
-|Version       |Product     |Offset     |
-|--------------|------------|-----------|
-|1.46.222034.0 |Game client |0x009DEAD8 |
-|1.42.217478.0 |Game server |0x00694E50 |
-
-The following HTTPS paths are defined in the game executable:
+The following HTTPS paths are listed in the game executable:
 * /
 * /dc/submit
 * /nucleus/authToken
@@ -574,10 +558,10 @@ The following HTTPS paths are defined in the game executable:
         </product>
     </products>
     ```
-
+    
 ## Theater
-
-The third type of connection is the Theater connection which runs over both TCP and UDP. 
+The 3rd type of connection is the Theater connection which runs over both TCP and UDP. 
+The ports can be found inside the Readme.txt inside the original files
 A seperate set of network sockets is made for the game servers and the game clients. 
 Theater connections are mostly in plaintext.
 The Theater network address and port is received by the game server/client through the FESL Hello message.
