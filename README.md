@@ -3,10 +3,10 @@
 ```CODE IS UNFINISHED```
 
 Download Vendor Package
-```glide install```
+==>```glide install```
 
 Remember to configure your GOPATH and type
-```go build``` 
+==>```go build``` 
 
 `fesl`  the implementation of `GameSpy` network adapted for Battlefield Heroes & Educational Purposes Only
 
