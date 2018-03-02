@@ -307,7 +307,7 @@ This message is sent to retrieve basic information about a user.
 |userInfo.*i*.masterUserId |1                          |                                  |
 |userInfo.*i*.namespace    |MAIN                       |                                  |
 |userInfo.*i*.xuid         |24                         |                                  |
-|userInfo.*i*.cid          |1                          |client it                         |
+|userInfo.*i*.cid          |1                          |client ID(not implemented         |
 |userInfo.[]               |3                          |Amount of users to lookup info of |
 
 This is a query for a list of endpoints to test for the lowest latency on a game client.
