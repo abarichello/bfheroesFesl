@@ -12,8 +12,7 @@ Remember to configure your GOPATH and type
 
 ## Configuration
 
-Below is a table with all enviroment (.env) variables used You can refer to `config/config.go` if you need more information about specific variable.
-
+Below is a table with all enviroment (.env) variables You can refer to `config/config.go` if you need more information for more info
 
 | Name                  | Default value        |
 |-----------------------|----------------------|
@@ -32,44 +31,40 @@ Below is a table with all enviroment (.env) variables used You can refer to `con
 | `DATABASE_HOST`       | `127.0.0.1`          |
 | `DATABASE_PORT`       | `3306`               |
 | `DATABASE_NAME`       | `open-heroes`        |
-| `CERT_PATH`           | `_fixtures/cert.pem` |
-| `PRIVATE_KEY_PATH`    | `_fixtures/key.pem`  |
+| `CERT_PATH`           | `./config/cert.pem`  |
+| `PRIVATE_KEY_PATH`    | `./config/key.pem`   |
 
 Warn for testing environment and production environment!!,use safe values!
 
 ### Example `.env` file
-
 ```ini
 DATABASE_NAME=open-heroes
 DATABASE_HOST=127.0.0.1
 DATABASE_PASSWORD=dbPass
-LOG_LEVEL=DEBUG //INFO.. //WARNING..
+LOG_LEVEL=DEBUG /INFO.. /WARNING..
 
 ## Credits ##
-All The Idea/Project/Prototype Behind Bringing Back Battlefield Heroes was by Synaxis
-Credits #MakaHost 
-Credits #Freeze,#Spencer and #mDawg From revive
-Credits #neqnill #WarpProductions #Temp #M0THERB0ARD
-
-=======================================================================================================================================
-# Battlefield Heroes protocol specification
-
-This provides a better info about the Backend or FESL . Between the Master server , Fesl Server and Theather Server
+All The Idea/Project/Prototype for Bringing Back BattlefieldHeroes was by Synaxis
+Credits #MakaHost Credits #Freeze,#Spencer and #mDawg from revive Credits #neqnill #WarpProductions
+#Temp #M0THERB0ARD
+=================================================================================================================================
+#  PROTOCOL
+This provides the info about the Backend or FESL . Between the Master server , Fesl Server and Theather Server
 
 ## General  overview
 
-Battlefield Heroes has a network structure similar to many other online games. It is based on previous games that also used the Refractor 2 game engine, such as Battlefield 2 or Battlefield 2142. Need For Speed World , and others
+Battlefield Heroes has a network structure similar to many other online games. It is based on previous games that also used the Refractor 2 game engine, such as Battlefield 2 or Battlefield 2142. Need For Speed Carbon , and others
 
 The general  consists of the following components:
 1. Game client: the front-end software that runs on the player's computer. Consists mainly of a graphical userinterface and some game-logic.
 2. Game server: the back-end server that acts as a central game coordinator for the players in a match. Consists mainly of game logic and connections to game clients.
 3. Master server: the back-end server that stores player and server data and does match-making. This server provides persistance in between matches.
 
-This specification provides details on the communication between the game client and master server, and the game server and the master server. This documents does not specify the protocol between game server and game client.
+This specification provides details on the communication between the game client and master server, and the game server and the master server. 
+##This document does not specify the protocol between game server and game client.##
 
 ## Master server overview
-
-The master server has 3 components:
+The MASTER server has 3 components:
 1. Two FESL servers: a message based protocol server that handles authentication, quering account info, ...
 2. The Magma server: a HTTPS based server for more account info and addons(Store,Entitlements,friend list ,Bookmark)
 3. Two Theater servers: a message based protocol server that handles querying, joining, leaving, ... For Both game servers and clients
@@ -80,7 +75,7 @@ A game client will first connect to the FESL server, then the HTTP server, then 
 ## FESL
 
 ### TLS
-On startup, both the game client and the game server will first connect to their respective, seperate FESL server. 
+On Start, both the game client and the game server will first connect to their respective, seperate FESL server. 
 The address and port of the FESL server is inside the game client/server exe HEX. these values can be changed with Hex editor , or redirected with hosts file
 Known offsets of the FESL server address are:
 
@@ -88,20 +83,16 @@ Known offsets of the FESL server address are:
 |--------------|------------|-----------|
 |1.46.222034.0 |Game client |0x00951EA4 |
 |1.42.217478.0 |Game server |0x0067329B |
-##this is not so important since you can connect any .exe that uses Magma(see fesl patch)
+##this is not important since you can connect any .exe that uses Magma
 
 The default value is "bfwest-server.fesl.ea.com".
 The default port is 18270 for the game client and 18051 for the game server.
 
 Communication is encrypted using TLS. By default, the game checks if the TLS certificate and disconnects if it does not match a preset EA certificate.
-This check can be disabled using a patch to executable. (See Appendix: "FESL certificate patch")
-After the patch, the game client/server will accept more but not all certificates.
+After the patch, the game client/server will accept more but not all certificates.(see FESL patch)
 
-During the TLS handshake, both parties agree on a cipher suite and SSL version. Known good values for these are TLS_RSA_WITH_RC4_128_SHA and SSL 3.0 respectively.
-
-### Pkt structure
-After the TLS handshake, FESL messages are exchanged over the encrypted line. 
-The format for these messages is as follows:
+### Packet structure
+After the TLS handshake, FESL The format for these messages is as follows:
 
 |Offset (bytes) |Length (bytes)     |Data type                          |Field name    |
 |---------------|-------------------|-----------------------------------|--------------|
@@ -501,7 +492,7 @@ The following HTTPS paths are listed in the game executable:
     </billingAccounts>
     ```
 
-### /ofb/products
+### /ofb/products // this is not a valid response
     ```
     <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
     <products>
@@ -560,27 +551,15 @@ The following HTTPS paths are listed in the game executable:
     ```
     
 ## Theater
-The 3rd type of connection is the Theater connection which runs over both TCP and UDP. 
+The 3rd type of connection is the Theater connection and runs over TCP and UDP. 
 The ports can be found inside the Readme.txt inside the original files
-A seperate set of network sockets is made for the game servers and the game clients. 
-Theater connections are mostly in plaintext.
+A seperate set of  sockets is made for the game servers and the game clients. 
 The Theater network address and port is received by the game server/client through the FESL Hello message.
 
-Pkts received or sent from the UDP port are decoded/encoded using the "gamespy XOR"
+Packets received or sent from the UDP port are decoded/encoded using the "gamespy XOR"
 
 ### Generating a BF2Random
 
 A BF2Random of length `n` consists of `n` characters chosen randomly from the following string:
 `0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ][`
-
-### Performing a "gamespy XOR"
-
-Given a string with n characters, the string is encoded as follows:
-
-string encode(inputstring):
-    m = length of "gameSpy"
-	for i = 0 to n
-		inputchar = inputstring[i]
-		xorChar = "gameSpy"[i mod m]
-		outputchar[i] = inputchar XOR xorChar
 ```
