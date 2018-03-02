@@ -1,4 +1,4 @@
-package: bitbucket.org/openheroes/backend
+package: https://github.com/Synaxis/bfheroesFesl
 import:
 - package: github.com/go-chi/chi
   version: ^3.3.0
@@ -23,7 +23,5 @@ import:
   - ssh/terminal
 - package: github.com/subosito/gotenv
   version: ^1.1.0
-- package: github.com/google/gops
-  version: ^0.3.2
   subpackages:
   - agent
