@@ -42,11 +42,6 @@ DATABASE_NAME=open-heroes
 DATABASE_HOST=127.0.0.1
 DATABASE_PASSWORD=dbPass
 LOG_LEVEL=DEBUG /INFO.. /WARNING..
-
-## Credits ##
-All The Idea/Project/Prototype for Bringing Back BattlefieldHeroes was by Synaxis
-Credits #MakaHost Credits #Freeze,#Spencer and #mDawg from revive Credits #neqnill #WarpProductions
-#Temp #M0THERB0ARD
 =================================================================================================================================
 #  PROTOCOL
 This provides the info about the Backend or FESL . Between the Master server , Fesl Server and Theather Server
