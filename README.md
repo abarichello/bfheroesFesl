@@ -558,3 +558,5 @@ Packets received or sent from the UDP port are decoded/encoded using the "gamesp
 A BF2Random of length `n` consists of `n` characters chosen randomly from the following string:
 `0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ][`
 ```
+
+Copyright Disclaimer Under Section 107 of the Copyright Act 1976, allowance is made for "fair use" for purposes such as criticism, comment, news reporting, teaching, scholarship, and research. Fair use is a use permitted by copyright statute that might otherwise be infringing. Non-profit, educational or personal use tips the balance in favor of fair use.
