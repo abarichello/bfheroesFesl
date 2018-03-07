@@ -21,18 +21,18 @@ func (tm *Theater) NewState(ident string) *level.State {
 }
 
 // USER - SHARED Called to get user data about client? No idea
-func (tm *Theater) USER(event network.EventClientCommand) {
+func (tm *Theater) USER(event network.EventClientProcess) {
 	if !event.Client.IsActive {
 		logrus.Println("Cli Left")
 		return
 	}
 
-	lkeyRedis := tm.level.NewObject("lkeys", event.Command.Msg["LKEY"])
+	lkeyRedis := tm.level.NewObject("lkeys", event.Process.Msg["LKEY"])
 
 	redisState := tm.NewState(fmt.Sprintf(
 		"%s:%s",
 		"mm",
-		event.Command.Msg["LKEY"],
+		event.Process.Msg["LKEY"],
 	))
 	event.Client.HashState = redisState
 
@@ -43,7 +43,7 @@ func (tm *Theater) USER(event network.EventClientCommand) {
 	event.Client.Answer(&codec.Pkt{
 		Type: thtrUSER,
 		Content: answerUSER{
-			TheaterID: event.Command.Msg["TID"],
+			TheaterID: event.Process.Msg["TID"],
 			Name:      lkeyRedis.Get("name"),
 		},
 	})

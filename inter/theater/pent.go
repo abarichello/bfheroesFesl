@@ -13,12 +13,12 @@ type ansPENT struct {
 }
 
 // PENT - SERVER sent up when a player joins (entitle player?)
-func (tM *Theater) PENT(event network.EventClientCommand) {
+func (tM *Theater) PENT(event network.EventClientProcess) {
 	if !event.Client.IsActive {
 		return
 	}
 
-	pid := event.Command.Msg["PID"]
+	pid := event.Process.Msg["PID"]
 
 	// Get 4 stats for PID
 	rows, err := tM.db.getStatsStatement(4).Query(pid, "c_kit", "c_team", "elo", "level")
@@ -39,12 +39,12 @@ func (tM *Theater) PENT(event network.EventClientCommand) {
 
 	switch stats["c_team"] {
 	case "1":
-		_, err = tM.db.stmtGameIncreaseTeam1.Exec(event.Command.Msg["GID"])
+		_, err = tM.db.stmtGameIncreaseTeam1.Exec(event.Process.Msg["GID"])
 		if err != nil {
 			logrus.Error("PENT ", err)
 		}
 	case "2":
-		_, err = tM.db.stmtGameIncreaseTeam2.Exec(event.Command.Msg["GID"])
+		_, err = tM.db.stmtGameIncreaseTeam2.Exec(event.Process.Msg["GID"])
 		if err != nil {
 			logrus.Error("PENT ", err)
 		}
@@ -55,8 +55,8 @@ func (tM *Theater) PENT(event network.EventClientCommand) {
 	event.Client.Answer(&codec.Pkt{
 		Type: thtrPENT,
 		Content: ansPENT{
-			event.Command.Msg["TID"],
-			event.Command.Msg["PID"],
+			event.Process.Msg["TID"],
+			event.Process.Msg["PID"],
 		},
 	})
 }

@@ -12,13 +12,13 @@ type ansEGRS struct {
 }
 
 // EGRS - SERVER sent up, tell us if client is 'allowed' to join
-func (tm *Theater) EGRS(event network.EventClientCommand) {
+func (tm *Theater) EGRS(event network.EventClientProcess) {
 	if !event.Client.IsActive {
 		return
 	}
 
-	if event.Command.Msg["ALLOWED"] == "1" {
-		_, err := tm.db.stmtGameIncreaseJoining.Exec(event.Command.Msg["GID"])
+	if event.Process.Msg["ALLOWED"] == "1" {
+		_, err := tm.db.stmtGameIncreaseJoining.Exec(event.Process.Msg["GID"])
 		if err != nil {
 			logrus.Error("NOT Allowed ", err)
 		}
@@ -26,6 +26,6 @@ func (tm *Theater) EGRS(event network.EventClientCommand) {
 
 	event.Client.Answer(&codec.Pkt{
 		Type:    thtrEGRS,
-		Content: ansEGRS{event.Command.Msg["TID"]},
+		Content: ansEGRS{event.Process.Msg["TID"]},
 	})
 }

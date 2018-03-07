@@ -81,7 +81,7 @@ func (tm *Theater) Listen() {
 			case "command.ECHO":
 				go tm.ECHO(event)
 			case "command":
-				logrus.Debugf("UDP %s: %v", event.Name, event.Data.(*network.CommandFESL))
+				logrus.Debugf("UDP %s: %v", event.Name, event.Data.(*network.ProcessFESL))
 			default:
 				logrus.Debugf("UDP %s: %v", event.Name, event.Data)
 			}
@@ -90,33 +90,33 @@ func (tm *Theater) Listen() {
 			case "newClient":
 				go tm.newClient(event.Data.(network.EventNewClient))
 			case "client.command.CONN":
-				go tm.CONN(event.Data.(network.EventClientCommand))
+				go tm.CONN(event.Data.(network.EventClientProcess))
 			case "client.command.USER":
-				go tm.USER(event.Data.(network.EventClientCommand))
+				go tm.USER(event.Data.(network.EventClientProcess))
 			case "client.command.LLST":
-				go tm.LLST(event.Data.(network.EventClientCommand))
+				go tm.LLST(event.Data.(network.EventClientProcess))
 			case "client.command.GDAT":
-				go tm.GDAT(event.Data.(network.EventClientCommand))
+				go tm.GDAT(event.Data.(network.EventClientProcess))
 			case "client.command.EGAM":
-				go tm.EGAM(event.Data.(network.EventClientCommand))
+				go tm.EGAM(event.Data.(network.EventClientProcess))
 			case "client.command.ECNL":
-				go tm.ECNL(event.Data.(network.EventClientCommand))
+				go tm.ECNL(event.Data.(network.EventClientProcess))
 			case "client.command.CGAM":
-				go tm.CGAM(event.Data.(network.EventClientCommand))
+				go tm.CGAM(event.Data.(network.EventClientProcess))
 			case "client.command.UBRA":
-				go tm.UBRA(event.Data.(network.EventClientCommand))
+				go tm.UBRA(event.Data.(network.EventClientProcess))
 			case "client.command.UGAM":
-				go tm.UGAM(event.Data.(network.EventClientCommand))
+				go tm.UGAM(event.Data.(network.EventClientProcess))
 			case "client.command.EGRS":
-				go tm.EGRS(event.Data.(network.EventClientCommand))
+				go tm.EGRS(event.Data.(network.EventClientProcess))
 			case "client.command.GLST":
-				go tm.GLST(event.Data.(network.EventClientCommand))
+				go tm.GLST(event.Data.(network.EventClientProcess))
 			case "client.command.PENT":
-				go tm.PENT(event.Data.(network.EventClientCommand))
+				go tm.PENT(event.Data.(network.EventClientProcess))
 			case "client.command.PLVT":
-				go tm.PLVT(event.Data.(network.EventClientCommand))
+				go tm.PLVT(event.Data.(network.EventClientProcess))
 			case "client.command.UPLA":
-				go tm.UPLA(event.Data.(network.EventClientCommand))
+				go tm.UPLA(event.Data.(network.EventClientProcess))
 			case "client.close":
 				tm.close(event.Data.(network.EventClientClose))
 			case "client.command":

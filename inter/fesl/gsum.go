@@ -6,26 +6,17 @@ import (
 )
 
 const (
-	gsum             = "gsum"
-	gsumGetSessionID = "GetSessionId"
-	// gsumAddGameData            = "AddGameData"
-	// gsumAddStats               = "AddStats"
-	// gsumGameSummaryUpdateState = "GameSummaryUpdateState"
-	// gsumGetGameData            = "GetGameData"
-	// gsumGetGameEvents          = "GetGameEvents"
-	// gsumGetPlayerInfo          = "GetPlayerInfo"
+	gsum         = "gsum"
+	GetSessionID = "GetSessionId"
 )
 
 type ansGetSessionID struct {
 	TXN string `fesl:"TXN"`
-	// Games  []Game  `fesl:"games"`
-	// Events []Event `fesl:"events"`
 }
 
-func (fm *FeslManager) gsumGetSessionID(event network.EventClientCommand) {
+func (fm *FeslManager) gsumGetSessionID(event network.EventClientProcess) {
 	event.Client.Answer(&codec.Pkt{
-		Content: ansGetSessionID{
-			TXN: gsumGetSessionID},
-		Type: gsum,
+		Content: ansGetSessionID{TXN: GetSessionID},
+		Type:    gsum,
 	})
 }

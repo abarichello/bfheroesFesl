@@ -7,7 +7,7 @@ import (
 )
 
 // GLST - CLIENT called to get a list of game servers? Irrelevant for heroes.
-func (tm *Theater) GLST(event network.EventClientCommand) {
+func (tm *Theater) GLST(event network.EventClientProcess) {
 	if !event.Client.IsActive {
 		logrus.Println("Cli Left")
 		return

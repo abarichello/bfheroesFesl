@@ -15,11 +15,9 @@ import (
 const (
 	fsys             = "fsys"
 	fsysGetPingSites = "GetPingSites"
-	// fsysGoodbye      = "Goodbye"
-	fsysHello    = "Hello"
-	fsysMemCheck = "MemCheck"
-	fsysPing     = "Ping"
-	// fsysSuicide      = "Suicide"
+	fsysHello        = "Hello"
+	fsysMemCheck     = "MemCheck"
+	fsysPing         = "Ping"
 )
 
 type ansMemCheck struct {
@@ -60,7 +58,7 @@ type domainPartition struct {
 	SubName string `fesl:"subDomain"`
 }
 
-func (fm *FeslManager) hello(event network.EventClientCommand) {
+func (fm *FeslManager) hello(event network.EventClientProcess) {
 	if !event.Client.IsActive {
 		logrus.Println("Cli Left")
 		return
@@ -68,7 +66,7 @@ func (fm *FeslManager) hello(event network.EventClientCommand) {
 
 	redisState := fm.createState(fmt.Sprintf(
 		"%s-%s",
-		event.Command.Msg["clientType"],
+		event.Process.Msg["clientType"],
 		event.Client.IpAddr.String(),
 	))
 
@@ -79,13 +77,13 @@ func (fm *FeslManager) hello(event network.EventClientCommand) {
 	}
 
 	saveRedis := map[string]interface{}{
-		"SDKVersion":     event.Command.Msg["SDKVersion"],
-		"clientPlatform": event.Command.Msg["clientPlatform"],
-		"clientString":   event.Command.Msg["clientString"],
-		"clientType":     event.Command.Msg["clientType"],
-		"clientVersion":  event.Command.Msg["clientVersion"],
-		"locale":         event.Command.Msg["locale"],
-		"sku":            event.Command.Msg["sku"],
+		"SDKVersion":     event.Process.Msg["SDKVersion"],
+		"clientPlatform": event.Process.Msg["clientPlatform"],
+		"clientString":   event.Process.Msg["clientString"],
+		"clientType":     event.Process.Msg["clientType"],
+		"clientVersion":  event.Process.Msg["clientVersion"],
+		"locale":         event.Process.Msg["locale"],
+		"sku":            event.Process.Msg["sku"],
 	}
 	event.Client.HashState.SetM(saveRedis)
 
@@ -130,15 +128,15 @@ type pingSite struct {
 }
 
 // GetPingSites - Get Pings for something
-func (fm *FeslManager) GetPingSites(event network.EventClientCommand) {
+func (fm *FeslManager) GetPingSites(event network.EventClientProcess) {
 	if !event.Client.IsActive {
 		logrus.Println("Cli Left")
 		return
 	}
 
 	event.Client.Answer(&codec.Pkt{
-		Type: event.Command.Query,
-		Send: event.Command.HEX,
+		Type: event.Process.Query,
+		Send: event.Process.HEX,
 		Content: ansGetPingSites{
 			TXN:      fsysGetPingSites,
 			MinPings: 1,

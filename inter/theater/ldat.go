@@ -18,7 +18,7 @@ type ansLDAT struct {
 	Passing         string `fesl:"PASSING"`
 }
 
-func (tm *Theater) LobbyData(event network.EventClientCommand) {
+func (tm *Theater) LobbyData(event network.EventClientProcess) {
 	event.Client.Answer(&codec.Pkt{
 		Type: thtrLDAT,
 		Content: ansLDAT{

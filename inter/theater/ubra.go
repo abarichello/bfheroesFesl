@@ -12,7 +12,7 @@ type ansUBRA struct {
 }
 
 // UBRA - SERVER Called to  update server data
-func (tM *Theater) UBRA(event network.EventClientCommand) {
+func (tM *Theater) UBRA(event network.EventClientProcess) {
 	if !event.Client.IsActive {
 		logrus.Println("Cli Left")
 		return
@@ -21,13 +21,13 @@ func (tM *Theater) UBRA(event network.EventClientCommand) {
 	event.Client.Answer(&codec.Pkt{
 		Type: thtrUBRA,
 		Content: ansUBRA{
-			TheaterID: event.Command.Msg["TID"],
+			TheaterID: event.Process.Msg["TID"],
 		},
 	})
 
-	gdata := tM.level.NewObject("gdata", event.Command.Msg["GID"])
+	gdata := tM.level.NewObject("gdata", event.Process.Msg["GID"])
 
-	if event.Command.Msg["START"] == "1" {
+	if event.Process.Msg["START"] == "1" {
 		gdata.Set("AP", "0")
 	}
 

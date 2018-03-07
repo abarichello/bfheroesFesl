@@ -16,13 +16,13 @@ type ansECHO struct {
 
 // ECHO - SHARED called like some heartbeat
 func (tm *Theater) ECHO(event network.SocketUDPEvent) {
-	command := event.Data.(*network.CommandFESL)
+	Process := event.Data.(*network.ProcessFESL)
 
 	tm.socketUDP.Answer(&codec.Pkt{
 		Type: thtrECHO,
 		Content: ansECHO{
-			TXN:       command.Msg["TXN"],
-			TID:       command.Msg["TID"],
+			TXN:       Process.Msg["TXN"],
+			TID:       Process.Msg["TID"],
 			IP:        event.Addr.IP.String(),
 			Port:      event.Addr.Port,
 			ErrStatus: 0,

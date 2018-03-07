@@ -12,17 +12,17 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-type eventReadFesl func(outCommand *CommandFESL, ContentType string)
+type eventReadFesl func(outCommand *ProcessFESL, ContentType string)
 
 func (client *Client) readFESL(data []byte) []byte {
-	return readFesl(data, func(cmd *CommandFESL, ContentType string) {
+	return readFesl(data, func(cmd *ProcessFESL, ContentType string) {
 		client.eventChan <- ClientEvent{Name: "command." + ContentType, Data: cmd}
 		client.eventChan <- ClientEvent{Name: "command", Data: cmd}
 	})
 }
 
 func (client *Client) readFESLTLS(data []byte) []byte {
-	return readFesl(data, func(cmd *CommandFESL, ContentType string) {
+	return readFesl(data, func(cmd *ProcessFESL, ContentType string) {
 		client.eventChan <- ClientEvent{Name: "command." + cmd.Msg["TXN"], Data: cmd}
 		client.eventChan <- ClientEvent{Name: "command", Data: cmd}
 	})
@@ -42,7 +42,7 @@ func (socket *SocketUDP) readFESL(data []byte, addr *net.UDPAddr) {
 	ContentRaw := data[12:]
 	Content := codec.DecodeFESL(ContentRaw)
 
-	out := &CommandFESL{
+	out := &ProcessFESL{
 		Query: ContentType,
 		HEX:   HEX,
 		Msg:   Content,
@@ -90,7 +90,7 @@ func readFesl(data []byte, fireEvent eventReadFesl) []byte {
 
 		Content := codec.DecodeFESL(ContentRaw)
 
-		out := &CommandFESL{
+		out := &ProcessFESL{
 			Query: ContentType,
 			HEX:   HEX,
 			Msg:   Content,
@@ -103,7 +103,7 @@ func readFesl(data []byte, fireEvent eventReadFesl) []byte {
 	return nil
 }
 
-type CommandFESL struct {
+type ProcessFESL struct {
 	Msg   map[string]string
 	Query string
 	HEX   uint32
@@ -111,8 +111,8 @@ type CommandFESL struct {
 
 // processCommand turns gamespy's command string to the
 // command struct
-func processCommand(msg string) (*CommandFESL, error) {
-	outCommand := new(CommandFESL) // Command not a CommandFESL
+func processCommand(msg string) (*ProcessFESL, error) {
+	outCommand := new(ProcessFESL) // Command not a CommandFESL
 	outCommand.Msg = make(map[string]string)
 	data := strings.Split(msg, `\`)
 

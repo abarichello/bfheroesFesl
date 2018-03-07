@@ -12,9 +12,9 @@ type ansLLST struct {
 }
 
 // LLST - CLIENT (???) unknown, potentially bookmarks
-func (tm *Theater) LLST(event network.EventClientCommand) {
+func (tm *Theater) LLST(event network.EventClientProcess) {
 	event.Client.Answer(&codec.Pkt{
 		Type:    thtrLLST,
-		Content: ansLLST{event.Command.Msg["TID"], 1},
+		Content: ansLLST{event.Process.Msg["TID"], 1},
 	})
 }

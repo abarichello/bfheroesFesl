@@ -36,7 +36,7 @@ type stGame struct {
 }
 
 // Status pnow.Status command
-func (fm *FeslManager) Status(event network.EventClientCommand) {
+func (fm *FeslManager) Status(event network.EventClientProcess) {
 	logrus.Println("=Status=")
 	//Infinite Search
 	gameID := mm.FindGIDs()
@@ -44,7 +44,7 @@ func (fm *FeslManager) Status(event network.EventClientCommand) {
 	ans := ansStatus{
 		TXN: pnowStatus,
 		ID: stPartition{1,
-			event.Command.Msg[partition]},
+			event.Process.Msg[partition]},
 		State: Complete,
 		Properties: map[string]interface{}{
 			"resultType": Join,

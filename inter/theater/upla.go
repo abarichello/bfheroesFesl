@@ -8,7 +8,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-func (tM *Theater) UPLA(event network.EventClientCommand) {
+func (tM *Theater) UPLA(event network.EventClientProcess) {
 	if !event.Client.IsActive {
 		return
 	}
@@ -17,10 +17,10 @@ func (tM *Theater) UPLA(event network.EventClientCommand) {
 
 	keys := 0
 
-	pid := event.Command.Msg["PID"]
-	gid := event.Command.Msg["GID"]
+	pid := event.Process.Msg["PID"]
+	gid := event.Process.Msg["GID"]
 
-	for index, value := range event.Command.Msg {
+	for index, value := range event.Process.Msg {
 		if index == "TID" || index == "PID" || index == "GID" {
 			continue
 		}
@@ -47,7 +47,7 @@ func (tM *Theater) UPLA(event network.EventClientCommand) {
 		logrus.Errorln("Failed to update stats for player "+pid, err.Error())
 	}
 
-	gdata := tM.level.NewObject("gdata", event.Command.Msg["GID"])
+	gdata := tM.level.NewObject("gdata", event.Process.Msg["GID"])
 
 	num, _ := strconv.Atoi(gdata.Get("AP"))
 

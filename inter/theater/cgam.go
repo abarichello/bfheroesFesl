@@ -23,7 +23,7 @@ type ansCGAM struct {
 }
 
 // CGAM - SERVER called to create a game
-func (tm *Theater) CGAM(event network.EventClientCommand) {
+func (tm *Theater) CGAM(event network.EventClientProcess) {
 	addr, ok := event.Client.IpAddr.(*net.TCPAddr)
 	if !ok {
 		logrus.Errorln("Failed turning IpAddr to net.TCPAddr")
@@ -31,11 +31,11 @@ func (tm *Theater) CGAM(event network.EventClientCommand) {
 	}
 
 	res, err := tm.db.stmtCreateServer.Exec(
-		event.Command.Msg["NAME"],
-		event.Command.Msg["B-U-community_name"],
-		event.Command.Msg["INT-IP"],
-		event.Command.Msg["INT-PORT"],
-		event.Command.Msg["B-version"],
+		event.Process.Msg["NAME"],
+		event.Process.Msg["B-U-community_name"],
+		event.Process.Msg["INT-IP"],
+		event.Process.Msg["INT-PORT"],
+		event.Process.Msg["B-version"],
 	)
 	if err != nil {
 		logrus.Error("Cannot create New server", err)
@@ -56,7 +56,7 @@ func (tm *Theater) CGAM(event network.EventClientCommand) {
 	keys := 0
 
 	// Stores what we know about this game in the redis db
-	for index, value := range event.Command.Msg {
+	for index, value := range event.Process.Msg {
 		if index == "TID" {
 			continue
 		}
@@ -94,20 +94,20 @@ func (tm *Theater) CGAM(event network.EventClientCommand) {
 	event.Client.Answer(&codec.Pkt{
 		Type: thtrCGAM,
 		Content: ansCGAM{
-			TheaterID:  event.Command.Msg["TID"],
+			TheaterID:  event.Process.Msg["TID"],
 			LobbyID:    "1",
-			UGID:       event.Command.Msg["UGID"],
-			MaxPlayers: event.Command.Msg["MAX-PLAYERS"],
+			UGID:       event.Process.Msg["UGID"],
+			MaxPlayers: event.Process.Msg["MAX-PLAYERS"],
 			EKEY:       `O65zZ2D2A58mNrZw1hmuJw%3d%3d`,
 			Secret:     `2587913`,
-			JOIN:       event.Command.Msg["JOIN"],
-			J:          event.Command.Msg["JOIN"],
+			JOIN:       event.Process.Msg["JOIN"],
+			J:          event.Process.Msg["JOIN"],
 			GameID:     gameID,
 		},
 	})
 
 	// Create game in database
-	_, err = tm.db.stmtAddGame.Exec(gameID, addr.IP.String(), event.Command.Msg["PORT"], event.Command.Msg["B-version"], event.Command.Msg["JOIN"], event.Command.Msg["B-U-map"], 0, 0, event.Command.Msg["MAX-PLAYERS"], 0, 0, "")
+	_, err = tm.db.stmtAddGame.Exec(gameID, addr.IP.String(), event.Process.Msg["PORT"], event.Process.Msg["B-version"], event.Process.Msg["JOIN"], event.Process.Msg["B-U-map"], 0, 0, event.Process.Msg["MAX-PLAYERS"], 0, 0, "")
 	if err != nil {
 		logrus.Errorf("Failed to add game: %v", err)
 	}

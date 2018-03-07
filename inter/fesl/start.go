@@ -11,14 +11,14 @@ type ansStart struct {
 }
 
 // Start handles pnow.Start
-func (fm *FeslManager) Start(event network.EventClientCommand) {
+func (fm *FeslManager) Start(event network.EventClientProcess) {
 	event.Client.Answer(&codec.Pkt{
 		Content: ansStart{
 			TXN: pnowStart,
 			ID: stPartition{1,
-				event.Command.Msg[partition]},
+				event.Process.Msg[partition]},
 		},
-		Send: event.Command.HEX,
+		Send: event.Process.HEX,
 		Type: pnow,
 	})
 	fm.Status(event)

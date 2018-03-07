@@ -17,7 +17,7 @@ type ansClientConnected struct {
 }
 
 // CONN - SHARED (???) called on connection
-func (tm *Theater) CONN(event network.EventClientCommand) {
+func (tm *Theater) CONN(event network.EventClientProcess) {
 	if !event.Client.IsActive {
 		logrus.Println("Cli Left")
 		return
@@ -26,10 +26,10 @@ func (tm *Theater) CONN(event network.EventClientCommand) {
 	event.Client.Answer(&codec.Pkt{
 		Type: thtrCONN,
 		Content: ansClientConnected{
-			TheaterID:   event.Command.Msg["TID"],
+			TheaterID:   event.Process.Msg["TID"],
 			ConnectedAt: time.Now().UTC().Unix(),
 			ConnTTL:     int((60 * time.Minute).Seconds()),
-			Protocol:    event.Command.Msg["PROT"],
+			Protocol:    event.Process.Msg["PROT"],
 		},
 	})
 }
