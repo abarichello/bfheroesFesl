@@ -2,11 +2,11 @@ package fesl
 
 import (
 	"strconv"
-
+	"fmt"
 	"github.com/Synaxis/bfheroesFesl/inter/network"
 	"github.com/Synaxis/bfheroesFesl/inter/network/codec"
 	"github.com/sirupsen/logrus"
-)
+) 
 
 const (
 	acct                 = "acct"
@@ -31,39 +31,39 @@ type userInfo struct {
 	UserName     string `fesl:"userName"`
 }
 
-// NuLookupUserInfo - Gets basic information about a game user
 func (fm *FeslManager) NuLookupUserInfo(event network.EventClientProcess) {
-
-	if event.Client.HashState.Get("clientType") == "server" && event.Process.Msg["userInfo.0.userName"] == "Test-Server" {
-		fm.NuLookupUserInfoServer(event)
+	if !event.Client.IsActive {
+		logrus.Println("Cli DC")
 		return
 	}
 
-	ans := ansNuLookupUserInfo{TXN: acctNuLookupUserInfo, UserInfo: []userInfo{}}
-
-	logrus.Println("LookupUserInfo CLIENT" + event.Process.Msg["userInfo.0.userName"])
+	ans := ansNuLookupUserInfo{
+	TXN: acctNuLookupUserInfo,
+	UserInfo: []userInfo{}}
 
 	keys, _ := strconv.Atoi(event.Process.Msg["userInfo.[]"])
 	for i := 0; i < keys; i++ {
-		heroNamePkt := event.Process.Msg["userInfo."+strconv.Itoa(i)+".userName"]
+	heroNamePkt := event.Process.Msg[fmt.Sprintf("userInfo.%d.userName", i)]
 
-		var id, userID, heroName, online string
-		err := fm.db.stmtGetHeroeByName.QueryRow(heroNamePkt).Scan(&id, &userID, &heroName, &online)
+	var id, userID, heroName, online string
+	err := fm.db.stmtGetHeroeByName.QueryRow(heroNamePkt).Scan(&id, &userID, //br
+	&heroName, &online)
+
 		if err != nil {
 			return
-		}
+		}		
 
 		ans.UserInfo = append(ans.UserInfo, userInfo{
 			UserName:     heroName,
 			UserID:       id,
 			MasterUserID: id,
 			Namespace:    "MAIN",
-			XUID:         "24",
+			XUID:         "24", // ??? wtf
 		})
 	}
 
 	event.Client.Answer(&codec.Pkt{
-		Content: ans,
+	  	Content: ans,
 		Send:    event.Process.HEX,
 		Type:    acct,
 	})
@@ -98,6 +98,10 @@ func (fm *FeslManager) NuLookupUserInfoServer(event network.EventClientProcess) 
 		Type: acct,
 	})
 }
+
+
+
+
 
 type ansNuLoginPersona struct {
 	TXN       string `fesl:"TXN"`
@@ -150,6 +154,8 @@ func (fm *FeslManager) NuLoginPersona(event network.EventClientProcess) {
 	})
 }
 
+
+
 //NuLoginPersonaServer Pre-Server Login (out of order ?)
 func (fm *FeslManager) NuLoginPersonaServer(event network.EventClientProcess) {
 	var id, userID, servername, secretKey, username string
@@ -182,6 +188,9 @@ func (fm *FeslManager) NuLoginPersonaServer(event network.EventClientProcess) {
 		Type: acct,
 	})
 }
+
+
+
 
 type ansNuGetPersonas struct {
 	TXN      string   `fesl:"TXN"`
