@@ -14,6 +14,7 @@ type ansECHO struct {
 	Type      int    `fesl:"TYPE"`
 }
 
+//TODO check typo network.EventClientProcess
 // ECHO - SHARED called like some heartbeat
 func (tm *Theater) ECHO(event network.SocketUDPEvent) {
 	Process := event.Data.(*network.ProcessFESL)

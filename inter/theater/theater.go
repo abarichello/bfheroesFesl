@@ -21,7 +21,6 @@ const (
 	thtrEGRS = "EGRS"
 	thtrENCL = "ENCL"
 	thtrGDAT = "GDAT"
-	thtrGLST = "GLST"
 	thtrKICK = "KICK"
 	thtrLDAT = "LDAT"
 	thtrLLST = "LLST"
@@ -109,8 +108,6 @@ func (tm *Theater) Listen() {
 				go tm.UGAM(event.Data.(network.EventClientProcess))
 			case "client.command.EGRS":
 				go tm.EGRS(event.Data.(network.EventClientProcess))
-			case "client.command.GLST":
-				go tm.GLST(event.Data.(network.EventClientProcess))
 			case "client.command.PENT":
 				go tm.PENT(event.Data.(network.EventClientProcess))
 			case "client.command.PLVT":
