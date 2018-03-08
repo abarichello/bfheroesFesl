@@ -1,2 +1,110 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<data version="1.0" store_group_id="DBFH"><products><product overwrite="false" default_locale="en_US" status="Published" productId=""><attributes><attribute isMandatory="Y" attributeType="String" locale="en_US" global="true" name="CruelBarbariansOxHead-DailyClaw-UNLM" type="productTitle"/><attribute isMandatory="N" attributeType="String" locale="en_US" global="true" name="MICROCONTENTUL" type="productType"/><attribute isMandatory="N" attributeType="String" locale="en_US" global="true" name="N" type="isLocked"/><attribute isMandatory="Y" attributeType="STRING" locale="en_US" global="false" name="WEST_Custom_Item_1451" type="ProductName"/><attribute isMandatory="Y" attributeType="STRING" locale="en_US" global="false" name="WEST_Custom_Item_1451" type="LongDescription"/><attribute isMandatory="Y" attributeType="STRING" locale="en_US" global="false" name="WEST_Custom_Item_1451" type="ShortDescription"/><attribute isMandatory="N" attributeType="STRING" locale="en_US" global="false" name="" type="LegalDisclaimers"/><attribute isMandatory="N" attributeType="STRING" locale="en_US" global="false" name="" type="SystemRequirements"/><attribute isMandatory="N" attributeType="STRING" locale="en_US" global="false" name="" type="eula"/><attribute isMandatory="Y" attributeType="STRING" locale="en_US" global="true" name="BFHPC_Head" type="groupName"/><attribute isMandatory="N" attributeType="Integer" locale="en_US" global="true" name="15" type="weight"/><attribute isMandatory="N" attributeType="STRING" locale="en_US" global="true" name="NO" type="consolationPrice"/><attribute isMandatory="Y" attributeType="String" locale="en_US" global="true" name="MICROCONTENTUL" type="ofbItemSubtype"/><attribute isMandatory="N" attributeType="Integer" locale="en_US" global="true" name="1" type="sortKey"/><attribute isMandatory="Y" attributeType="STRING" locale="en_US" global="true" name="1451-UNLM-CruelBarbariansOxHead" type="entitlementTag"/><attribute isMandatory="Y" attributeType="String" locale="en_US" global="true" name="CruelBarbariansOxHead-UNLM" type="ofbItemTitle"/><attribute isMandatory="N" attributeType="STRING" locale="en_US" global="true" name="YES" type="hiddenInWebstore"/><attribute isMandatory="N" attributeType="Boolean_YN" locale="en_US" global="true" name="YES" type="appliedToPersona"/><attribute isMandatory="Y" attributeType="EntitlementType" locale="en_US" global="true" name="DEFAULT" type="entitlementType"/><attribute isMandatory="N" attributeType="Boolean_YN" locale="en_US" global="true" name="NO" type="isStackable"/><attribute isMandatory="Y" attributeType="String" locale="en_US" global="true" name="fba6db45-6009-45ba-b127-45f5f15d8a72-bc8ccf1ac89f" type="ofbItemGuid"/></attributes><finances><finance finance_Id="102010651"/></finances><prices><price locale="en_US" endDate="" startDate="2011-06-30 07:19:11.0" priceValue="0.0" currencyCode="USD" currencyType="REAL" priceType="SALE_PRICE"/></prices></product><product overwrite="false" default_locale="en_US" status="Published" productId=""><attributes><attribute isMandatory="Y" attributeType="String" locale="en_US" global="true" name="BrutalRavagersBullhead-DailyClaw-UNLM" type="productTitle"/><attribute isMandatory="N" attributeType="String" locale="en_US" global="true" name="MICROCONTENTUL" type="productType"/><attribute isMandatory="N" attributeType="String" locale="en_US" global="true" name="N" type="isLocked"/><attribute isMandatory="Y" attributeType="STRING" locale="en_US" global="false" name="WEST_Custom_Item_1465" type="ProductName"/><attribute isMandatory="Y" attributeType="STRING" locale="en_US" global="false" name="WEST_Custom_Item_1465" type="LongDescription"/><attribute isMandatory="Y" attributeType="STRING" locale="en_US" global="false" name="WEST_Custom_Item_1465" type="ShortDescription"/><attribute isMandatory="N" attributeType="STRING" locale="en_US" global="false" name="" type="LegalDisclaimers"/><attribute isMandatory="N" attributeType="STRING" locale="en_US" global="false" name="" type="SystemRequirements"/><attribute isMandatory="N" attributeType="STRING" locale="en_US" global="false" name="" type="eula"/><attribute isMandatory="Y" attributeType="STRING" locale="en_US" global="true" name="BFHPC_Head" type="groupName"/><attribute isMandatory="N" attributeType="Integer" locale="en_US" global="true" name="15" type="weight"/><attribute isMandatory="N" attributeType="STRING" locale="en_US" global="true" name="NO" type="consolationPrice"/><attribute isMandatory="Y" attributeType="String" locale="en_US" global="true" name="MICROCONTENTUL" type="ofbItemSubtype"/><attribute isMandatory="N" attributeType="Integer" locale="en_US" global="true" name="1" type="sortKey"/><attribute isMandatory="Y" attributeType="STRING" locale="en_US" global="true" name="1465-UNLM-BrutalRavagersBullhead" type="entitlementTag"/><attribute isMandatory="Y" attributeType="String" locale="en_US" global="true" name="BrutalRavagersBullhead-UNLM" type="ofbItemTitle"/><attribute isMandatory="N" attributeType="STRING" locale="en_US" global="true" name="YES" type="hiddenInWebstore"/><attribute isMandatory="N" attributeType="Boolean_YN" locale="en_US" global="true" name="YES" type="appliedToPersona"/><attribute isMandatory="Y" attributeType="EntitlementType" locale="en_US" global="true" name="DEFAULT" type="entitlementType"/><attribute isMandatory="N" attributeType="Boolean_YN" locale="en_US" global="true" name="NO" type="isStackable"/><attribute isMandatory="Y" attributeType="String" locale="en_US" global="true" name="9758824f-f3f5-451d-be27-1e38154604d6-9aec3c8d0548" type="ofbItemGuid"/></attributes><finances><finance finance_Id="102010674"/></finances><prices><price locale="en_US" endDate="" startDate="2011-06-30 07:19:11.0" priceValue="0.0" currencyCode="USD" currencyType="REAL" priceType="SALE_PRICE"/></prices></product></products></data>
+<data version="1.0" store_group_id="DBFH"><RootNode>
+  <OfferCategory name="Appearance" icon="Appearance.png">
+    <id>00461b22-5946-4d4f-be37-f3c3118fa8d7</id>
+    <nucleusGroupName>BFHPC_Appearance</nucleusGroupName>
+    <OfferCategory name="Face" icon="NewCategory.png">
+      <id>cdbb4d4a-a22f-4c1a-924f-add0a391ac60</id>
+      <nucleusGroupName>BFHPC_Face</nucleusGroupName>
+    </OfferCategory>
+    <OfferCategory name="Head" icon="NewCategory.png">
+      <id>6bb32550-253a-4ffe-958e-7aaca3cb267f</id>
+      <nucleusGroupName>BFHPC_Head</nucleusGroupName>
+    </OfferCategory>
+    <OfferCategory name="Neck" icon="NewCategory.png">
+      <id>65953358-1a00-42ea-83ea-e133bc5bd5c8</id>
+      <nucleusGroupName>BFHPC_Neck</nucleusGroupName>
+    </OfferCategory>
+    <OfferCategory name="Accessory" icon="NewCategory.png">
+      <id>25902169-4377-4bcf-893c-93a584809b0d</id>
+      <nucleusGroupName>BFHPC_Accessory</nucleusGroupName>
+    </OfferCategory>
+    <OfferCategory name="Body" icon="NewCategory.png">
+      <id>5e63cb16-b660-479d-9135-4c341515e504</id>
+      <nucleusGroupName>BFHPC_Body</nucleusGroupName>
+    </OfferCategory>
+    <OfferCategory name="Chest" icon="NewCategory.png">
+      <id>dbe09480-e14e-4339-8b38-b28c6242a7cf</id>
+      <nucleusGroupName>BFHPC_Chest</nucleusGroupName>
+    </OfferCategory>
+    <OfferCategory name="Hands" icon="NewCategory.png">
+      <id>4d6678ff-24a6-4271-8f38-a16f3e1f31c5</id>
+      <nucleusGroupName>BFHPC_Hands</nucleusGroupName>
+    </OfferCategory>
+    <OfferCategory name="Waist" icon="NewCategory.png">
+      <id>d8caf866-9158-48f6-946d-59c582d0dfd6</id>
+      <nucleusGroupName>BFHPC_Waist</nucleusGroupName>
+    </OfferCategory>
+    <OfferCategory name="Legs" icon="NewCategory.png">
+      <id>a6ce25f9-f6a3-4b58-8dc1-55bf41aa5fe1</id>
+      <nucleusGroupName>BFHPC_Legs</nucleusGroupName>
+    </OfferCategory>
+    <OfferCategory name="Feet" icon="NewCategory.png">
+      <id>399099a6-7940-42f7-8eb2-bac1c1eb8820</id>
+      <nucleusGroupName>BFHPC_Feet</nucleusGroupName>
+    </OfferCategory>
+  </OfferCategory>
+  <OfferCategory name="Weapons" icon="Weapons.png">
+    <id>a93be9db-e0ce-4c7f-b83c-0929f4bb185e</id>
+    <nucleusGroupName>BFHPC_Weapon</nucleusGroupName>
+    <OfferCategory name="Knifes" icon="NewCategory.png">
+      <id>432f376a-bfa3-4aad-8438-5f82e6706c7d</id>
+      <nucleusGroupName>BFHPC_Knife</nucleusGroupName>
+      <PricePoint icon="app\ValorPoints.png">
+        <id>OFR1</id>
+        <wallet>ValorPoints</wallet>
+        <price>10</price>
+        <comments />
+        <limit type="Unlimited" />
+      </PricePoint>
+    </OfferCategory>
+    <OfferCategory name="Pistols" icon="NewCategory.png">
+      <id>ec1d034d-14e8-47a3-91c8-38bec96d4f90</id>
+      <nucleusGroupName>BFHPC_Pistol</nucleusGroupName>
+    </OfferCategory>
+    <OfferCategory name="Rifles" icon="NewCategory.png">
+      <id>773c0253-8d0c-47da-88fc-b6d55025b0a5</id>
+      <nucleusGroupName>BFHPC_Rifle</nucleusGroupName>
+    </OfferCategory>
+    <OfferCategory name="SMGs" icon="NewCategory.png">
+      <id>c1dac6a1-eb5a-4bf5-bc88-80303e243e45</id>
+      <nucleusGroupName>BFHPC_SMG</nucleusGroupName>
+    </OfferCategory>
+    <OfferCategory name="MachineGuns" icon="NewCategory.png">
+      <id>7b1f6062-6ae3-42df-b6df-3992fe6d3260</id>
+      <nucleusGroupName>BFHPC_MachineGuns</nucleusGroupName>
+    </OfferCategory>
+    <OfferCategory name="Explosives" icon="NewCategory.png">
+      <id>38d2e0ac-dd3c-49d3-84b3-85d8eee93a89</id>
+      <nucleusGroupName>BFHPC_Explosive</nucleusGroupName>
+    </OfferCategory>
+  </OfferCategory>
+  <OfferCategory name="Emotes" icon="Emotes.png">
+    <id>7b27e876-90dc-415e-92ee-f80ebda89bb1</id>
+    <nucleusGroupName>BFHPC_Emote</nucleusGroupName>
+  </OfferCategory>
+  <OfferCategory name="Abilities" icon="Abilities.png">
+    <id>12e7ac09-e685-4189-afbd-bf93e7067016</id>
+    <nucleusGroupName>BFHPC_Ability</nucleusGroupName>
+  </OfferCategory>
+  <OfferCategory name="Convenience" icon="NewCategory.png">
+    <id>9bc043d5-66a9-4e08-b393-9b24d2622f4a</id>
+    <nucleusGroupName>BFHPC_Convenience</nucleusGroupName>
+    <OfferCategory name="Stats Modifiers" icon="NewCategory.png">
+      <id>9feed766-cf20-437b-a8fa-9c063ac41b49</id>
+      <nucleusGroupName>BFHPC_StatsModifier</nucleusGroupName>
+    </OfferCategory>
+    <OfferCategory name="Stats Update" icon="NewCategory.png">
+      <id>af8f57af-f3cd-47d1-b04f-88cb12847cb4</id>
+      <nucleusGroupName>BFHPC_StatsUpdate</nucleusGroupName>
+    </OfferCategory>
+  </OfferCategory>
+  <OfferCategory name="Special" icon="NewCategory.png">
+    <id>1056a80b-12d3-46ba-b162-8b16c5301909</id>
+    <nucleusGroupName>BFHPC_Special</nucleusGroupName>
+  </OfferCategory>
+  <OfferCategory name="Bundles" icon="NewCategory.png">
+    <id>4da974b6-bc32-43bb-b1df-317df172469e</id>
+    <nucleusGroupName>BFHPC_Bundles</nucleusGroupName>
+  </OfferCategory>
+</RootNode>

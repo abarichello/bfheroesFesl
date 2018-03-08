@@ -18,11 +18,6 @@ const (
 	acctGrantEntitlement = "NuGrantEntitlement"
 )
 
-type ansNuLookupUserInfo struct {
-	TXN      string     `fesl:"TXN"`
-	UserInfo []userInfo `fesl:"userInfo"`
-}
-
 type userInfo struct {
 	Namespace    string `fesl:"namespace"`
 	XUID         string `fesl:"xuid"`
@@ -43,6 +38,127 @@ type LoginContainerErr struct {
 	Value      string `fesl:"value"`
 	FieldError string `fesl:"fieldError"`
 	FieldName  string `fesl:"fieldName"`
+}
+
+type ansNuLogin struct {
+	TXN       string `fesl:"TXN"`
+	ProfileID string `fesl:"profileId"`
+	UserID    string `fesl:"userId"`
+	NucleusID string `fesl:"nuid"`
+	Lkey      string `fesl:"lkey"`
+}
+
+// NuLogin - master login command
+// TODO: Here we can implement a banlist/permission check if player is allowed to play/join
+func (fm *FeslManager) NuLogin(event network.EventClientProcess) {
+
+	if event.Client.HashState.Get("clientType") == "server" {
+		// Server login
+		fm.NuLoginServer(event)
+		return
+	}
+
+	var id, username, email, birthday, language, country, gameToken string
+
+	err := fm.db.stmtGetUserByGameToken.QueryRow(event.Process.Msg["encryptedInfo"]).Scan(&id, &username, //CONTINUE
+		&email, &birthday, &language, &country, &gameToken)
+
+	if err != nil {
+		event.Client.Answer(&codec.Pkt{
+			Content: NuLoginErr{
+				TXN:     acctNuLogin,
+				Message: `"Wrong Login/Spoof"`,
+				Code:    120,
+			},
+
+			Send: event.Process.HEX,
+			Type: event.Process.Query,
+		})
+		return
+	}
+
+	saveRedis := map[string]interface{}{
+		"uID":       id,
+		"username":  username,
+		"sessionID": gameToken,
+		"email":     email,
+		"keyHash":   event.Process.Msg["encryptedInfo"],
+	}
+	event.Client.HashState.SetM(saveRedis)
+
+	// Setup a new key for our persona
+	lkey := BF2RandomUnsafe(24)
+	lkeyRedis := fm.level.NewObject("lkeys", lkey)
+	lkeyRedis.Set("id", id)
+	lkeyRedis.Set("userID", id)
+	lkeyRedis.Set("name", username)
+
+	event.Client.HashState.Set("lkeys", event.Client.HashState.Get("lkeys")+";"+lkey)
+	event.Client.Answer(&codec.Pkt{
+		Content: ansNuLogin{
+			TXN:       acctNuLogin,
+			ProfileID: id,
+			UserID:    id,
+			NucleusID: username,
+			Lkey:      lkey,
+		},
+		Send: event.Process.HEX,
+		Type: acct,
+	})
+}
+
+// NuLoginServer - login command for servers
+func (fm *FeslManager) NuLoginServer(event network.EventClientProcess) {
+	var id, userID, servername, secretKey, username string
+
+	err := fm.db.stmtGetServerBySecret.QueryRow(event.Process.Msg["password"]).Scan(&id,
+		&userID, &servername, &secretKey, &username)
+
+	if err != nil {
+		event.Client.Answer(&codec.Pkt{
+			Content: NuLoginErr{
+				TXN:     acctNuLogin,
+				Message: `"Wrong Server "`,
+				Code:    122,
+			},
+			Send: event.Process.HEX,
+			Type: acct,
+		})
+		return
+	}
+
+	saveRedis := make(map[string]interface{})
+	saveRedis["uID"] = userID
+	saveRedis["sID"] = id
+	saveRedis["username"] = username
+	saveRedis["apikey"] = event.Process.Msg["encryptedInfo"]
+	saveRedis["keyHash"] = event.Process.Msg["password"]
+	event.Client.HashState.SetM(saveRedis)
+
+	// Setup a new key for new persona
+	lkey := BF2RandomUnsafe(24)
+	lkeyRedis := fm.level.NewObject("lkeys", lkey)
+	lkeyRedis.Set("id", id)
+	lkeyRedis.Set("userID", userID)
+	lkeyRedis.Set("name", username)
+
+	event.Client.HashState.Set("lkeys", event.Client.HashState.Get("lkeys")+";"+lkey)
+	event.Client.Answer(&codec.Pkt{
+		Content: ansNuLogin{
+			TXN:       acctNuLogin,
+			ProfileID: userID,
+			UserID:    userID,
+			NucleusID: username,
+			Lkey:      lkey,
+		},
+		Send: event.Process.HEX,
+		Type: acct,
+	})
+}
+
+type ansNuLookupUserInfo struct {
+	TXN      string     `fesl:"TXN"`
+	UserInfo []userInfo `fesl:"userInfo"`
 }
 
 func (fm *FeslManager) NuLookupUserInfo(event network.EventClientProcess) {
@@ -370,121 +486,5 @@ func (fm *FeslManager) acctNuGetAccount(event *network.EventClientProcess) {
 			UserID:         event.Client.HashState.Get("uID"),
 		},
 		Send: event.Process.HEX,
-	})
-}
-
-type ansNuLogin struct {
-	TXN       string `fesl:"TXN"`
-	ProfileID string `fesl:"profileId"`
-	UserID    string `fesl:"userId"`
-	NucleusID string `fesl:"nuid"`
-	Lkey      string `fesl:"lkey"`
-}
-
-// NuLogin - master login command
-// TODO: Here we can implement a banlist/permission check if player is allowed to play/join
-func (fm *FeslManager) NuLogin(event network.EventClientProcess) {
-
-	if event.Client.HashState.Get("clientType") == "server" {
-		// Server login
-		fm.NuLoginServer(event)
-		return
-	}
-
-	var id, username, email, birthday, language, country, gameToken string
-
-	err := fm.db.stmtGetUserByGameToken.QueryRow(event.Process.Msg["encryptedInfo"]).Scan(&id, &username, //CONTINUE
-		&email, &birthday, &language, &country, &gameToken)
-
-	if err != nil {
-		event.Client.Answer(&codec.Pkt{
-			Content: NuLoginErr{
-				TXN:     acctNuLogin,
-				Message: `"Wrong Login/Spoof"`,
-				Code:    120,
-			},
-
-			Send: event.Process.HEX,
-			Type: event.Process.Query,
-		})
-		return
-	}
-
-	saveRedis := map[string]interface{}{
-		"uID":       id,
-		"username":  username,
-		"sessionID": gameToken,
-		"email":     email,
-		"keyHash":   event.Process.Msg["encryptedInfo"],
-	}
-	event.Client.HashState.SetM(saveRedis)
-
-	// Setup a new key for our persona
-	lkey := BF2RandomUnsafe(24)
-	lkeyRedis := fm.level.NewObject("lkeys", lkey)
-	lkeyRedis.Set("id", id)
-	lkeyRedis.Set("userID", id)
-	lkeyRedis.Set("name", username)
-
-	event.Client.HashState.Set("lkeys", event.Client.HashState.Get("lkeys")+";"+lkey)
-	event.Client.Answer(&codec.Pkt{
-		Content: ansNuLogin{
-			TXN:       acctNuLogin,
-			ProfileID: id,
-			UserID:    id,
-			NucleusID: username,
-			Lkey:      lkey,
-		},
-		Send: event.Process.HEX,
-		Type: acct,
-	})
-}
-
-// NuLoginServer - login command for servers
-func (fm *FeslManager) NuLoginServer(event network.EventClientProcess) {
-	var id, userID, servername, secretKey, username string
-
-	err := fm.db.stmtGetServerBySecret.QueryRow(event.Process.Msg["password"]).Scan(&id,
-		&userID, &servername, &secretKey, &username)
-
-	if err != nil {
-		event.Client.Answer(&codec.Pkt{
-			Content: NuLoginErr{
-				TXN:     acctNuLogin,
-				Message: `"Wrong Server "`,
-				Code:    122,
-			},
-			Send: event.Process.HEX,
-			Type: acct,
-		})
-		return
-	}
-
-	saveRedis := make(map[string]interface{})
-	saveRedis["uID"] = userID
-	saveRedis["sID"] = id
-	saveRedis["username"] = username
-	saveRedis["apikey"] = event.Process.Msg["encryptedInfo"]
-	saveRedis["keyHash"] = event.Process.Msg["password"]
-	event.Client.HashState.SetM(saveRedis)
-
-	// Setup a new key for new persona
-	lkey := BF2RandomUnsafe(24)
-	lkeyRedis := fm.level.NewObject("lkeys", lkey)
-	lkeyRedis.Set("id", id)
-	lkeyRedis.Set("userID", userID)
-	lkeyRedis.Set("name", username)
-
-	event.Client.HashState.Set("lkeys", event.Client.HashState.Get("lkeys")+";"+lkey)
-	event.Client.Answer(&codec.Pkt{
-		Content: ansNuLogin{
-			TXN:       acctNuLogin,
-			ProfileID: userID,
-			UserID:    userID,
-			NucleusID: username,
-			Lkey:      lkey,
-		},
-		Send: event.Process.HEX,
-		Type: acct,
 	})
 }
