@@ -44,7 +44,7 @@ DATABASE_PASSWORD=dbPass
 LOG_LEVEL=DEBUG /INFO.. /WARNING..
 =================================================================================================================================
 #  PROTOCOL
-This provides the info about the Backend or FESL . Between the Master server , Fesl Server and Theater Server
+This provides the info about the Backend or FESL . Between the Master server , Fesl Server and Theather Server
 
 ## General  overview
 

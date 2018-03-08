@@ -95,7 +95,7 @@ func newClientTLS(name string, conn *tls.Conn) *Client {
 
 func (client *Client) handleRequestTLS() {
 	client.IsActive = true
-	buf := make([]byte, 16384) // buffer
+	buf := make([]byte, 8096) // buffer
 	tempBuf := []byte{}
 
 	for client.IsActive {
@@ -110,13 +110,13 @@ func (client *Client) handleRequestTLS() {
 		} else {
 			tempBuf = client.readFESLTLS(buf[:n])
 		}
-		buf = make([]byte, 16384) // new fresh buffer
+		buf = make([]byte, 8096) // new fresh buffer
 	}
 }
 
 func (client *Client) handleRequest() {
 	client.IsActive = true
-	buf := make([]byte, 16384) // buffer
+	buf := make([]byte, 8096) // buffer
 	tempBuf := []byte{}
 
 	for client.IsActive {
@@ -132,7 +132,7 @@ func (client *Client) handleRequest() {
 			} else {
 				tempBuf = client.readFESL(buf[:n])
 			}
-			buf = make([]byte, 16384) // new fresh buffer
+			buf = make([]byte, 8096) // new fresh buffer
 			continue
 		}
 
