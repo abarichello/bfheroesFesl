@@ -86,11 +86,11 @@ func (fm *FeslManager) run() {
 			case "client.command":
 				TXN := event.Data.(network.EventClientProcess).Process.Msg["TXN"]
 				logrus.WithFields(logrus.Fields{
-					"srv": fm.name,
+					" ": fm.name,
 					"cmd": fmt.Sprintf("%s/TXN:%s", event.Name, TXN),
-				}).Debugf("Event")
+				}).Debugf("EV")
 			default:
-				logrus.WithFields(logrus.Fields{"srv": fm.name, "event": event.Name}).Debugf("Event")
+				logrus.WithFields(logrus.Fields{" ": fm.name, "EV": event.Name}).Debugf("EV")
 			}
 		}
 	}

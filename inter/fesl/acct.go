@@ -18,8 +18,9 @@ const (
 	acctGrantEntitlement = "NuGrantEntitlement"
 )
 
+
 type ansNuLookupUserInfo struct {
-	TXN      string     `fesl:"TXN"`
+	TXN     string      `fesl:"TXN"`
 	UserInfo []userInfo `fesl:"userInfo"`
 }
 
@@ -30,6 +31,23 @@ type userInfo struct {
 	UserID       string `fesl:"userId"`
 	UserName     string `fesl:"userName"`
 }
+
+
+// Server Login Security -> Send close Packet
+type NuLoginErr struct {
+	TXN     string                `fesl:"TXN"`
+	Message string                `fesl:"localizedMessage"`
+	Errors  []LoginContainerErr   `fesl:"errorContainer"`
+	Code    int                   `fesl:"errorCode"`
+}
+
+type LoginContainerErr struct {
+	Value      string `fesl:"value"`
+	FieldError string `fesl:"fieldError"`
+	FieldName  string `fesl:"fieldName"`
+}
+
+
 
 func (fm *FeslManager) NuLookupUserInfo(event network.EventClientProcess) {
 	if !event.Client.IsActive {
@@ -58,7 +76,7 @@ func (fm *FeslManager) NuLookupUserInfo(event network.EventClientProcess) {
 			UserID:       id,
 			MasterUserID: id,
 			Namespace:    "MAIN",
-			XUID:         "24", // ??? wtf
+			XUID:         "24",
 		})
 	}
 
@@ -75,7 +93,9 @@ func (fm *FeslManager) NuLookupUserInfoServer(event network.EventClientProcess) 
 	var err error
 
 	var id, userID, servername, secretKey, username string
-	err = fm.db.stmtGetServerByID.QueryRow(event.Client.HashState.Get("sID")).Scan(&id, &userID, &servername, &secretKey, &username)
+	err = fm.db.stmtGetServerByID.QueryRow(event.Client.HashState.Get("sID")).Scan(&id, &userID, //br
+	&servername, &secretKey, &username)
+
 	if err != nil {
 		logrus.Errorln(err)
 		return
@@ -101,7 +121,10 @@ func (fm *FeslManager) NuLookupUserInfoServer(event network.EventClientProcess) 
 
 
 
-
+type reqNuLoginPersona struct {
+	Txn  string `fesl:"TXN"`  // =NuLoginPersona
+	Name string `fesl:"name"` // Value specified in +soldierName
+}
 
 type ansNuLoginPersona struct {
 	TXN       string `fesl:"TXN"`
@@ -142,6 +165,7 @@ func (fm *FeslManager) NuLoginPersona(event network.EventClientProcess) {
 	event.Client.HashState.SetM(saveRedis)
 
 	event.Client.HashState.Set("lkeys", event.Client.HashState.Get("lkeys")+";"+lkey)
+
 	event.Client.Answer(&codec.Pkt{
 		Content: ansNuLogin{
 			TXN:       acctNuLoginPersona,
@@ -156,20 +180,37 @@ func (fm *FeslManager) NuLoginPersona(event network.EventClientProcess) {
 
 
 
+
 //NuLoginPersonaServer Pre-Server Login (out of order ?)
 func (fm *FeslManager) NuLoginPersonaServer(event network.EventClientProcess) {
+	if !event.Client.IsActive {
+		logrus.Println("Client Left")
+		return
+	}
+
+	if event.Client.HashState.Get("clientType") != "server" {
+		// Server Exploit Login		
+		return
+	}	
+
 	var id, userID, servername, secretKey, username string
 
 	err := fm.db.stmtGetServerByName.QueryRow(event.Process.Msg["name"]).Scan(&id, //continue
-		&userID, &servername, //continue
-		&secretKey, &username)
+	&userID, &servername, //continue
+	&secretKey, &username)
+
+	if event.Client.HashState.Get("clientType") != "server" {
+		// Server Exploit Login		
+		return
+	}
 
 	if err != nil {
 		logrus.Println("Wrong Server Login")
 		return
 	}
 
-	// Setup a new key for our persona
+
+	// Setup a key for Server
 	lkey := BF2RandomUnsafe(24)
 	lkeyRedis := fm.level.NewObject("lkeys", lkey)
 	lkeyRedis.Set("id", userID)
@@ -248,9 +289,29 @@ func (fm *FeslManager) NuGrantEntitlement(event network.EventClientProcess) {
 	})
 }
 
+
+
+
 // NuGetPersonasServer - Soldier data lookup call for servers
 func (fm *FeslManager) NuGetPersonasServer(event network.EventClientProcess) {
-	logrus.Println("SERVER CONNECT")
+	logrus.Println("======SERVER CONNECTING=====")
+
+	var id, userID, servername, secretKey, username string
+
+	err := fm.db.stmtGetServerByName.QueryRow(event.Process.Msg["name"]).Scan(&id, //continue
+	&userID, &servername, //continue
+	&secretKey, &username)
+
+	// if event.Client.HashState.Get("clientType") != "server" {
+	// 	// Server Exploit Login		
+	// 	return
+	// }
+
+	// if err != nil {
+	// 	logrus.Println("=======Wrong Server Login===============")
+	// 	return
+	// }
+	
 
 	// Server login
 	rows, err := fm.db.stmtGetServerByID.Query(event.Client.HashState.Get("uID"))
@@ -264,9 +325,18 @@ func (fm *FeslManager) NuGetPersonasServer(event network.EventClientProcess) {
 		var id, userID, servername, secretKey, username string
 		err := rows.Scan(&id, &userID, &servername, &secretKey, &username)
 		if err != nil {
-			logrus.Errorln(err)
-			return
-		}
+		event.Client.Answer(&codec.Pkt{
+			Content: NuLoginErr{
+				TXN:     acctNuLogin,
+				Message: `"Wrong Login/Spoof"`,
+				Code:    120,
+			},
+
+			Send: event.Process.HEX,
+			Type: event.Process.Query,
+		})
+		return
+	}
 
 		ans.Personas = append(ans.Personas, servername)
 		event.Client.HashState.Set("ownerId."+strconv.Itoa(len(ans.Personas)), id)
@@ -331,18 +401,6 @@ type ansNuLogin struct {
 	Lkey      string `fesl:"lkey"`
 }
 
-type ansNuLoginErr struct {
-	TXN     string                `fesl:"TXN"`
-	Message string                `fesl:"localizedMessage"`
-	Errors  []nuLoginContainerErr `fesl:"errorContainer"`
-	Code    int                   `fesl:"errorCode"`
-}
-
-type nuLoginContainerErr struct {
-	Value      string `fesl:"value"`
-	FieldError string `fesl:"fieldError"`
-	FieldName  string `fesl:"fieldName"`
-}
 
 // NuLogin - master login command
 // TODO: Here we can implement a banlist/permission check if player is allowed to play/join
@@ -358,9 +416,10 @@ func (fm *FeslManager) NuLogin(event network.EventClientProcess) {
 
 	err := fm.db.stmtGetUserByGameToken.QueryRow(event.Process.Msg["encryptedInfo"]).Scan(&id, &username, //CONTINUE
 		&email, &birthday, &language, &country, &gameToken)
+
 	if err != nil {
 		event.Client.Answer(&codec.Pkt{
-			Content: ansNuLoginErr{
+			Content: NuLoginErr{
 				TXN:     acctNuLogin,
 				Message: `"Wrong Login/Spoof"`,
 				Code:    120,
@@ -411,7 +470,7 @@ func (fm *FeslManager) NuLoginServer(event network.EventClientProcess) {
 
 	if err != nil {
 		event.Client.Answer(&codec.Pkt{
-			Content: ansNuLoginErr{
+			Content: NuLoginErr{
 				TXN:     acctNuLogin,
 				Message: `"Wrong Server "`,
 				Code:    122,

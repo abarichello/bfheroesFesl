@@ -11,7 +11,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-//THIS IS THE HELLO Pkt ;)
+//THIS IS THE HELLO PACKET
 const (
 	fsys             = "fsys"
 	fsysGetPingSites = "GetPingSites"
