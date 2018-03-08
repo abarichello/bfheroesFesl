@@ -7,21 +7,21 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+//global const
 const (
-	Complete = "COMPLETE"
-	pnow     = "pnow"
-	//pnowCancel = "Cancel"
+	Complete   = "COMPLETE"
+	pnow       = "pnow"
 	pnowStart  = "Start"
 	pnowStatus = "Status"
 	partition  = "partition.partition"
-	Join       = "JOIN"
+	J     	   = "JOIN"
 )
 
 type ansStatus struct {
 	TXN        string                 `fesl:"TXN"`
 	ID         stPartition            `fesl:"id"`
 	State      string                 `fesl:"sessionState"`
-	Properties map[string]interface{} `fesl:"props"`
+	Props 	   map[string]interface{} `fesl:"props"`
 }
 
 type stPartition struct {
@@ -37,26 +37,26 @@ type stGame struct {
 
 // Status pnow.Status command
 func (fm *FeslManager) Status(event network.EventClientProcess) {
-	logrus.Println("=Status=")
-	//Infinite Search
+	logrus.Println("===PNOW===")
 	gameID := mm.FindGIDs()
-
 	ans := ansStatus{
-		TXN: pnowStatus,
-		ID: stPartition{1,
-			event.Process.Msg[partition]},
-		State: Complete,
-		Properties: map[string]interface{}{
-			"resultType": Join,
-			"games": []stGame{
-				{
-					LobbyID: 1,
-					Fit:     1500,
-					GAME:    gameID,
-				},
-			},
-		},
-	}
+					TXN: pnowStatus,					
+			 		ID: stPartition{
+					1,event.Process.Msg[partition]},
+					State: Complete,
+					Props: map[string]interface{}{
+						"resultType": J,
+						"games": []stGame{
+							{
+							LobbyID: 1,
+							Fit:     1500,
+							GAME:    gameID,
+							},
+						},
+					},		
+				}	
+
+
 	event.Client.Answer(&codec.Pkt{
 		Content: ans,
 		Send:    0x80000000,

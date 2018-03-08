@@ -120,9 +120,9 @@ func (tm *Theater) Listen() {
 			case "client.close":
 				tm.close(event.Data.(network.EventClientClose))
 			case "client.command":
-				logrus.WithFields(logrus.Fields{"srv": tm.name, "cmd": event.Name}).Debugf("Event")
+				logrus.WithFields(logrus.Fields{" ": tm.name, "cmd": event.Name}).Debugf("Ev")
 			default:
-				logrus.WithFields(logrus.Fields{"srv": tm.name, "cmd": event.Name}).Debugf("Event")
+				logrus.WithFields(logrus.Fields{" ": tm.name, "cmd": event.Name}).Debugf("Ev")
 			}
 		}
 	}

@@ -107,7 +107,7 @@ func (tm *Theater) EGAM(event network.EventClientProcess) {
 		gameServer.Answer(&codec.Pkt{
 			Type: thtrEGRQ,
 			Content: ansEGRQ{
-				TheaterID:    "0",
+				TheaterID:    event.Process.Msg["TID"],
 				Name:         stats["heroName"],
 				UserID:       stats["userID"],
 				PlayerID:     pid,
