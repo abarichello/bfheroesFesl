@@ -127,7 +127,7 @@ type ansNuLoginPersona struct {
 	Lkey      string `fesl:"lkey"`
 }
 
-// NuLoginPersona  // User logs in with selected Hero
+// User log in with selected Hero
 func (fm *FeslManager) NuLoginPersona(event network.EventClientProcess) {
 	if !event.Client.IsActive {
 		logrus.Println("C Left")

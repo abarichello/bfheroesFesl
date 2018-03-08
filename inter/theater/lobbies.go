@@ -35,16 +35,25 @@ func (tm *Theater) LobbyData(event network.EventClientProcess) {
 	})
 }
 
-// LLST Lobbies List
+// Lobbies List
 type ansLLST struct {
 	TID        string `fesl:"TID"`
 	NumLobbies int    `fesl:"NUM-LOBBIES"`
 }
 
-// LLST - Probably Bookmarks /Or Bookmarks -> Magma
+// LLST - CLIENT (???) unknown, potentially bookmarks
 func (tm *Theater) LLST(event network.EventClientProcess) {
 	event.Client.Answer(&codec.Pkt{
 		Type:    thtrLLST,
 		Content: ansLLST{event.Process.Msg["TID"], 1},
 	})
+}
+
+// GLST - CLIENT called to get a list of game servers? Irrelevant for heroes.
+func (tm *Theater) GLST(event network.EventClientProcess) {
+	if !event.Client.IsActive {
+		logrus.Println("Cli Left")
+		return
+	}
+	logrus.Println("GLST was called")
 }
