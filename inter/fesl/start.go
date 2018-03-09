@@ -6,7 +6,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-type ansStart struct {
+type Start struct {
 	TXN string      `fesl:"TXN"`
 	ID  stPartition `fesl:"id"`
 }
@@ -14,15 +14,14 @@ type ansStart struct {
 // Start handles pnow.Start
 func (fm *FeslManager) Start(event network.EventClientProcess) {
 	logrus.Println("==START==")
+
 	event.Client.Answer(&codec.Pkt{
-		Content: ansStart{
-			TXN: pnowStart,
-			ID: stPartition{
-				1,
-				event.Process.Msg[partition]},
+		Content: Start{
+			TXN: "Start",
+			ID: stPartition{1, event.Process.Msg[partition]},
 		},
-		Send: event.Process.HEX,
-		Type: pnow,
+		Send: 0xc000000d,
+		Type: "pnow",
 	})
 	fm.Status(event)
 }

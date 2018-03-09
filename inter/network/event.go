@@ -2,19 +2,6 @@ package network
 
 import "net"
 
-// SocketEvent is the generic struct for events
-// by this socket
-//
-// Current events:
-//		Name				-> Data-Type
-// 		close 				-> nil
-//		error				-> error
-//		newClient			-> *Client
-//		client.close		-> [0: *client, 1:nil]
-//		client.error		-> {*client, error}
-// 		client.command		-> {*client, *Command}
-//		client.command.*	-> {*client, *Command}
-//		client.data			-> {*client, string}
 type SocketEvent struct {
 	Name string
 	Data interface{}
@@ -27,7 +14,6 @@ type SocketUDPEvent struct {
 }
 
 // ClientEvent is the generic struct for events
-// by this Client
 type ClientEvent struct {
 	Name string
 	Data interface{}
@@ -107,8 +93,6 @@ func (c *Client) FireSomething(event ClientEvent) SocketEvent {
 		Data: interfaceSlice,
 	}
 }
-
-// ===
 
 func (s *Socket) FireError(err error) SocketEvent {
 	return SocketEvent{

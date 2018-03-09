@@ -88,11 +88,11 @@ func readFesl(data []byte, fireEvent eventReadFesl) []byte {
 		ContentRaw = make([]byte, (length - 12))
 		p.Read(ContentRaw)
 
-		Content := codec.DecodeFESL(ContentRaw)
+		Content := codec.DecodeFESL(ContentRaw) //hex to asci
 
 		out := &ProcessFESL{
 			Query: ContentType,
-			HEX:   HEX,
+			HEX:   HEX, //ContentID like 0xc000000d 
 			Msg:   Content,
 		}
 		fireEvent(out, ContentType)
@@ -103,6 +103,17 @@ func readFesl(data []byte, fireEvent eventReadFesl) []byte {
 	return nil
 }
 
+// this is not important just do like 
+//		Send: 0xc000000d,
+
+// event.Client.Answer(&codec.Pkt{
+// Content: Start{
+// 	TXN: "Start",
+// 	ID: stPartition{1, event.Process.Msg[partition]},
+// 	},
+// 	Send: 0xc000000d,
+// 	Type: pnow,
+// })
 type ProcessFESL struct {
 	Msg   map[string]string
 	Query string
@@ -123,9 +134,6 @@ func processCommand(msg string) (*ProcessFESL, error) {
 		return nil, errors.New("Command Msg invalid")
 	}
 
-	// TODO:
-	// Check if that makes any sense? Kinda just translated from the js-code
-	//		if (data.length < 2) { return out; }
 	if len(data) == 1 {
 		outCommand.Msg["__query"] = data[0]
 		outCommand.Query = data[0]

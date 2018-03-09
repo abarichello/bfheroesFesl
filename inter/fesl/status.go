@@ -9,14 +9,10 @@ import (
 
 //global const
 const (
-	pnow       = "pnow"
-	pnowStart  = "Start"
-	pnowStatus = "Status"
 	partition  = "partition.partition"
-	J          = "JOIN"
 )
 
-type ansStatus struct {
+type Status struct {
 	TXN   string                 `fesl:"TXN"`
 	ID    stPartition            `fesl:"id"`
 	State string                 `fesl:"sessionState"`
@@ -32,33 +28,37 @@ type stGame struct {
 	LobbyID int    `fesl:"lid"`
 	Fit     int    `fesl:"fit"` // ELO ?
 	GAME    string `fesl:"gid"`
+	games1  int    `fesl:"games"`
 }
 
 // Status pnow.Status command
 func (fm *FeslManager) Status(event network.EventClientProcess) {
-	logrus.Println("===PNOW===")
+	logrus.Println("==Status==")
+
 	gameID := mm.FindGIDs()
-	ans := ansStatus{
-		TXN: pnowStatus,
+	ans := Status{
+		Props: map[string]interface{}{
+			"resultType":  "JOIN",
+			"debugLevel":  "high",
+			"sessionType": "findServer",
+					"games": []stGame{
+						{
+						LobbyID: 1,
+						Fit:     1500,
+						GAME:    gameID,
+					},
+				},
+			},
+
+		TXN: "Status",
 		ID: stPartition{
 			1, event.Process.Msg[partition]},
 		State: "COMPLETE",
-		Props: map[string]interface{}{
-			"resultType":  "JOIN",
-			"sessionType": "findServer",
-			"games": []stGame{
-				{
-					LobbyID: 1,
-					Fit:     1500,
-					GAME:    gameID,
-				},
-			},
-		},
 	}
 
 	event.Client.Answer(&codec.Pkt{
 		Content: ans,
 		Send:    0x80000000,
-		Type:    pnow,
+		Type:    "pnow",
 	})
 }
