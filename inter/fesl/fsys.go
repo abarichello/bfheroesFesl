@@ -22,7 +22,7 @@ const (
 
 type ansMemCheck struct {
 	TXN       string     `fesl:"TXN"`
-	MemChecks []memCheck `fesl:"memcheck"`
+	// Result    string					`fesl:"result"`
 	Salt      string     `fesl:"salt"`
 }
 
@@ -36,7 +36,7 @@ func (fm *FeslManager) fsysMemCheck(event *network.EventNewClient) {
 		Type: fsys,
 		Content: ansMemCheck{
 			TXN:  fsysMemCheck,
-			Salt: "5",
+			Salt: "",
 		},
 		Send: 0xC0000000,
 	})
@@ -92,6 +92,7 @@ func (fm *FeslManager) hello(event network.EventClientProcess) {
 		ConnTTL:     int((1 * time.Hour).Seconds()),
 		ConnectedAt: time.Now().Format("Jan-02-2006 15:04:05 MST"),
 		TheaterIP:   config.General.ThtrAddr,
+		MessengerIP: config.General.MessengerAddr,
 	}
 
 	if fm.server {
@@ -139,7 +140,7 @@ func (fm *FeslManager) GetPingSites(event network.EventClientProcess) {
 		Send: event.Process.HEX,
 		Content: ansGetPingSites{
 			TXN:      fsysGetPingSites,
-			MinPings: 1,
+			MinPings: 0,
 			PingSites: []pingSite{
 				{"8.8.8.8",
 					location,

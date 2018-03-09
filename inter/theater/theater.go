@@ -80,9 +80,9 @@ func (tm *Theater) Listen() {
 			case "command.ECHO":
 				go tm.ECHO(event)
 			case "command":
-				logrus.Debugf("UDP %s: %v", event.Name, event.Data.(*network.ProcessFESL))
+				logrus.Debugf(" %s: %v", event.Name, event.Data.(*network.ProcessFESL))
 			default:
-				logrus.Debugf("UDP %s: %v", event.Name, event.Data)
+				logrus.Debugf(" %s: %v", event.Name, event.Data)
 			}
 		case event := <-tm.socket.EventChan:
 			switch event.Name {
@@ -117,9 +117,9 @@ func (tm *Theater) Listen() {
 			case "client.close":
 				tm.close(event.Data.(network.EventClientClose))
 			case "client.command":
-				logrus.WithFields(logrus.Fields{" ": tm.name, "cmd": event.Name}).Debugf("Ev")
+				logrus.WithFields(logrus.Fields{" ": tm.name, "cmd": event.Name})
 			default:
-				logrus.WithFields(logrus.Fields{" ": tm.name, "cmd": event.Name}).Debugf("Ev")
+				logrus.WithFields(logrus.Fields{" ": tm.name, "cmd": event.Name})
 			}
 		}
 	}
@@ -134,15 +134,12 @@ func (tm *Theater) newClient(event network.EventNewClient) {
 		logrus.Println("Cli Left")
 		return
 	}
-	logrus.Println("CLiJoinGame")
+	logrus.Println("Jtheater")
 
 	// Start Heartbeat
-	event.Client.State.HeartTicker = time.NewTicker(time.Second * 30)
+	event.Client.State.HeartTicker = time.NewTicker(55 * time.Second)
 	go func() {
-		for {
-			if !event.Client.IsActive {
-				return
-			}
+		for event.Client.IsActive {
 			select {
 			case <-event.Client.State.HeartTicker.C:
 				if !event.Client.IsActive {

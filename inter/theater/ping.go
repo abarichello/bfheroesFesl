@@ -6,7 +6,7 @@ import (
 )
 
 type ansPING struct {
-	TheaterID string `fesl:"TID"`
+	TID string `fesl:"TID"`
 }
 
 func (tm *Theater) PING(event *network.EventNewClient) {

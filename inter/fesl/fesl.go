@@ -86,16 +86,14 @@ func (fm *FeslManager) run() {
 			case "client.command":
 				TXN := event.Data.(network.EventClientProcess).Process.Msg["TXN"]
 				logrus.WithFields(logrus.Fields{
-					" ": fm.name,
-					"cmd": fmt.Sprintf("%s/TXN:%s", event.Name, TXN),
-				}).Debugf("EV")
-			default:
-				logrus.WithFields(logrus.Fields{" ": fm.name, "EV": event.Name}).Debugf("EV")
+					"func": fm.name,
+					"message": fmt.Sprintf("%s/TXN:%s",
+						event.Name, TXN),
+				})
 			}
 		}
 	}
 }
-
 // TLS
 func (fm *FeslManager) newClient(event network.EventNewClient) {
 	if !event.Client.IsActive {
@@ -106,12 +104,9 @@ func (fm *FeslManager) newClient(event network.EventNewClient) {
 	fm.fsysMemCheck(&event)
 
 	// Start Heartbeat
-	event.Client.State.HeartTicker = time.NewTicker(time.Second * 14)
+	event.Client.State.HeartTicker = time.NewTicker(55 * time.Second)
 	go func() {
-		for {
-			if !event.Client.IsActive {
-				return
-			}
+		for event.Client.IsActive {
 			select {
 			case <-event.Client.State.HeartTicker.C:
 				if !event.Client.IsActive {
@@ -123,7 +118,6 @@ func (fm *FeslManager) newClient(event network.EventNewClient) {
 	}()
 
 	logrus.Println("New Client")
-
 }
 
 // TLS

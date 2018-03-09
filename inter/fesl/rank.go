@@ -84,7 +84,7 @@ func (fm *FeslManager) GetStats(event network.EventClientProcess) {
 		delete(statsKeys, statsKey)
 	}
 
-	// Send stats not found with default value of ""
+	// Send stats not found with value of ""
 	for key := range statsKeys {
 		ans.Stats = append(ans.Stats, statsPair{Key: key})
 	}

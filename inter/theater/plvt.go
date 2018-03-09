@@ -14,7 +14,7 @@ type ansKICK struct {
 }
 
 type ansPLVT struct {
-	TheaterID string `fesl:"TID"`
+	TID string `fesl:"TID"`
 }
 
 // PENT - SERVER sent up when a player joins (entitle player?)

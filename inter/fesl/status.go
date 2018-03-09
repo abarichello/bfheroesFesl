@@ -13,7 +13,7 @@ const (
 	partition  = "partition.partition"
 )
 
-type ansStatus struct {
+type Status struct {
 	TXN   string                 `fesl:"TXN"`
 	ID    stPartition            `fesl:"id"`
 	State string                 `fesl:"sessionState"`
@@ -28,7 +28,7 @@ type stPartition struct {
 type stGame struct {
 	LobbyID int    `fesl:"lid"`
 	Fit     int    `fesl:"fit"` // ELO ?
-	GID    string `fesl:"gid"`
+	GID    string  `fesl:"gid"`
 }
 
 // Status pnow.Status command
@@ -36,13 +36,14 @@ func (fm *FeslManager) Status(event network.EventClientProcess) {
 	logrus.Println("==Status==")
 
 	gameID := mm.FindGIDs()
-	ans := ansStatus{
+	ans := Status{
 		TXN: TXNStatus,
 		ID: stPartition{1, event.Process.Msg[partition]},
 		State: "COMPLETE",
 		Props: map[string]interface{}{
 			"resultType":  "JOIN",
 			"debugLevel":  "high",
+			"timeout": "0",
 			"sessionType": "findServer",
 			"games": []stGame{
 				{

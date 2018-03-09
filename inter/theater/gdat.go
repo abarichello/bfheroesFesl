@@ -67,7 +67,7 @@ type ansGDAT struct {
 	ServerName          string `fesl:"NAME"`
 	ServerType          string `fesl:"B-U-servertype"`
 	StdDevLevel         string `fesl:"B-U-lvl_sdv"`
-	TheaterID           string `fesl:"TID"`
+	TID                 string `fesl:"TID"`
 
 	BMaxObservers        string `fesl:"B-maxObservers"`
 	BNumObservers        string `fesl:"B-numObservers"`
@@ -98,6 +98,7 @@ type ansGDAT struct {
 	Secret               string `fesl:"SECRET"`
 	Type                 string `fesl:"TYPE"`
 	Ugid                 string `fesl:"UGID"`
+	Allowed														string `fesl:"ALLOWED"`
 }
 
 // GDAT - CLIENT called to get data about the server
@@ -113,7 +114,8 @@ func (tm *Theater) GDAT(event network.EventClientProcess) {
 	event.Client.Answer(&codec.Pkt{
 		Type: thtrGDAT,
 		Content: ansGDAT{
-			TheaterID:            event.Process.Msg["TID"],
+			Allowed:               "1",
+			TID:                  event.Process.Msg["TID"],
 			Ap:                   gameServer.Get("AP"),
 			ArmyDistribution:     gameServer.Get("B-U-army_distribution"),
 			AvailableVipsNation:  gameServer.Get("B-U-avail_vips_national"),
