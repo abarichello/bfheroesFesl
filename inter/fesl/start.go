@@ -3,31 +3,23 @@ package fesl
 import (
 	"github.com/Synaxis/bfheroesFesl/inter/network"
 	"github.com/Synaxis/bfheroesFesl/inter/network/codec"
-	"github.com/sirupsen/logrus"
 )
-//TODO
-// 'GetStatus'
-// 'Update'
-// 'Cancel'
-	
-type Start struct {
+
+type ansStart struct {
 	TXN string      `fesl:"TXN"`
 	ID  stPartition `fesl:"id"`
-	dbgLevel string `fesl:"debugLevel"`	
 }
 
 // Start handles pnow.Start
-func (fm *FeslManager) Start(event network.EventClientProcess) {
-	logrus.Println("==START==")
-
+func (fm *FeslManager) Start(event network.EventClientCommand) {
 	event.Client.Answer(&codec.Pkt{
-		Content: Start{
-			TXN: "Start",
-			dbgLevel:  "high",
-			ID: stPartition{1, event.Process.Msg[partition]},			
+		Content: ansStart{
+			TXN: pnowStart,
+			ID: stPartition{1,
+				event.Command.Msg[partition]},
 		},
-		Send: 0xc000000d,
-		Type: "pnow",
+		Send: event.Command.HEX,
+		Type: pnow,
 	})
 	fm.Status(event)
 }

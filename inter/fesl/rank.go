@@ -10,8 +10,16 @@ import (
 )
 
 const (
-	rank            = "rank"
-	rankGetStats    = "GetStats"
+	rank = "rank"
+
+	// rankGetDateRange            = "GetDateRange"
+	// rankGetRankedStats          = "GetRankedStats"
+	// rankGetRankedStatsForOwners = "GetRankedStatsForOwners"
+	rankGetStats = "GetStats"
+	// rankGetStatsForOwners       = "GetStatsForOwners"
+	// rankGetTopN                 = "GetTopN"
+	// rankGetTopNAndMe            = "GetTopNAndMe"
+	// rankGetTopNAndStats         = "GetTopNAndStats"
 	rankUpdateStats = "UpdateStats"
 )
 
@@ -29,21 +37,21 @@ type statsPair struct {
 }
 
 // GetStats - Get basic stats about a soldier/owner (account holder)
-func (fm *FeslManager) GetStats(event network.EventClientProcess) {
+func (fm *FeslManager) GetStats(event network.EventClientCommand) {
 	if !event.Client.IsActive {
 		logrus.Println("Cli Left")
 		return
 	}
 
-	owner := event.Process.Msg["owner"]
-	userId := event.Client.HashState.Get("uID") //ultra typo
+	owner := event.Command.Msg["owner"]
+	userId := event.Client.HashState.Get("uID")
 
 	if event.Client.HashState.Get("clientType") == "server" {
 
 		var id, userID, heroName, online string
 		err := fm.db.stmtGetHeroeByID.QueryRow(owner).Scan(&id, &userID, &heroName, &online)
 		if err != nil {
-			logrus.Println("ServerLOGIN")
+			logrus.Println("server clientType!")
 			return
 		}
 
@@ -62,10 +70,10 @@ func (fm *FeslManager) GetStats(event network.EventClientProcess) {
 	statsKeys := make(map[string]string)
 	args = append(args, owner)
 	args = append(args, userId)
-	keys, _ := strconv.Atoi(event.Process.Msg["keys.[]"])
+	keys, _ := strconv.Atoi(event.Command.Msg["keys.[]"])
 	for i := 0; i < keys; i++ {
-		args = append(args, event.Process.Msg["keys."+strconv.Itoa(i)+""])
-		statsKeys[event.Process.Msg["keys."+strconv.Itoa(i)+""]] = strconv.Itoa(i)
+		args = append(args, event.Command.Msg["keys."+strconv.Itoa(i)+""])
+		statsKeys[event.Command.Msg["keys."+strconv.Itoa(i)+""]] = strconv.Itoa(i)
 	}
 
 	rows, err := fm.db.getStatsStatement(keys).Query(args...)
@@ -84,14 +92,14 @@ func (fm *FeslManager) GetStats(event network.EventClientProcess) {
 		delete(statsKeys, statsKey)
 	}
 
-	// Send stats not found with value of ""
+	// Send stats not found with default value of ""
 	for key := range statsKeys {
 		ans.Stats = append(ans.Stats, statsPair{Key: key})
 	}
 
 	event.Client.Answer(&codec.Pkt{
 		Content: ans,
-		Send:    event.Process.HEX,
+		Send:    event.Command.HEX,
 		Type:    rank,
 	})
 }
@@ -121,7 +129,7 @@ type updateStat struct {
 }
 
 // UpdateStats - updates stats about a soldier
-func (fm *FeslManager) UpdateStats(event network.EventClientProcess) {
+func (fm *FeslManager) UpdateStats(event network.EventClientCommand) {
 	if !event.Client.IsActive {
 		logrus.Println("Cli Left")
 		return
@@ -131,7 +139,7 @@ func (fm *FeslManager) UpdateStats(event network.EventClientProcess) {
 
 	userId := event.Client.HashState.Get("uID")
 
-	users, _ := strconv.Atoi(event.Process.Msg["u.[]"])
+	users, _ := strconv.Atoi(event.Command.Msg["u.[]"])
 
 	if users == 0 {
 		logrus.Warning("No u.[], defaulting to 1")
@@ -139,7 +147,7 @@ func (fm *FeslManager) UpdateStats(event network.EventClientProcess) {
 	}
 
 	for i := 0; i < users; i++ {
-		owner, ok := event.Process.Msg["u."+strconv.Itoa(i)+".o"]
+		owner, ok := event.Command.Msg["u."+strconv.Itoa(i)+".o"]
 		if event.Client.HashState.Get("clientType") == "server" {
 
 			var id, userIDhero, heroName, online string
@@ -165,10 +173,10 @@ func (fm *FeslManager) UpdateStats(event network.EventClientProcess) {
 		statsKeys := make(map[string]string)
 		argsGet = append(argsGet, owner)
 		argsGet = append(argsGet, userId)
-		keys, _ := strconv.Atoi(event.Process.Msg["u."+strconv.Itoa(i)+".s.[]"])
+		keys, _ := strconv.Atoi(event.Command.Msg["u."+strconv.Itoa(i)+".s.[]"])
 		for j := 0; j < keys; j++ {
-			argsGet = append(argsGet, event.Process.Msg["u."+strconv.Itoa(i)+".s."+strconv.Itoa(j)+".k"])
-			statsKeys[event.Process.Msg["u."+strconv.Itoa(i)+".s."+strconv.Itoa(j)+".k"]] = strconv.Itoa(j)
+			argsGet = append(argsGet, event.Command.Msg["u."+strconv.Itoa(i)+".s."+strconv.Itoa(j)+".k"])
+			statsKeys[event.Command.Msg["u."+strconv.Itoa(i)+".s."+strconv.Itoa(j)+".k"]] = strconv.Itoa(j)
 		}
 
 		rows, err := fm.db.getStatsStatement(keys).Query(argsGet...)
@@ -210,29 +218,29 @@ func (fm *FeslManager) UpdateStats(event network.EventClientProcess) {
 
 		// Generate our argument list for the statement -> userId, owner, key1, value1, userId, owner, key2, value2, userId, owner, ...
 		var args []interface{}
-		keys, _ = strconv.Atoi(event.Process.Msg["u."+strconv.Itoa(i)+".s.[]"])
+		keys, _ = strconv.Atoi(event.Command.Msg["u."+strconv.Itoa(i)+".s.[]"])
 		for j := 0; j < keys; j++ {
 
-			if event.Process.Msg["u."+strconv.Itoa(i)+".s."+strconv.Itoa(j)+".ut"] != "3" {
-				logrus.Println("Update new Type:", event.Process.Msg["u."+strconv.Itoa(i)+".s."+strconv.Itoa(j)+".k"], event.Process.Msg["u."+strconv.Itoa(i)+".s."+strconv.Itoa(j)+".t"], event.Process.Msg["u."+strconv.Itoa(i)+".s."+strconv.Itoa(j)+".ut"], event.Process.Msg["u."+strconv.Itoa(i)+".s."+strconv.Itoa(j)+".v"], event.Process.Msg["u."+strconv.Itoa(i)+".s."+strconv.Itoa(j)+".pt"])
+			if event.Command.Msg["u."+strconv.Itoa(i)+".s."+strconv.Itoa(j)+".ut"] != "3" {
+				logrus.Println("Update new Type:", event.Command.Msg["u."+strconv.Itoa(i)+".s."+strconv.Itoa(j)+".k"], event.Command.Msg["u."+strconv.Itoa(i)+".s."+strconv.Itoa(j)+".t"], event.Command.Msg["u."+strconv.Itoa(i)+".s."+strconv.Itoa(j)+".ut"], event.Command.Msg["u."+strconv.Itoa(i)+".s."+strconv.Itoa(j)+".v"], event.Command.Msg["u."+strconv.Itoa(i)+".s."+strconv.Itoa(j)+".pt"])
 			}
 
-			key := event.Process.Msg["u."+strconv.Itoa(i)+".s."+strconv.Itoa(j)+".k"]
-			value := event.Process.Msg["u."+strconv.Itoa(i)+".s."+strconv.Itoa(j)+".t"]
+			key := event.Command.Msg["u."+strconv.Itoa(i)+".s."+strconv.Itoa(j)+".k"]
+			value := event.Command.Msg["u."+strconv.Itoa(i)+".s."+strconv.Itoa(j)+".t"]
 
 			if value == "" {
-				logrus.Println("Updating stat", key+":", event.Process.Msg["u."+strconv.Itoa(i)+".s."+strconv.Itoa(j)+".v"], "+", stats[key].value)
+				logrus.Println("Updating stat", key+":", event.Command.Msg["u."+strconv.Itoa(i)+".s."+strconv.Itoa(j)+".v"], "+", stats[key].value)
 				// We are dealing with a number
-				value = event.Process.Msg["u."+strconv.Itoa(i)+".s."+strconv.Itoa(j)+".v"]
+				value = event.Command.Msg["u."+strconv.Itoa(i)+".s."+strconv.Itoa(j)+".v"]
 
 				// ut seems to be 3 when we need to add up (xp has ut 0 when you level'ed up, otherwise 3)
-				if event.Process.Msg["u."+strconv.Itoa(i)+".s."+strconv.Itoa(j)+".ut"] == "3" {
+				if event.Command.Msg["u."+strconv.Itoa(i)+".s."+strconv.Itoa(j)+".ut"] == "3" {
 					intValue, err := strconv.ParseFloat(value, 64)
 					if err != nil {
 						// Couldn't transfer it to a number, skip updating this stat
 						logrus.Errorln("Skipping stat "+key, err)
 						event.Client.Answer(&codec.Pkt{
-							Send:    event.Process.HEX,
+							Send:    event.Command.HEX,
 							Type:    rank,
 							Content: ansUpdateStats{TXN: rankUpdateStats},
 						})
@@ -246,7 +254,7 @@ func (fm *FeslManager) UpdateStats(event network.EventClientProcess) {
 						if key == "c_wallet_hero" && newValue < 0 {
 							logrus.Errorln("Not allowed to process stat. c_wallet_hero lower than 0", key)
 							event.Client.Answer(&codec.Pkt{
-								Send:    event.Process.HEX,
+								Send:    event.Command.HEX,
 								Type:    rank,
 								Content: ansUpdateStats{TXN: rankUpdateStats},
 							})
@@ -257,7 +265,7 @@ func (fm *FeslManager) UpdateStats(event network.EventClientProcess) {
 					} else {
 						logrus.Errorln("Not allowed to process stat", key)
 						event.Client.Answer(&codec.Pkt{
-							Send:    event.Process.HEX,
+							Send:    event.Command.HEX,
 							Type:    rank,
 							Content: ansUpdateStats{TXN: rankUpdateStats},
 						})
@@ -282,7 +290,7 @@ func (fm *FeslManager) UpdateStats(event network.EventClientProcess) {
 	}
 
 	event.Client.Answer(&codec.Pkt{
-		Send:    event.Process.HEX,
+		Send:    event.Command.HEX,
 		Type:    rank,
 		Content: ans,
 	})
@@ -300,7 +308,7 @@ type statsContainer struct {
 }
 
 // GetStatsForOwners - Gives a bunch of info for the Hero selection screen?
-func (fm *FeslManager) GetStatsForOwners(event network.EventClientProcess) {
+func (fm *FeslManager) GetStatsForOwners(event network.EventClientCommand) {
 	if !event.Client.IsActive {
 		logrus.Println("Cli Left")
 		return
@@ -345,10 +353,10 @@ func (fm *FeslManager) GetStatsForOwners(event network.EventClientProcess) {
 		statsKeys := make(map[string]string)
 		args = append(args, ownerID)
 		args = append(args, userID)
-		keys, _ := strconv.Atoi(event.Process.Msg["keys.[]"])
+		keys, _ := strconv.Atoi(event.Command.Msg["keys.[]"])
 		for i := 0; i < keys; i++ {
-			args = append(args, event.Process.Msg["keys."+strconv.Itoa(i)+""])
-			statsKeys[event.Process.Msg["keys."+strconv.Itoa(i)+""]] = strconv.Itoa(i)
+			args = append(args, event.Command.Msg["keys."+strconv.Itoa(i)+""])
+			statsKeys[event.Command.Msg["keys."+strconv.Itoa(i)+""]] = strconv.Itoa(i)
 		}
 
 		rows, err := fm.db.getStatsStatement(keys).Query(args...)

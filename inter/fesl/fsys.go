@@ -11,18 +11,20 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-//THIS IS THE HELLO PACKET
+//THIS IS THE HELLO Pkt ;)
 const (
 	fsys             = "fsys"
 	fsysGetPingSites = "GetPingSites"
-	fsysHello        = "Hello"
-	fsysMemCheck     = "MemCheck"
-	fsysPing         = "Ping"
+	// fsysGoodbye      = "Goodbye"
+	fsysHello    = "Hello"
+	fsysMemCheck = "MemCheck"
+	fsysPing     = "Ping"
+	// fsysSuicide      = "Suicide"
 )
 
 type ansMemCheck struct {
 	TXN       string     `fesl:"TXN"`
-	// Result    string					`fesl:"result"`
+	MemChecks []memCheck `fesl:"memcheck"`
 	Salt      string     `fesl:"salt"`
 }
 
@@ -36,7 +38,7 @@ func (fm *FeslManager) fsysMemCheck(event *network.EventNewClient) {
 		Type: fsys,
 		Content: ansMemCheck{
 			TXN:  fsysMemCheck,
-			Salt: "",
+			Salt: "5",
 		},
 		Send: 0xC0000000,
 	})
@@ -58,7 +60,7 @@ type domainPartition struct {
 	SubName string `fesl:"subDomain"`
 }
 
-func (fm *FeslManager) hello(event network.EventClientProcess) {
+func (fm *FeslManager) hello(event network.EventClientCommand) {
 	if !event.Client.IsActive {
 		logrus.Println("Cli Left")
 		return
@@ -66,7 +68,7 @@ func (fm *FeslManager) hello(event network.EventClientProcess) {
 
 	redisState := fm.createState(fmt.Sprintf(
 		"%s-%s",
-		event.Process.Msg["clientType"],
+		event.Command.Msg["clientType"],
 		event.Client.IpAddr.String(),
 	))
 
@@ -77,13 +79,13 @@ func (fm *FeslManager) hello(event network.EventClientProcess) {
 	}
 
 	saveRedis := map[string]interface{}{
-		"SDKVersion":     event.Process.Msg["SDKVersion"],
-		"clientPlatform": event.Process.Msg["clientPlatform"],
-		"clientString":   event.Process.Msg["clientString"],
-		"clientType":     event.Process.Msg["clientType"],
-		"clientVersion":  event.Process.Msg["clientVersion"],
-		"locale":         event.Process.Msg["locale"],
-		"sku":            event.Process.Msg["sku"],
+		"SDKVersion":     event.Command.Msg["SDKVersion"],
+		"clientPlatform": event.Command.Msg["clientPlatform"],
+		"clientString":   event.Command.Msg["clientString"],
+		"clientType":     event.Command.Msg["clientType"],
+		"clientVersion":  event.Command.Msg["clientVersion"],
+		"locale":         event.Command.Msg["locale"],
+		"sku":            event.Command.Msg["sku"],
 	}
 	event.Client.HashState.SetM(saveRedis)
 
@@ -92,7 +94,6 @@ func (fm *FeslManager) hello(event network.EventClientProcess) {
 		ConnTTL:     int((1 * time.Hour).Seconds()),
 		ConnectedAt: time.Now().Format("Jan-02-2006 15:04:05 MST"),
 		TheaterIP:   config.General.ThtrAddr,
-		MessengerIP: config.General.MessengerAddr,
 	}
 
 	if fm.server {
@@ -129,18 +130,18 @@ type pingSite struct {
 }
 
 // GetPingSites - Get Pings for something
-func (fm *FeslManager) GetPingSites(event network.EventClientProcess) {
+func (fm *FeslManager) GetPingSites(event network.EventClientCommand) {
 	if !event.Client.IsActive {
 		logrus.Println("Cli Left")
 		return
 	}
 
 	event.Client.Answer(&codec.Pkt{
-		Type: event.Process.Query,
-		Send: event.Process.HEX,
+		Type: event.Command.Query,
+		Send: event.Command.HEX,
 		Content: ansGetPingSites{
 			TXN:      fsysGetPingSites,
-			MinPings: 0,
+			MinPings: 1,
 			PingSites: []pingSite{
 				{"8.8.8.8",
 					location,

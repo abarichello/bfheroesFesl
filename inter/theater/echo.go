@@ -14,16 +14,15 @@ type ansECHO struct {
 	Type      int    `fesl:"TYPE"`
 }
 
-//TODO check typo network.EventClientProcess
 // ECHO - SHARED called like some heartbeat
 func (tm *Theater) ECHO(event network.SocketUDPEvent) {
-	Process := event.Data.(*network.ProcessFESL)
+	command := event.Data.(*network.CommandFESL)
 
 	tm.socketUDP.Answer(&codec.Pkt{
 		Type: thtrECHO,
 		Content: ansECHO{
-			TXN:       "TXN",
-			TID:       Process.Msg["TID"],
+			TXN:       command.Msg["TXN"],
+			TID:       command.Msg["TID"],
 			IP:        event.Addr.IP.String(),
 			Port:      event.Addr.Port,
 			ErrStatus: 0,

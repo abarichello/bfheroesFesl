@@ -7,17 +7,21 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-//global const
 const (
-	TXNStatus = "Status"
+	Complete = "COMPLETE"
+	pnow     = "pnow"
+	//pnowCancel = "Cancel"
+	pnowStart  = "Start"
+	pnowStatus = "Status"
 	partition  = "partition.partition"
+	Join       = "JOIN"
 )
 
-type Status struct {
-	TXN   string                 `fesl:"TXN"`
-	ID    stPartition            `fesl:"id"`
-	State string                 `fesl:"sessionState"`
-	Props map[string]interface{} `fesl:"props"`
+type ansStatus struct {
+	TXN        string                 `fesl:"TXN"`
+	ID         stPartition            `fesl:"id"`
+	State      string                 `fesl:"sessionState"`
+	Properties map[string]interface{} `fesl:"props"`
 }
 
 type stPartition struct {
@@ -28,35 +32,34 @@ type stPartition struct {
 type stGame struct {
 	LobbyID int    `fesl:"lid"`
 	Fit     int    `fesl:"fit"` // ELO ?
-	GID    string  `fesl:"gid"`
+	GAME    string `fesl:"gid"`
 }
 
 // Status pnow.Status command
-func (fm *FeslManager) Status(event network.EventClientProcess) {
-	logrus.Println("==Status==")
-
+func (fm *FeslManager) Status(event network.EventClientCommand) {
+	logrus.Println("=Status=")
+	//Infinite Search
 	gameID := mm.FindGIDs()
-	ans := Status{
-		TXN: TXNStatus,
-		ID: stPartition{1, event.Process.Msg[partition]},
-		State: "COMPLETE",
-		Props: map[string]interface{}{
-			"resultType":  "JOIN",
-			"debugLevel":  "high",
-			"timeout": "0",
-			"sessionType": "findServer",
+
+	ans := ansStatus{
+		TXN: pnowStatus,
+		ID: stPartition{1,
+			event.Command.Msg[partition]},
+		State: Complete,
+		Properties: map[string]interface{}{
+			"resultType": Join,
 			"games": []stGame{
 				{
 					LobbyID: 1,
 					Fit:     1500,
-					GID:    gameID,
+					GAME:    gameID,
 				},
 			},
-		},		
+		},
 	}
 	event.Client.Answer(&codec.Pkt{
 		Content: ans,
 		Send:    0x80000000,
-		Type:    "pnow",
+		Type:    pnow,
 	})
 }

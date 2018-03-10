@@ -14,16 +14,16 @@ type ansKICK struct {
 }
 
 type ansPLVT struct {
-	TID string `fesl:"TID"`
+	TheaterID string `fesl:"TID"`
 }
 
 // PENT - SERVER sent up when a player joins (entitle player?)
-func (tM *Theater) PLVT(event network.EventClientProcess) {
+func (tM *Theater) PLVT(event network.EventClientCommand) {
 	if !event.Client.IsActive {
 		return
 	}
 
-	pid := event.Process.Msg["PID"]
+	pid := event.Command.Msg["PID"]
 
 	// Get 4 stats for PID
 	rows, err := tM.db.getStatsStatement(4).Query(pid, "c_kit", "c_team", "elo", "level")
@@ -44,12 +44,12 @@ func (tM *Theater) PLVT(event network.EventClientProcess) {
 
 	switch stats["c_team"] {
 	case "1":
-		_, err = tM.db.stmtGameDecreaseTeam1.Exec(event.Process.Msg["GID"])
+		_, err = tM.db.stmtGameDecreaseTeam1.Exec(event.Command.Msg["GID"])
 		if err != nil {
 			logrus.Error("PLVT ", err)
 		}
 	case "2":
-		_, err = tM.db.stmtGameDecreaseTeam2.Exec(event.Process.Msg["GID"])
+		_, err = tM.db.stmtGameDecreaseTeam2.Exec(event.Command.Msg["GID"])
 		if err != nil {
 			logrus.Error("PLVT ", err)
 		}
@@ -60,14 +60,14 @@ func (tM *Theater) PLVT(event network.EventClientProcess) {
 	event.Client.Answer(&codec.Pkt{
 		Type: thtrKICK,
 		Content: ansKICK{
-			event.Process.Msg["PID"],
-			event.Process.Msg["LID"],
-			event.Process.Msg["GID"],
+			event.Command.Msg["PID"],
+			event.Command.Msg["LID"],
+			event.Command.Msg["GID"],
 		},
 	})
 
 	event.Client.Answer(&codec.Pkt{
 		Type:    thtrPLVT,
-		Content: ansPLVT{event.Process.Msg["TID"]},
+		Content: ansPLVT{event.Command.Msg["TID"]},
 	})
 }
