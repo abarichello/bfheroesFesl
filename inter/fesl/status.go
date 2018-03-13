@@ -18,6 +18,12 @@ type Status struct {
 	Props map[string]interface{} `fesl:"props"`
 }
 
+type stGame struct {
+	LobbyID int    `fesl:"lid"`
+	Fit     int    `fesl:"fit"`
+	GID     string `fesl:"gid"`
+}
+
 type stPartition struct {
 	ID        int    `fesl:"id"`
 	Partition string `fesl:"partition"`
@@ -37,9 +43,13 @@ func (fm *FeslManager) Status(event network.EventClientProcess) {
 		Props: map[string]interface{}{
 			"resultType":  "JOIN",
 			"sessionType": "findServer",
-			"games":       "1",
-			"Fit":         "1000", //ELO
-			"GID":         gameID,
+			"games": []stGame{
+				{
+					LobbyID: 1,
+					Fit:     1000,
+					GID:     gameID,
+				},
+			},
 		},
 	}
 	event.Client.Answer(&codec.Pkt{
