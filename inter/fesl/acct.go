@@ -1,12 +1,11 @@
 package fesl
 
 import (
-	"strconv"
-
+	"fmt"
 	"github.com/Synaxis/bfheroesFesl/inter/network"
 	"github.com/Synaxis/bfheroesFesl/inter/network/codec"
-
 	"github.com/sirupsen/logrus"
+	"strconv"
 )
 
 const (
@@ -16,12 +15,8 @@ const (
 	acctNuLogin          = "NuLogin"
 	acctNuLoginPersona   = "NuLoginPersona"
 	acctNuLookupUserInfo = "NuLookupUserInfo"
+	acctGrantEntitlement = "NuGrantEntitlement"
 )
-
-type ansNuLookupUserInfo struct {
-	Taxon    string     `fesl:"TXN"`
-	UserInfo []userInfo `fesl:"userInfo"`
-}
 
 type userInfo struct {
 	Namespace    string `fesl:"namespace"`
@@ -31,24 +26,159 @@ type userInfo struct {
 	UserName     string `fesl:"userName"`
 }
 
-// NuLookupUserInfo - Gets basic information about a game user
-func (fm *FeslManager) NuLookupUserInfo(event network.EventClientCommand) {
+// Server Login Security -> Send close Packet
+type NuLoginErr struct {
+	TXN     string              `fesl:"TXN"`
+	Message string              `fesl:"localizedMessage"`
+	Errors  []LoginContainerErr `fesl:"errorContainer"`
+	Code    int                 `fesl:"errorCode"`
+}
 
-	if event.Client.HashState.Get("clientType") == "server" && event.Command.Msg["userInfo.0.userName"] == "Test-Server" {
-		fm.NuLookupUserInfoServer(event)
+type LoginContainerErr struct {
+	Value      string `fesl:"value"`
+	FieldError string `fesl:"fieldError"`
+	FieldName  string `fesl:"fieldName"`
+}
+
+type ansNuLogin struct {
+	TXN       string `fesl:"TXN"`
+	ProfileID string `fesl:"profileId"`
+	UserID    string `fesl:"userId"`
+	NucleusID string `fesl:"nuid"`
+	Lkey      string `fesl:"lkey"`
+}
+
+// NuLogin - master login command
+// TODO: Here we can implement a banlist/permission check if player is allowed to play/join
+func (fm *FeslManager) NuLogin(event network.EventClientProcess) {
+
+	if event.Client.HashState.Get("clientType") == "server" {
+		// Server login
+		fm.NuLoginServer(event)
 		return
 	}
 
-	ans := ansNuLookupUserInfo{Taxon: acctNuLookupUserInfo, UserInfo: []userInfo{}}
+	var id, username, email, birthday, language, country, gameToken string
 
-	logrus.Println("LookupUserInfo CLIENT" + event.Command.Msg["userInfo.0.userName"])
+	err := fm.db.stmtGetUserByGameToken.QueryRow(event.Process.Msg["encryptedInfo"]).Scan(&id, &username, //CONTINUE
+		&email, &birthday, &language, &country, &gameToken)
 
-	keys, _ := strconv.Atoi(event.Command.Msg["userInfo.[]"])
+	if err != nil {
+		event.Client.Answer(&codec.Pkt{
+			Content: NuLoginErr{
+				TXN:     acctNuLogin,
+				Message: `"Wrong Login/Spoof"`,
+				Code:    120,
+			},
+
+			Send: event.Process.HEX,
+			Type: event.Process.Query,
+		})
+		return
+	}
+
+	saveRedis := map[string]interface{}{
+		"uID":       id,
+		"username":  username,
+		"sessionID": gameToken,
+		"email":     email,
+		"keyHash":   event.Process.Msg["encryptedInfo"],
+	}
+	event.Client.HashState.SetM(saveRedis)
+
+	// Setup a new key for our persona
+	lkey := BF2RandomUnsafe(24)
+	lkeyRedis := fm.level.NewObject("lkeys", lkey)
+	lkeyRedis.Set("id", id)
+	lkeyRedis.Set("userID", id)
+	lkeyRedis.Set("name", username)
+
+	event.Client.HashState.Set("lkeys", event.Client.HashState.Get("lkeys")+";"+lkey)
+	event.Client.Answer(&codec.Pkt{
+		Content: ansNuLogin{
+			TXN:       acctNuLogin,
+			ProfileID: id,
+			UserID:    id,
+			NucleusID: username,
+			Lkey:      lkey,
+		},
+		Send: event.Process.HEX,
+		Type: acct,
+	})
+}
+
+// NuLoginServer - login command for servers
+func (fm *FeslManager) NuLoginServer(event network.EventClientProcess) {
+	var id, userID, servername, secretKey, username string
+
+	err := fm.db.stmtGetServerBySecret.QueryRow(event.Process.Msg["password"]).Scan(&id,
+		&userID, &servername, &secretKey, &username)
+
+	if err != nil {
+		event.Client.Answer(&codec.Pkt{
+			Content: NuLoginErr{
+				TXN:     acctNuLogin,
+				Message: `"Wrong Server "`,
+				Code:    122,
+			},
+			Send: event.Process.HEX,
+			Type: acct,
+		})
+		return
+	}
+
+	saveRedis := make(map[string]interface{})
+	saveRedis["uID"] = userID
+	saveRedis["sID"] = id
+	saveRedis["username"] = username
+	saveRedis["apikey"] = event.Process.Msg["encryptedInfo"]
+	saveRedis["keyHash"] = event.Process.Msg["password"]
+	event.Client.HashState.SetM(saveRedis)
+
+	// Setup a new key for new persona
+	lkey := BF2RandomUnsafe(24)
+	lkeyRedis := fm.level.NewObject("lkeys", lkey)
+	lkeyRedis.Set("id", id)
+	lkeyRedis.Set("userID", userID)
+	lkeyRedis.Set("name", username)
+
+	event.Client.HashState.Set("lkeys", event.Client.HashState.Get("lkeys")+";"+lkey)
+	event.Client.Answer(&codec.Pkt{
+		Content: ansNuLogin{
+			TXN:       acctNuLogin,
+			ProfileID: userID,
+			UserID:    userID,
+			NucleusID: username,
+			Lkey:      lkey,
+		},
+		Send: event.Process.HEX,
+		Type: acct,
+	})
+}
+
+type ansNuLookupUserInfo struct {
+	TXN      string     `fesl:"TXN"`
+	UserInfo []userInfo `fesl:"userInfo"`
+}
+
+func (fm *FeslManager) NuLookupUserInfo(event network.EventClientProcess) {
+	if !event.Client.IsActive {
+		logrus.Println("Cli DC")
+		return
+	}
+
+	ans := ansNuLookupUserInfo{
+		TXN:      acctNuLookupUserInfo,
+		UserInfo: []userInfo{}}
+
+	keys, _ := strconv.Atoi(event.Process.Msg["userInfo.[]"])
 	for i := 0; i < keys; i++ {
-		heroNamePkt := event.Command.Msg["userInfo."+strconv.Itoa(i)+".userName"]
+		heroNamePkt := event.Process.Msg[fmt.Sprintf("userInfo.%d.userName", i)]
 
 		var id, userID, heroName, online string
-		err := fm.db.stmtGetHeroeByName.QueryRow(heroNamePkt).Scan(&id, &userID, &heroName, &online)
+		err := fm.db.stmtGetHeroeByName.QueryRow(heroNamePkt).Scan(&id, &userID, //br
+			&heroName, &online)
+
 		if err != nil {
 			return
 		}
@@ -64,18 +194,20 @@ func (fm *FeslManager) NuLookupUserInfo(event network.EventClientCommand) {
 
 	event.Client.Answer(&codec.Pkt{
 		Content: ans,
-		Send:    event.Command.HEX,
+		Send:    event.Process.HEX,
 		Type:    acct,
 	})
 
 }
 
 // NuLookupUserInfoServer - Gets basic information about a game user
-func (fm *FeslManager) NuLookupUserInfoServer(event network.EventClientCommand) {
+func (fm *FeslManager) NuLookupUserInfoServer(event network.EventClientProcess) {
 	var err error
 
 	var id, userID, servername, secretKey, username string
-	err = fm.db.stmtGetServerByID.QueryRow(event.Client.HashState.Get("sID")).Scan(&id, &userID, &servername, &secretKey, &username)
+	err = fm.db.stmtGetServerByID.QueryRow(event.Client.HashState.Get("sID")).Scan(&id, &userID, //br
+		&servername, &secretKey, &username)
+
 	if err != nil {
 		logrus.Errorln(err)
 		return
@@ -83,7 +215,7 @@ func (fm *FeslManager) NuLookupUserInfoServer(event network.EventClientCommand) 
 
 	event.Client.Answer(&codec.Pkt{
 		Content: ansNuLookupUserInfo{
-			Taxon: acctNuLookupUserInfo,
+			TXN: acctNuLookupUserInfo,
 			UserInfo: []userInfo{
 				{
 					Namespace:    "MAIN",
@@ -94,20 +226,25 @@ func (fm *FeslManager) NuLookupUserInfoServer(event network.EventClientCommand) 
 				},
 			},
 		},
-		Send: event.Command.HEX,
+		Send: event.Process.HEX,
 		Type: acct,
 	})
 }
 
+type reqNuLoginPersona struct {
+	Txn  string `fesl:"TXN"`  // =NuLoginPersona
+	Name string `fesl:"name"` // Value specified in +soldierName
+}
+
 type ansNuLoginPersona struct {
-	Taxon     string `fesl:"TXN"`
+	TXN       string `fesl:"TXN"`
 	ProfileID string `fesl:"profileId"`
 	UserID    string `fesl:"userId"`
 	Lkey      string `fesl:"lkey"`
 }
 
-// NuLoginPersona - soldier login command
-func (fm *FeslManager) NuLoginPersona(event network.EventClientCommand) {
+// User log in with selected Hero
+func (fm *FeslManager) NuLoginPersona(event network.EventClientProcess) {
 	if !event.Client.IsActive {
 		logrus.Println("C Left")
 		return
@@ -120,7 +257,7 @@ func (fm *FeslManager) NuLoginPersona(event network.EventClientCommand) {
 	}
 
 	var id, userID, heroName, online string
-	err := fm.db.stmtGetHeroeByName.QueryRow(event.Command.Msg["name"]).Scan(&id, &userID, &heroName, &online)
+	err := fm.db.stmtGetHeroeByName.QueryRow(event.Process.Msg["name"]).Scan(&id, &userID, &heroName, &online)
 	if err != nil {
 		logrus.Println("Wrong Login")
 		return
@@ -138,28 +275,48 @@ func (fm *FeslManager) NuLoginPersona(event network.EventClientCommand) {
 	event.Client.HashState.SetM(saveRedis)
 
 	event.Client.HashState.Set("lkeys", event.Client.HashState.Get("lkeys")+";"+lkey)
+
 	event.Client.Answer(&codec.Pkt{
 		Content: ansNuLogin{
-			Taxon:     acctNuLoginPersona,
+			TXN:       acctNuLoginPersona,
 			ProfileID: userID,
 			UserID:    userID,
 			Lkey:      lkey,
 		},
-		Send: event.Command.HEX,
+		Send: event.Process.HEX,
 		Type: acct,
 	})
 }
 
-// NuLoginPersonaServer Pre-Server Login (out of order ?)
-func (fm *FeslManager) NuLoginPersonaServer(event network.EventClientCommand) {
+//NuLoginPersonaServer Pre-Server Login (out of order ?)
+func (fm *FeslManager) NuLoginPersonaServer(event network.EventClientProcess) {
+	if !event.Client.IsActive {
+		logrus.Println("Client Left")
+		return
+	}
+
+	if event.Client.HashState.Get("clientType") != "server" {
+		// Server Exploit Login
+		return
+	}
+
 	var id, userID, servername, secretKey, username string
-	err := fm.db.stmtGetServerByName.QueryRow(event.Command.Msg["name"]).Scan(&id, &userID, &servername, &secretKey, &username)
+
+	err := fm.db.stmtGetServerByName.QueryRow(event.Process.Msg["name"]).Scan(&id, //continue
+		&userID, &servername, //continue
+		&secretKey, &username)
+
+	if event.Client.HashState.Get("clientType") != "server" {
+		// Server Exploit Login
+		return
+	}
+
 	if err != nil {
 		logrus.Println("Wrong Server Login")
 		return
 	}
 
-	// Setup a new key for our persona
+	// Setup a key for Server
 	lkey := BF2RandomUnsafe(24)
 	lkeyRedis := fm.level.NewObject("lkeys", lkey)
 	lkeyRedis.Set("id", userID)
@@ -169,23 +326,23 @@ func (fm *FeslManager) NuLoginPersonaServer(event network.EventClientCommand) {
 	event.Client.HashState.Set("lkeys", event.Client.HashState.Get("lkeys")+";"+lkey)
 	event.Client.Answer(&codec.Pkt{
 		Content: ansNuLogin{
-			Taxon:     acctNuLoginPersona,
+			TXN:       acctNuLoginPersona,
 			ProfileID: id,
 			UserID:    id,
 			Lkey:      lkey,
 		},
-		Send: event.Command.HEX,
+		Send: event.Process.HEX,
 		Type: acct,
 	})
 }
 
 type ansNuGetPersonas struct {
-	Taxon    string   `fesl:"TXN"`
+	TXN      string   `fesl:"TXN"`
 	Personas []string `fesl:"personas"`
 }
 
-// NuGetPersonas - Soldier data lookup call
-func (fm *FeslManager) NuGetPersonas(event network.EventClientCommand) {
+// NuGetPersonas . Display all Personas to the User
+func (fm *FeslManager) NuGetPersonas(event network.EventClientProcess) {
 	if !event.Client.IsActive {
 		logrus.Println("Client Left")
 		return
@@ -201,7 +358,7 @@ func (fm *FeslManager) NuGetPersonas(event network.EventClientCommand) {
 		return
 	}
 
-	ans := ansNuGetPersonas{Taxon: acctNuGetPersonas, Personas: []string{}}
+	ans := ansNuGetPersonas{TXN: acctNuGetPersonas, Personas: []string{}}
 
 	for rows.Next() {
 		var id, userID, heroName, online string
@@ -218,15 +375,39 @@ func (fm *FeslManager) NuGetPersonas(event network.EventClientCommand) {
 	event.Client.HashState.Set("numOfHeroes", strconv.Itoa(len(ans.Personas)))
 
 	event.Client.Answer(&codec.Pkt{
-		Send:    event.Command.HEX,
+		Send:    event.Process.HEX,
 		Type:    acct,
 		Content: ans,
 	})
 }
 
+// test stuff
+func (fm *FeslManager) NuGrantEntitlement(event network.EventClientProcess) {
+	logrus.Println("GRANT ENTITLEMENT")
+
+	event.Client.Answer(&codec.Pkt{
+		Type:    acct,
+		Content: "TXN",
+		Send:    event.Process.HEX,
+	})
+}
+
 // NuGetPersonasServer - Soldier data lookup call for servers
-func (fm *FeslManager) NuGetPersonasServer(event network.EventClientCommand) {
-	logrus.Println("SERVER CONNECT")
+func (fm *FeslManager) NuGetPersonasServer(event network.EventClientProcess) {
+	logrus.Println("======SERVER CONNECTING=====")
+
+	var id, userID, servername, secretKey, username string
+
+	err := fm.db.stmtGetServerByName.QueryRow(event.Process.Msg["name"]).Scan(&id, //continue
+		&userID, &servername, //continue
+		&secretKey, &username)
+
+	if event.Client.HashState.Get("clientType") != "server" {
+		// Server Exploit Login
+		logrus.Println("====Wrong Server Login====")
+
+		return
+	}
 
 	// Server login
 	rows, err := fm.db.stmtGetServerByID.Query(event.Client.HashState.Get("uID"))
@@ -234,13 +415,22 @@ func (fm *FeslManager) NuGetPersonasServer(event network.EventClientCommand) {
 		return
 	}
 
-	ans := ansNuGetPersonas{Taxon: acctNuGetPersonas, Personas: []string{}}
+	ans := ansNuGetPersonas{TXN: acctNuGetPersonas, Personas: []string{}}
 
 	for rows.Next() {
 		var id, userID, servername, secretKey, username string
 		err := rows.Scan(&id, &userID, &servername, &secretKey, &username)
 		if err != nil {
-			logrus.Errorln(err)
+			event.Client.Answer(&codec.Pkt{
+				Content: NuLoginErr{
+					TXN:     acctNuLogin,
+					Message: `"Wrong Login/Spoof"`,
+					Code:    120,
+				},
+
+				Send: event.Process.HEX,
+				Type: event.Process.Query,
+			})
 			return
 		}
 
@@ -249,14 +439,14 @@ func (fm *FeslManager) NuGetPersonasServer(event network.EventClientCommand) {
 	}
 
 	event.Client.Answer(&codec.Pkt{
-		Send:    event.Command.HEX,
+		Send:    event.Process.HEX,
 		Type:    acct,
 		Content: ans,
 	})
 }
 
 // NuGetAccount - General account information retrieved, based on parameters sent
-func (fm *FeslManager) NuGetAccount(event network.EventClientCommand) {
+func (fm *FeslManager) NuGetAccount(event network.EventClientProcess) {
 	if !event.Client.IsActive {
 		logrus.Println("Client Left")
 		return
@@ -266,7 +456,7 @@ func (fm *FeslManager) NuGetAccount(event network.EventClientCommand) {
 }
 
 type ansNuGetAccount struct {
-	Taxon          string `fesl:"TXN"`
+	TXN            string `fesl:"TXN"`
 	NucleusID      string `fesl:"nuid"`
 	UserID         string `fesl:"userId"`
 	HeroName       string `fesl:"heroName"`
@@ -279,146 +469,22 @@ type ansNuGetAccount struct {
 	ThidPartyOptIn bool   `fesl:"thidPartyOptin"`
 }
 
-func (fm *FeslManager) acctNuGetAccount(event *network.EventClientCommand) {
+func (fm *FeslManager) acctNuGetAccount(event *network.EventClientProcess) {
 	event.Client.Answer(&codec.Pkt{
 		Type: acct,
 		Content: ansNuGetAccount{
-			Taxon:          acctNuGetAccount,
+			TXN:            acctNuGetAccount,
 			Country:        "US",
 			Language:       "en_US",
 			DobDay:         1,
 			DobMonth:       1,
-			DobYear:        2018,
+			DobYear:        1992,
 			GlobalOptIn:    false,
 			ThidPartyOptIn: false,
 			NucleusID:      event.Client.HashState.Get("email"),
 			HeroName:       event.Client.HashState.Get("username"),
 			UserID:         event.Client.HashState.Get("uID"),
 		},
-		Send: event.Command.HEX,
-	})
-}
-
-type ansNuLogin struct {
-	Taxon     string `fesl:"TXN"`
-	ProfileID string `fesl:"profileId"`
-	UserID    string `fesl:"userId"`
-	NucleusID string `fesl:"nuid"`
-	Lkey      string `fesl:"lkey"`
-}
-
-type ansNuLoginErr struct {
-	Taxon   string                `fesl:"TXN"`
-	Message string                `fesl:"localizedMessage"`
-	Errors  []nuLoginContainerErr `fesl:"errorContainer"`
-	Code    int                   `fesl:"errorCode"`
-}
-
-type nuLoginContainerErr struct {
-	Value      string `fesl:"value"`
-	FieldError string `fesl:"fieldError"`
-	FieldName  string `fesl:"fieldName"`
-}
-
-// NuLogin - master login command
-// TODO: Here we can implement a banlist/permission check if player is allowed to play/join
-func (fm *FeslManager) NuLogin(event network.EventClientCommand) {
-
-	if event.Client.HashState.Get("clientType") == "server" {
-		// Server login
-		fm.NuLoginServer(event)
-		return
-	}
-
-	var id, username, email, birthday, language, country, gameToken string
-
-	err := fm.db.stmtGetUserByGameToken.QueryRow(event.Command.Msg["encryptedInfo"]).Scan(&id, &username, &email, &birthday, &language, &country, &gameToken)
-	if err != nil {
-		event.Client.Answer(&codec.Pkt{
-			Content: ansNuLoginErr{
-				Taxon:   acctNuLogin,
-				Message: `"Wrong Login/Spoof"`,
-				Code:    120,
-			},
-			Send: event.Command.HEX,
-			Type: event.Command.Query,
-		})
-		return
-	}
-
-	saveRedis := map[string]interface{}{
-		"uID":       id,
-		"username":  username,
-		"sessionID": gameToken,
-		"email":     email,
-		"keyHash":   event.Command.Msg["encryptedInfo"],
-	}
-	event.Client.HashState.SetM(saveRedis)
-
-	// Setup a new key for our persona
-	lkey := BF2RandomUnsafe(24)
-	lkeyRedis := fm.level.NewObject("lkeys", lkey)
-	lkeyRedis.Set("id", id)
-	lkeyRedis.Set("userID", id)
-	lkeyRedis.Set("name", username)
-
-	event.Client.HashState.Set("lkeys", event.Client.HashState.Get("lkeys")+";"+lkey)
-	event.Client.Answer(&codec.Pkt{
-		Content: ansNuLogin{
-			Taxon:     acctNuLogin,
-			ProfileID: id,
-			UserID:    id,
-			NucleusID: username,
-			Lkey:      lkey,
-		},
-		Send: event.Command.HEX,
-		Type: acct,
-	})
-}
-
-// NuLoginServer - login command for servers
-func (fm *FeslManager) NuLoginServer(event network.EventClientCommand) {
-	var id, userID, servername, secretKey, username string
-
-	err := fm.db.stmtGetServerBySecret.QueryRow(event.Command.Msg["password"]).Scan(&id, &userID, &servername, &secretKey, &username)
-	if err != nil {
-		event.Client.Answer(&codec.Pkt{
-			Content: ansNuLoginErr{
-				Taxon:   acctNuLogin,
-				Message: `"Wrong Server "`,
-				Code:    122,
-			},
-			Send: event.Command.HEX,
-			Type: acct,
-		})
-		return
-	}
-
-	saveRedis := make(map[string]interface{})
-	saveRedis["uID"] = userID
-	saveRedis["sID"] = id
-	saveRedis["username"] = username
-	saveRedis["apikey"] = event.Command.Msg["encryptedInfo"]
-	saveRedis["keyHash"] = event.Command.Msg["password"]
-	event.Client.HashState.SetM(saveRedis)
-
-	// Setup a new key for new persona
-	lkey := BF2RandomUnsafe(24)
-	lkeyRedis := fm.level.NewObject("lkeys", lkey)
-	lkeyRedis.Set("id", id)
-	lkeyRedis.Set("userID", userID)
-	lkeyRedis.Set("name", username)
-
-	event.Client.HashState.Set("lkeys", event.Client.HashState.Get("lkeys")+";"+lkey)
-	event.Client.Answer(&codec.Pkt{
-		Content: ansNuLogin{
-			Taxon:     acctNuLogin,
-			ProfileID: userID,
-			UserID:    userID,
-			NucleusID: username,
-			Lkey:      lkey,
-		},
-		Send: event.Command.HEX,
-		Type: acct,
+		Send: event.Process.HEX,
 	})
 }
