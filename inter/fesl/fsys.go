@@ -21,9 +21,9 @@ const (
 )
 
 type ansMemCheck struct {
-	TXN       string     `fesl:"TXN"`
-	// Result    string					`fesl:"result"`
-	Salt      string     `fesl:"salt"`
+	TXN    string `fesl:"TXN"`
+	Result string `fesl:"result"`
+	Salt   string `fesl:"salt"`
 }
 
 type memCheck struct {
@@ -35,8 +35,9 @@ func (fm *FeslManager) fsysMemCheck(event *network.EventNewClient) {
 	event.Client.Answer(&codec.Pkt{
 		Type: fsys,
 		Content: ansMemCheck{
-			TXN:  fsysMemCheck,
-			Salt: "",
+			TXN:    fsysMemCheck,
+			Salt:   "5",
+			Result: "0",
 		},
 		Send: 0xC0000000,
 	})
