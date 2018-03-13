@@ -28,6 +28,7 @@ func (fm *FeslManager) Status(event network.EventClientProcess) {
 	logrus.Println("==Status==")
 	gameID := mm.FindGIDs()
 
+	//@TODO refactor this
 	ans := Status{
 		TXN: "Status",
 		ID: stPartition{1,

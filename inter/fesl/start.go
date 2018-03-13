@@ -15,7 +15,6 @@ type Start struct {
 	TXN              string      `fesl:"TXN"`
 	ID               stPartition `fesl:"id"`
 	debugLevel       string      `fesl:"debugLevel"`
-	hostSetupTimeout string      `fesl:"hostSetupTimeout"`
 }
 
 // Start handles pnow.Start
