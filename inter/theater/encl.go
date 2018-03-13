@@ -14,16 +14,15 @@ type ansECNL struct {
 }
 
 // ECNL - CLIENT calls when they want to leave
-func (tm *Theater) ECNL(event network.EventClientCommand) {
-	logrus.Println("Left Q")
+func (tm *Theater) ECNL(event network.EventClientProcess) {
+	logrus.Println("HeroRQ")
 
 	event.Client.Answer(&codec.Pkt{
-		Send: 0x0,
 		Type: thtrENCL,
 		Content: ansECNL{
-			event.Command.Msg["TID"],
-			event.Command.Msg["GID"],
-			event.Command.Msg["LID"],
+			event.Process.Msg["TID"],
+			event.Process.Msg["GID"],
+			event.Process.Msg["LID"],
 		},
 	})
 }

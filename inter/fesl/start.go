@@ -5,15 +5,17 @@ import (
 	"github.com/Synaxis/bfheroesFesl/inter/network/codec"
 	"github.com/sirupsen/logrus"
 )
+
 //TODO
 // 'GetStatus'
 // 'Update'
 // 'Cancel'
-	
+
 type Start struct {
-	TXN string      `fesl:"TXN"`
-	ID  stPartition `fesl:"id"`
-	dbgLevel string `fesl:"debugLevel"`	
+	TXN              string      `fesl:"TXN"`
+	ID               stPartition `fesl:"id"`
+	debugLevel       string      `fesl:"debugLevel"`
+	hostSetupTimeout string      `fesl:"hostSetupTimeout"`
 }
 
 // Start handles pnow.Start
@@ -22,9 +24,10 @@ func (fm *FeslManager) Start(event network.EventClientProcess) {
 
 	event.Client.Answer(&codec.Pkt{
 		Content: Start{
-			TXN: "Start",
-			dbgLevel:  "high",
-			ID: stPartition{1, event.Process.Msg[partition]},			
+			TXN:        "Start",
+			debugLevel: "high",
+			ID: stPartition{1,
+				event.Process.Msg[partition]},
 		},
 		Send: 0xc000000d,
 		Type: "pnow",

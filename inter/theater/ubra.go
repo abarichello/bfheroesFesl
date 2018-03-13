@@ -8,27 +8,25 @@ import (
 )
 
 type ansUBRA struct {
-	TheaterID string `fesl:"TID"`
+	TID string `fesl:"TID"`
 }
 
 // UBRA - SERVER Called to  update server data
-func (tM *Theater) UBRA(event network.EventClientCommand) {
+func (tM *Theater) UBRA(event network.EventClientProcess) {
 	if !event.Client.IsActive {
 		logrus.Println("Cli Left")
 		return
 	}
 
-	event.Client.Answer(&codec.Pkt{
-		Type: thtrUBRA,
-		Content: ansUBRA{
-			TheaterID: event.Command.Msg["TID"],
-		},
-	})
+	gdata := tM.level.NewObject("gdata", event.Process.Msg["GID"])
 
-	gdata := tM.level.NewObject("gdata", event.Command.Msg["GID"])
-
-	if event.Command.Msg["START"] == "1" {
+	if event.Process.Msg["Start"]  == "1" {
 		gdata.Set("AP", "0")
 	}
 
+		event.Client.Answer(&codec.Pkt{
+			Type: thtrUBRA,
+			Content: ansUBRA{event.Process.Msg["TID"],
+		},
+	})
 }

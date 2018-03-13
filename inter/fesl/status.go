@@ -23,31 +23,22 @@ type stPartition struct {
 	Partition string `fesl:"partition"`
 }
 
-type stGame struct {
-	LobbyID int    `fesl:"lid"`
-	Fit     int    `fesl:"fit"`
-	GID     string `fesl:"gid"`
-}
-
 // Status comes after Start. tells info about desired server
 func (fm *FeslManager) Status(event network.EventClientProcess) {
 	logrus.Println("==Status==")
 	gameID := mm.FindGIDs()
 
 	ans := Status{
-		TXN:   "Status",
-		ID:    stPartition{1, event.Process.Msg[partition]},
+		TXN: "Status",
+		ID: stPartition{1,
+			event.Process.Msg[partition]},
 		State: "COMPLETE",
 		Props: map[string]interface{}{
 			"resultType":  "JOIN",
 			"sessionType": "findServer",
-			"games": []stGame{
-				{
-					LobbyID: 1,
-					Fit:     1500,
-					GID:     gameID,
-				},
-			},
+			"games":       "1",
+			"Fit":         "1000", //ELO
+			"GID":         gameID,
 		},
 	}
 	event.Client.Answer(&codec.Pkt{

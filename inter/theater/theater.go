@@ -92,8 +92,6 @@ func (tm *Theater) Listen() {
 				go tm.CONN(event.Data.(network.EventClientProcess))
 			case "client.command.USER":
 				go tm.USER(event.Data.(network.EventClientProcess))
-			case "client.command.LLST":
-				go tm.LLST(event.Data.(network.EventClientProcess))
 			case "client.command.GDAT":
 				go tm.GDAT(event.Data.(network.EventClientProcess))
 			case "client.command.EGAM":

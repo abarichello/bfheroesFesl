@@ -3,8 +3,6 @@ package theater
 import (
 	"github.com/Synaxis/bfheroesFesl/inter/network"
 	"github.com/Synaxis/bfheroesFesl/inter/network/codec"
-
-	"github.com/sirupsen/logrus"
 )
 
 // GameClient Represents a game client connected to theater
@@ -98,15 +96,11 @@ type ansGDAT struct {
 	Secret               string `fesl:"SECRET"`
 	Type                 string `fesl:"TYPE"`
 	Ugid                 string `fesl:"UGID"`
-	Allowed														string `fesl:"ALLOWED"`
+	Allowed              string `fesl:"ALLOWED"`
 }
 
 // GDAT - CLIENT called to get data about the server
 func (tm *Theater) GDAT(event network.EventClientProcess) {
-	if !event.Client.IsActive {
-		logrus.Println("Cli Left")
-		return
-	}
 
 	gameID := event.Process.Msg["GID"]
 	gameServer := tm.level.NewObject("gdata", gameID)
@@ -114,7 +108,6 @@ func (tm *Theater) GDAT(event network.EventClientProcess) {
 	event.Client.Answer(&codec.Pkt{
 		Type: thtrGDAT,
 		Content: ansGDAT{
-			Allowed:               "1",
 			TID:                  event.Process.Msg["TID"],
 			Ap:                   gameServer.Get("AP"),
 			ArmyDistribution:     gameServer.Get("B-U-army_distribution"),

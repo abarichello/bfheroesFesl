@@ -65,16 +65,16 @@ type ansEGEG struct {
 }
 
 // EGAM - CLIENT called when a client wants to join a gameserver
-func (tm *Theater) EGAM(event network.EventClientCommand) {
-	gameID := event.Command.Msg["GID"]
+func (tm *Theater) EGAM(event network.EventClientProcess) {
+	gameID := event.Process.Msg["GID"]
 	externalIP := event.Client.IpAddr.(*net.TCPAddr).IP.String()
-	lobbyID := event.Command.Msg["LID"]
+	lobbyID := event.Process.Msg["LID"]
 	pid := event.Client.HashState.Get("id")
 
 	event.Client.Answer(&codec.Pkt{
 		Type: thtrEGAM,
 		Content: ansEGAM{
-			event.Command.Msg["TID"],
+			event.Process.Msg["TID"],
 			lobbyID,
 			gameID,
 		},
@@ -114,8 +114,8 @@ func (tm *Theater) EGAM(event network.EventClientCommand) {
 				Ticket:       "2018751182",
 				IP:           externalIP,
 				Port:         strconv.Itoa(event.Client.IpAddr.(*net.TCPAddr).Port),
-				IntIP:        event.Command.Msg["R-INT-IP"],
-				IntPort:      event.Command.Msg["R-INT-PORT"],
+				IntIP:        event.Process.Msg["R-INT-IP"],
+				IntPort:      event.Process.Msg["R-INT-PORT"],
 				Ptype:        "P",
 				RUser:        stats["heroName"],
 				RUid:         stats["userID"],
@@ -126,10 +126,10 @@ func (tm *Theater) EGAM(event network.EventClientCommand) {
 				RULvl:        stats["level"],
 				RUDataCenter: "iad",
 				RUExternalIP: externalIP,
-				RUInternalIP: event.Command.Msg["R-INT-IP"],
-				RUCategory:   event.Command.Msg["R-U-category"],
-				RIntIP:       event.Command.Msg["R-INT-IP"],
-				RIntPort:     event.Command.Msg["R-INT-PORT"],
+				RUInternalIP: event.Process.Msg["R-INT-IP"],
+				RUCategory:   event.Process.Msg["R-U-category"],
+				RIntIP:       event.Process.Msg["R-INT-IP"],
+				RIntPort:     event.Process.Msg["R-INT-PORT"],
 				Xuid:         "24",
 				RXuid:        "24",
 				LobbyID:      lobbyID,
@@ -141,13 +141,13 @@ func (tm *Theater) EGAM(event network.EventClientCommand) {
 		event.Client.Answer(&codec.Pkt{
 			Type: thtrEGEG,
 			Content: ansEGEG{
-				TheaterID: event.Command.Msg["TID"],
+				TheaterID: "0",
 				Platform:  "pc",
 				Ticket:    "2018751182",
 				PlayerID:  pid,
 				IP:        gsData.Get("IP"),
 				Port:      gsData.Get("PORT"),
-				Huid:      "1", // find via GID soon
+				Huid:      "1",
 				Ekey:      "O65zZ2D2A58mNrZw1hmuJw%3d%3d",
 				IntIP:     gsData.Get("INT-IP"),
 				IntPort:   gsData.Get("INT-PORT"),
