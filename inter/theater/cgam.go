@@ -11,7 +11,7 @@ import (
 )
 
 type ansCGAM struct {
-	TheaterID  string `fesl:"TID"`
+	TID        string `fesl:"TID"`
 	LobbyID    string `fesl:"LID"`
 	MaxPlayers string `fesl:"MAX-PLAYERS"`
 	EKEY       string `fesl:"EKEY"`
@@ -81,7 +81,7 @@ func (tm *Theater) CGAM(event network.EventClientProcess) {
 	gameServer.Set("GID", gameID)
 	gameServer.Set("IP", addr.IP.String())
 	gameServer.Set("AP", "0")
-	gameServer.Set("QUEUE-LENGTH", "0")
+	gameServer.Set("QUEUE-LENGTH", "16")
 
 	event.Client.HashState.Set("gdata:GID", gameID)
 
@@ -91,17 +91,17 @@ func (tm *Theater) CGAM(event network.EventClientProcess) {
 		return
 	}
 
-	event.Client.Answer(&codec.Pkt{
+	event.Client.Answer(&codec.Packet{
 		Message: thtrCGAM,
 		Content: ansCGAM{
-			TheaterID:  event.Process.Msg["TID"],
+			TID:        event.Process.Msg["TID"],
 			LobbyID:    "1",
 			UGID:       event.Process.Msg["UGID"],
 			MaxPlayers: event.Process.Msg["MAX-PLAYERS"],
 			EKEY:       `O65zZ2D2A58mNrZw1hmuJw%3d%3d`,
 			Secret:     `2587913`,
 			JOIN:       event.Process.Msg["JOIN"],
-			J:          event.Process.Msg["JOIN"],
+			J:          event.Process.Msg["J"],
 			GameID:     gameID,
 		},
 	})

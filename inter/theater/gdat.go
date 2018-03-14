@@ -94,7 +94,7 @@ type ansGDAT struct {
 	ReserveHost          string `fesl:"RESERVE-HOST"`
 	Rt                   string `fesl:"RT"`
 	Secret               string `fesl:"SECRET"`
-	Message                 string `fesl:"TYPE"`
+	Message              string `fesl:"TYPE"`
 	Ugid                 string `fesl:"UGID"`
 	Allowed              string `fesl:"ALLOWED"`
 }
@@ -105,7 +105,7 @@ func (tm *Theater) GDAT(event network.EventClientProcess) {
 	gameID := event.Process.Msg["GID"]
 	gameServer := tm.level.NewObject("gdata", gameID)
 
-	event.Client.Answer(&codec.Pkt{
+	event.Client.Answer(&codec.Packet{
 		Message: thtrGDAT,
 		Content: ansGDAT{
 			TID:                  event.Process.Msg["TID"],
@@ -154,7 +154,7 @@ func (tm *Theater) GDAT(event network.EventClientProcess) {
 			ReserveHost:          gameServer.Get("RESERVE-HOST"),
 			Rt:                   gameServer.Get("RT"),
 			Secret:               gameServer.Get("SECRET"),
-			Message:                 gameServer.Get("TYPE"),
+			Message:              gameServer.Get("TYPE"),
 			Ugid:                 gameServer.Get("UGID"),
 		},
 	})

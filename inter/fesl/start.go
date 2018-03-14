@@ -29,10 +29,9 @@ func (fm *FeslManager) Start(event network.EventClientProcess) {
 		Button = ""
 	}
 
-	event.Client.Answer(&codec.Pkt{
+	event.Client.Answer(&codec.Packet{
 		Content: Start{
-			TXN:        Button,
-			debugLevel: "high",
+			TXN: Button,
 			ID: stPartition{1,
 				event.Process.Msg[partition]},
 		},

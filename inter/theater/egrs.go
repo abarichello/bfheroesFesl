@@ -7,7 +7,7 @@ import (
 )
 
 type ansEGRS struct {
-	TheaterID string `fesl:"TID"`
+	TID string `fesl:"TID"`
 }
 
 // EGRS - SERVER sent up, tell us if client is 'allowed' to join
@@ -21,8 +21,8 @@ func (tm *Theater) EGRS(event network.EventClientProcess) {
 		tm.db.stmtGameIncreaseJoining.Exec(event.Process.Msg["GID"])
 	}
 
-	event.Client.Answer(&codec.Pkt{
-		Message:    thtrEGRS,
+	event.Client.Answer(&codec.Packet{
+		Message: thtrEGRS,
 		Content: ansEGRS{event.Process.Msg["TID"]},
 	})
 }

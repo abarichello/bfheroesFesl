@@ -12,13 +12,13 @@ import (
 )
 
 type ansEGAM struct {
-	TheaterID string `fesl:"TID"`
-	LobbyID   string `fesl:"LID"`
-	GameID    string `fesl:"GID"`
+	TID     string `fesl:"TID"`
+	LobbyID string `fesl:"LID"`
+	GameID  string `fesl:"GID"`
 }
 
 type ansEGRQ struct {
-	TheaterID    string `fesl:"TID"`
+	TID          string `fesl:"TID"`
 	Name         string `fesl:"NAME"`
 	UserID       string `fesl:"UID"`
 	PlayerID     string `fesl:"PID"`
@@ -48,20 +48,20 @@ type ansEGRQ struct {
 }
 
 type ansEGEG struct {
-	TheaterID string `fesl:"TID"`
-	Platform  string `fesl:"PL"`
-	Ticket    string `fesl:"TICKET"`
-	PlayerID  string `fesl:"PID"`
-	IP        string `fesl:"I"`
-	Port      string `fesl:"P"`
-	Huid      string `fesl:"HUID"`
-	Ekey      string `fesl:"EKEY"`
-	IntIP     string `fesl:"INT-IP"`
-	IntPort   string `fesl:"INT-PORT"`
-	Secret    string `fesl:"SECRET"`
-	Ugid      string `fesl:"UGID"`
-	LobbyID   string `fesl:"LID"`
-	GameID    string `fesl:"GID"`
+	TID      string `fesl:"TID"`
+	Platform string `fesl:"PL"`
+	Ticket   string `fesl:"TICKET"`
+	PlayerID string `fesl:"PID"`
+	IP       string `fesl:"I"`
+	Port     string `fesl:"P"`
+	Huid     string `fesl:"HUID"`
+	Ekey     string `fesl:"EKEY"`
+	IntIP    string `fesl:"INT-IP"`
+	IntPort  string `fesl:"INT-PORT"`
+	Secret   string `fesl:"SECRET"`
+	Ugid     string `fesl:"UGID"`
+	LobbyID  string `fesl:"LID"`
+	GameID   string `fesl:"GID"`
 }
 
 // EGAM - CLIENT called when a client wants to join a gameserver
@@ -71,7 +71,7 @@ func (tm *Theater) EGAM(event network.EventClientProcess) {
 	lobbyID := event.Process.Msg["LID"]
 	pid := event.Client.HashState.Get("id")
 
-	event.Client.Answer(&codec.Pkt{
+	event.Client.Answer(&codec.Packet{
 		Message: thtrEGAM,
 		Content: ansEGAM{
 			event.Process.Msg["TID"],
@@ -104,10 +104,10 @@ func (tm *Theater) EGAM(event network.EventClientProcess) {
 		gsData := tm.level.NewObject("gdata", gameID)
 
 		// Server
-		gameServer.Answer(&codec.Pkt{
+		gameServer.Answer(&codec.Packet{
 			Message: thtrEGRQ,
 			Content: ansEGRQ{
-				TheaterID:    "0",
+				TID:          event.Process.Msg["TID"],
 				Name:         stats["heroName"],
 				UserID:       stats["userID"],
 				PlayerID:     pid,
@@ -138,23 +138,23 @@ func (tm *Theater) EGAM(event network.EventClientProcess) {
 		})
 
 		// Client
-		event.Client.Answer(&codec.Pkt{
+		event.Client.Answer(&codec.Packet{
 			Message: thtrEGEG,
 			Content: ansEGEG{
-				TheaterID: "0",
-				Platform:  "pc",
-				Ticket:    "2018751182",
-				PlayerID:  pid,
-				IP:        gsData.Get("IP"),
-				Port:      gsData.Get("PORT"),
-				Huid:      "1",
-				Ekey:      "O65zZ2D2A58mNrZw1hmuJw%3d%3d",
-				IntIP:     gsData.Get("INT-IP"),
-				IntPort:   gsData.Get("INT-PORT"),
-				Secret:    "2587913",
-				Ugid:      gsData.Get("UGID"),
-				LobbyID:   lobbyID,
-				GameID:    gameID,
+				TID:      event.Process.Msg["TID"],
+				Platform: "pc",
+				Ticket:   "2018751182",
+				PlayerID: pid,
+				IP:       gsData.Get("IP"),
+				Port:     gsData.Get("PORT"),
+				Huid:     "1",
+				Ekey:     "O65zZ2D2A58mNrZw1hmuJw%3d%3d",
+				IntIP:    gsData.Get("INT-IP"),
+				IntPort:  gsData.Get("INT-PORT"),
+				Secret:   "2587913",
+				Ugid:     gsData.Get("UGID"),
+				LobbyID:  lobbyID,
+				GameID:   gameID,
 			},
 		})
 	}

@@ -8,8 +8,8 @@ import (
 )
 
 type ansPENT struct {
-	TheaterID string `fesl:"TID"`
-	PlayerID  string `fesl:"PID"`
+	TID      string `fesl:"TID"`
+	PlayerID string `fesl:"PID"`
 }
 
 // PENT - SERVER sent up when a player joins (entitle player?)
@@ -52,7 +52,7 @@ func (tM *Theater) PENT(event network.EventClientProcess) {
 		logrus.Errorln("Invalid team " + stats["c_team"] + " for " + pid)
 	}
 
-	event.Client.Answer(&codec.Pkt{
+	event.Client.Answer(&codec.Packet{
 		Message: thtrPENT,
 		Content: ansPENT{
 			event.Process.Msg["TID"],

@@ -10,7 +10,7 @@ import (
 )
 
 type ansClientConnected struct {
-	TheaterID   string `fesl:"TID"`
+	TID   string `fesl:"TID"`
 	ConnectedAt int64  `fesl:"TIME"`
 	ConnTTL     int    `fesl:"activityTimeoutSecs"`
 	Protocol    string `fesl:"PROT"`
@@ -23,10 +23,10 @@ func (tm *Theater) CONN(event network.EventClientProcess) {
 		return
 	}
 
-	event.Client.Answer(&codec.Pkt{
+	event.Client.Answer(&codec.Packet{
 		Message: thtrCONN,
 		Content: ansClientConnected{
-			TheaterID:   event.Process.Msg["TID"],
+			TID:   event.Process.Msg["TID"],
 			ConnectedAt: time.Now().UTC().Unix(),
 			ConnTTL:     int((60 * time.Minute).Seconds()),
 			Protocol:    event.Process.Msg["PROT"],

@@ -65,7 +65,7 @@ func (fm *FeslManager) NuLogin(event network.EventClientProcess) {
 		&email, &birthday, &language, &country, &gameToken)
 
 	if err != nil {
-		event.Client.Answer(&codec.Pkt{
+		event.Client.Answer(&codec.Packet{
 			Content: NuLoginErr{
 				TXN:     acctNuLogin,
 				Message: `"Wrong Login/Spoof"`,
@@ -95,7 +95,7 @@ func (fm *FeslManager) NuLogin(event network.EventClientProcess) {
 	lkeyRedis.Set("name", username)
 
 	event.Client.HashState.Set("lkeys", event.Client.HashState.Get("lkeys")+";"+lkey)
-	event.Client.Answer(&codec.Pkt{
+	event.Client.Answer(&codec.Packet{
 		Content: ansNuLogin{
 			TXN:       acctNuLogin,
 			ProfileID: id,
@@ -110,13 +110,14 @@ func (fm *FeslManager) NuLogin(event network.EventClientProcess) {
 
 // NuLoginServer - login command for servers
 func (fm *FeslManager) NuLoginServer(event network.EventClientProcess) {
+
 	var id, userID, servername, secretKey, username string
 
 	err := fm.db.stmtGetServerBySecret.QueryRow(event.Process.Msg["password"]).Scan(&id,
 		&userID, &servername, &secretKey, &username)
 
 	if err != nil {
-		event.Client.Answer(&codec.Pkt{
+		event.Client.Answer(&codec.Packet{
 			Content: NuLoginErr{
 				TXN:     acctNuLogin,
 				Message: `"Wrong Server "`,
@@ -144,7 +145,7 @@ func (fm *FeslManager) NuLoginServer(event network.EventClientProcess) {
 	lkeyRedis.Set("name", username)
 
 	event.Client.HashState.Set("lkeys", event.Client.HashState.Get("lkeys")+";"+lkey)
-	event.Client.Answer(&codec.Pkt{
+	event.Client.Answer(&codec.Packet{
 		Content: ansNuLogin{
 			TXN:       acctNuLogin,
 			ProfileID: userID,
@@ -193,7 +194,7 @@ func (fm *FeslManager) NuLookupUserInfo(event network.EventClientProcess) {
 		})
 	}
 
-	event.Client.Answer(&codec.Pkt{
+	event.Client.Answer(&codec.Packet{
 		Content: ans,
 		Send:    event.Process.HEX,
 		Message: acct,
@@ -213,8 +214,8 @@ func (fm *FeslManager) NuLookupUserInfoServer(event network.EventClientProcess) 
 		logrus.Errorln(err)
 		return
 	}
-
-	event.Client.Answer(&codec.Pkt{
+	hex := event.Process.HEX
+	event.Client.Answer(&codec.Packet{
 		Content: ansNuLookupUserInfo{
 			TXN: acctNuLookupUserInfo,
 			UserInfo: []userInfo{
@@ -227,7 +228,7 @@ func (fm *FeslManager) NuLookupUserInfoServer(event network.EventClientProcess) 
 				},
 			},
 		},
-		Send:    event.Process.HEX,
+		Send:    hex,
 		Message: acct,
 	})
 }
@@ -277,7 +278,7 @@ func (fm *FeslManager) NuLoginPersona(event network.EventClientProcess) {
 
 	event.Client.HashState.Set("lkeys", event.Client.HashState.Get("lkeys")+";"+lkey)
 
-	event.Client.Answer(&codec.Pkt{
+	event.Client.Answer(&codec.Packet{
 		Content: ansNuLogin{
 			TXN:       acctNuLoginPersona,
 			ProfileID: userID,
@@ -325,7 +326,7 @@ func (fm *FeslManager) NuLoginPersonaServer(event network.EventClientProcess) {
 	lkeyRedis.Set("name", servername)
 
 	event.Client.HashState.Set("lkeys", event.Client.HashState.Get("lkeys")+";"+lkey)
-	event.Client.Answer(&codec.Pkt{
+	event.Client.Answer(&codec.Packet{
 		Content: ansNuLogin{
 			TXN:       acctNuLoginPersona,
 			ProfileID: id,
@@ -375,7 +376,7 @@ func (fm *FeslManager) NuGetPersonas(event network.EventClientProcess) {
 
 	event.Client.HashState.Set("numOfHeroes", strconv.Itoa(len(ans.Personas)))
 
-	event.Client.Answer(&codec.Pkt{
+	event.Client.Answer(&codec.Packet{
 		Send:    event.Process.HEX,
 		Message: acct,
 		Content: ans,
@@ -386,7 +387,7 @@ func (fm *FeslManager) NuGetPersonas(event network.EventClientProcess) {
 func (fm *FeslManager) NuGrantEntitlement(event network.EventClientProcess) {
 	logrus.Println("GRANT ENTITLEMENT")
 
-	event.Client.Answer(&codec.Pkt{
+	event.Client.Answer(&codec.Packet{
 		Message: acct,
 		Content: "TXN",
 		Send:    event.Process.HEX,
@@ -422,7 +423,7 @@ func (fm *FeslManager) NuGetPersonasServer(event network.EventClientProcess) {
 		var id, userID, servername, secretKey, username string
 		err := rows.Scan(&id, &userID, &servername, &secretKey, &username)
 		if err != nil {
-			event.Client.Answer(&codec.Pkt{
+			event.Client.Answer(&codec.Packet{
 				Content: NuLoginErr{
 					TXN:     acctNuLogin,
 					Message: `"Wrong Login/Spoof"`,
@@ -439,7 +440,7 @@ func (fm *FeslManager) NuGetPersonasServer(event network.EventClientProcess) {
 		event.Client.HashState.Set("ownerId."+strconv.Itoa(len(ans.Personas)), id)
 	}
 
-	event.Client.Answer(&codec.Pkt{
+	event.Client.Answer(&codec.Packet{
 		Send:    event.Process.HEX,
 		Message: acct,
 		Content: ans,
@@ -471,7 +472,7 @@ type ansNuGetAccount struct {
 }
 
 func (fm *FeslManager) acctNuGetAccount(event *network.EventClientProcess) {
-	event.Client.Answer(&codec.Pkt{
+	event.Client.Answer(&codec.Packet{
 		Message: acct,
 		Content: ansNuGetAccount{
 			TXN:            acctNuGetAccount,

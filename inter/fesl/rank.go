@@ -89,10 +89,10 @@ func (fm *FeslManager) GetStats(event network.EventClientProcess) {
 		ans.Stats = append(ans.Stats, statsPair{Key: key})
 	}
 
-	event.Client.Answer(&codec.Pkt{
+	event.Client.Answer(&codec.Packet{
 		Content: ans,
 		Send:    event.Process.HEX,
-		Message:    rank,
+		Message: rank,
 	})
 }
 
@@ -214,7 +214,7 @@ func (fm *FeslManager) UpdateStats(event network.EventClientProcess) {
 		for j := 0; j < keys; j++ {
 
 			if event.Process.Msg["u."+strconv.Itoa(i)+".s."+strconv.Itoa(j)+".ut"] != "3" {
-				logrus.Println("Update new Message:", event.Process.Msg["u."+strconv.Itoa(i)+".s."+strconv.Itoa(j)+".k"], event.Process.Msg["u."+strconv.Itoa(i)+".s."+strconv.Itoa(j)+".t"], event.Process.Msg["u."+strconv.Itoa(i)+".s."+strconv.Itoa(j)+".ut"], event.Process.Msg["u."+strconv.Itoa(i)+".s."+strconv.Itoa(j)+".v"], event.Process.Msg["u."+strconv.Itoa(i)+".s."+strconv.Itoa(j)+".pt"])
+				logrus.Println("NewUpdate:", event.Process.Msg["u."+strconv.Itoa(i)+".s."+strconv.Itoa(j)+".k"], event.Process.Msg["u."+strconv.Itoa(i)+".s."+strconv.Itoa(j)+".t"], event.Process.Msg["u."+strconv.Itoa(i)+".s."+strconv.Itoa(j)+".ut"], event.Process.Msg["u."+strconv.Itoa(i)+".s."+strconv.Itoa(j)+".v"], event.Process.Msg["u."+strconv.Itoa(i)+".s."+strconv.Itoa(j)+".pt"])
 			}
 
 			key := event.Process.Msg["u."+strconv.Itoa(i)+".s."+strconv.Itoa(j)+".k"]
@@ -231,9 +231,9 @@ func (fm *FeslManager) UpdateStats(event network.EventClientProcess) {
 					if err != nil {
 						// Couldn't transfer it to a number, skip updating this stat
 						logrus.Errorln("Skipping stat "+key, err)
-						event.Client.Answer(&codec.Pkt{
+						event.Client.Answer(&codec.Packet{
 							Send:    event.Process.HEX,
-							Message:    rank,
+							Message: rank,
 							Content: ansUpdateStats{TXN: rankUpdateStats},
 						})
 						return
@@ -244,10 +244,10 @@ func (fm *FeslManager) UpdateStats(event network.EventClientProcess) {
 						newValue := stats[key].value + intValue
 
 						if key == "c_wallet_hero" && newValue < 0 {
-							logrus.Errorln("Not allowed to process stat. c_wallet_hero lower than 0", key)
-							event.Client.Answer(&codec.Pkt{
+							logrus.Errorln("Negative STATS", key)
+							event.Client.Answer(&codec.Packet{
 								Send:    event.Process.HEX,
-								Message:    rank,
+								Message: rank,
 								Content: ansUpdateStats{TXN: rankUpdateStats},
 							})
 							return
@@ -256,9 +256,9 @@ func (fm *FeslManager) UpdateStats(event network.EventClientProcess) {
 						value = strconv.FormatFloat(newValue, 'f', 4, 64)
 					} else {
 						logrus.Errorln("Not allowed to process stat", key)
-						event.Client.Answer(&codec.Pkt{
+						event.Client.Answer(&codec.Packet{
 							Send:    event.Process.HEX,
-							Message:    rank,
+							Message: rank,
 							Content: ansUpdateStats{TXN: rankUpdateStats},
 						})
 						return
@@ -281,9 +281,9 @@ func (fm *FeslManager) UpdateStats(event network.EventClientProcess) {
 		}
 	}
 
-	event.Client.Answer(&codec.Pkt{
+	event.Client.Answer(&codec.Packet{
 		Send:    event.Process.HEX,
-		Message:    rank,
+		Message: rank,
 		Content: ans,
 	})
 }
@@ -383,9 +383,10 @@ func (fm *FeslManager) GetStatsForOwners(event network.EventClientProcess) {
 		ans.Stats = append(ans.Stats, stContainer)
 	}
 
-	event.Client.Answer(&codec.Pkt{
-		Send:    0xC0000007,
-		Message:    rank,
+	hex := event.Process.HEX
+	event.Client.Answer(&codec.Packet{
+		Send:    hex,
+		Message: rank,
 		Content: ans,
 	})
 }

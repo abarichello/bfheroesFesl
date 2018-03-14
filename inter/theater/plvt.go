@@ -57,7 +57,7 @@ func (tM *Theater) PLVT(event network.EventClientProcess) {
 		logrus.Errorln("Invalid team " + stats["c_team"] + " for " + pid)
 	}
 
-	event.Client.Answer(&codec.Pkt{
+	event.Client.Answer(&codec.Packet{
 		Message: thtrKICK,
 		Content: ansKICK{
 			event.Process.Msg["PID"],
@@ -66,8 +66,8 @@ func (tM *Theater) PLVT(event network.EventClientProcess) {
 		},
 	})
 
-	event.Client.Answer(&codec.Pkt{
-		Message:    thtrPLVT,
+	event.Client.Answer(&codec.Packet{
+		Message: thtrPLVT,
 		Content: ansPLVT{event.Process.Msg["TID"]},
 	})
 }

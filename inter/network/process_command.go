@@ -58,7 +58,7 @@ func readFesl(data []byte, fireEvent eventReadFesl) []byte {
 	var ContentRaw []byte
 	for {
 		// Create a copy at this point in case we have to abort later
-		// And send back the Pkt to get the rest
+		// And send back the Packet to get the rest
 		curData := p
 
 		var HEX uint32
@@ -81,7 +81,7 @@ func readFesl(data []byte, fireEvent eventReadFesl) []byte {
 		binary.Read(p, binary.BigEndian, &length)
 
 		if (length - 12) > uint32(len(p.Bytes())) {
-			logrus.Println("Pkt not fully read")
+			logrus.Println("Packet not fully read")
 			return curData.Bytes()
 		}
 
@@ -106,7 +106,7 @@ func readFesl(data []byte, fireEvent eventReadFesl) []byte {
 // this is not important just do like 
 //		Send: 0xc000000d,
 
-// event.Client.Answer(&codec.Pkt{
+// event.Client.Answer(&codec.Packet{
 // Content: Start{
 // 	TXN: "Start",
 // 	ID: stPartition{1, event.Process.Msg[partition]},
@@ -150,25 +150,25 @@ func processCommand(msg string) (*ProcessFESL, error) {
 }
 
 func (client *Client) processCommand(command string) {
-	gsPkt, err := processCommand(command)
+	gsPacket, err := processCommand(command)
 	if err != nil {
 		logrus.Errorf("%s: Error processing command %s.\n%v", client.name, command, err)
 		client.eventChan <- client.FireError(err)
 		return
 	}
 
-	client.eventChan <- ClientEvent{Name: "command." + gsPkt.Query, Data: gsPkt}
-	client.eventChan <- ClientEvent{Name: "command", Data: gsPkt}
+	client.eventChan <- ClientEvent{Name: "command." + gsPacket.Query, Data: gsPacket}
+	client.eventChan <- ClientEvent{Name: "command", Data: gsPacket}
 }
 
 func (socket *SocketUDP) processCommand(command string, addr *net.UDPAddr) {
-	gsPkt, err := processCommand(command)
+	gsPacket, err := processCommand(command)
 	if err != nil {
 		logrus.Errorf("%s: Error processing command %s.\n%v", socket.name, command, err)
 		socket.EventChan <- SocketUDPEvent{Name: "error", Addr: addr, Data: err}
 		return
 	}
 
-	socket.EventChan <- SocketUDPEvent{Name: "command." + gsPkt.Query, Addr: addr, Data: gsPkt}
-	socket.EventChan <- SocketUDPEvent{Name: "command", Addr: addr, Data: gsPkt}
+	socket.EventChan <- SocketUDPEvent{Name: "command." + gsPacket.Query, Addr: addr, Data: gsPacket}
+	socket.EventChan <- SocketUDPEvent{Name: "command", Addr: addr, Data: gsPacket}
 }

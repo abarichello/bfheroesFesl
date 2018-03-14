@@ -247,7 +247,7 @@ func (socket *SocketUDP) run() {
 
 		message := strings.TrimSpace(string(socket.XOr(buf[0:n])))
 
-		logrus.Debugln("Got UDP message:", message)
+		logrus.Debugln("UDP message:", message)
 
 		socket.EventChan <- SocketUDPEvent{Name: "data", Addr: addr, Data: message}
 

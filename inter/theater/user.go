@@ -11,7 +11,7 @@ import (
 )
 
 type answerUSER struct {
-	TheaterID string `fesl:"TID"`
+	TID string `fesl:"TID"`
 	Name      string `fesl:"NAME"` // ServerName / ClientName
 	ClientID  string `fesl:"CID"`  // ?
 }
@@ -40,10 +40,10 @@ func (tm *Theater) USER(event network.EventClientProcess) {
 	redisState.Set("userID", lkeyRedis.Get("userID"))
 	redisState.Set("name", lkeyRedis.Get("name"))
 
-	event.Client.Answer(&codec.Pkt{
+	event.Client.Answer(&codec.Packet{
 		Message: thtrUSER,
 		Content: answerUSER{
-			TheaterID: event.Process.Msg["TID"],
+			TID: event.Process.Msg["TID"],
 			Name:      lkeyRedis.Get("name"),
 		},
 	})

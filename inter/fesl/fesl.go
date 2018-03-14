@@ -59,8 +59,8 @@ func (fm *FeslManager) run() {
 				fm.newClient(event.Data.(network.EventNewClient)) // TLS
 			case "client.command.Hello":
 				fm.hello(event.Data.(network.EventClientProcess))
-			// case "client.command.Chunk":
-			// 	fm.Chunk(event.Data.(network.EventClientProcess))
+			case "client.command.Chunk":
+				fm.Chunk(event.Data.(network.EventClientProcess))
 			case "client.command.NuLogin":
 				fm.NuLogin(event.Data.(network.EventClientProcess))
 			case "client.command.NuGetPersonas":

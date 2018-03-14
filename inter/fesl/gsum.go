@@ -15,7 +15,7 @@ type ansGetSessionID struct {
 }
 
 func (fm *FeslManager) gsumGetSessionID(event network.EventClientProcess) {
-	event.Client.Answer(&codec.Pkt{
+	event.Client.Answer(&codec.Packet{
 		Content: ansGetSessionID{TXN: GetSessionID},
 		Message: gsum,
 	})

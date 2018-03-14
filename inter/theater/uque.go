@@ -18,7 +18,7 @@ func (tm *Theater) UQUE(event network.EventClientProcess) {
 	}
 	logrus.Println("==============UQUE==============")
 
-	event.Client.Answer(&codec.Pkt{
+	event.Client.Answer(&codec.Packet{
 		Message: thtrUQUE,
 		Content: ansUQUE{
 			event.Process.Msg["TID"],

@@ -24,15 +24,17 @@ type ansMemCheck struct {
 	Salt     string `fesl:"salt"`
 	mtype    string `fesl:"type"`
 	memcheck string `fesl:"memcheck.[]`
+	result   string `fesl:"result"`
 }
 
 func (fm *FeslManager) fsysMemCheck(event *network.EventNewClient) {
-	event.Client.Answer(&codec.Pkt{
+	event.Client.Answer(&codec.Packet{
 		Message: fsys,
 		Content: ansMemCheck{
 			TXN:      "MemCheck",
 			memcheck: "0",
-			Salt:     "",
+			Salt:     "3",
+			result:   "",
 		},
 		Send: 0xC0000000,
 	})
@@ -99,18 +101,17 @@ func (fm *FeslManager) hello(event network.EventClientProcess) {
 		ans.TheaterPort = config.General.ThtrClientPort
 	}
 
-	event.Client.Answer(&codec.Pkt{
+	hex := event.Process.HEX
+	event.Client.Answer(&codec.Packet{
 		Content: ans,
 		Message: fsys,
-		Send:    0xC0000001,
+		Send:    hex,
 	})
 }
 
 const (
 	location = "iad"
 )
-
-//is this usefull ? added google dns to test
 
 type ansGetPingSites struct {
 	TXN       string     `fesl:"TXN"`
@@ -131,16 +132,15 @@ func (fm *FeslManager) GetPingSites(event network.EventClientProcess) {
 		return
 	}
 
-	event.Client.Answer(&codec.Pkt{
+	hex := event.Process.HEX
+	event.Client.Answer(&codec.Packet{
 		Message: event.Process.Query,
-		Send:    0x80000000,
+		Send:    hex,
 		Content: ansGetPingSites{
 			TXN:      fsysGetPingSites,
 			MinPings: 1,
 			PingSites: []pingSite{
-				{"127.0.0.1",
-					location,
-					0}, //0 = MS
+				{"127.0.0.1", location, 1},
 			},
 		},
 	})
