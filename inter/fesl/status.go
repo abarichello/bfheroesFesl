@@ -55,6 +55,6 @@ func (fm *FeslManager) Status(event network.EventClientProcess) {
 	event.Client.Answer(&codec.Pkt{
 		Content: ans,
 		Send:    0x80000000,
-		Type:    "pnow",
+		Message:    "pnow",
 	})
 }

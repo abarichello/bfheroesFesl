@@ -13,7 +13,7 @@ import (
 
 func (client *Client) Answer(Pkt *codec.Pkt) error {
 	if !client.IsActive {
-		logrus.Printf("%s: Trying to write to inactive Client.\n%v", client.name, Pkt.Type)
+		logrus.Printf("%s: Trying to write to inactive Client.\n%v", client.name, Pkt.Message)
 		return errors.New("Client NOT active.Can't send message")
 	}
 
@@ -31,7 +31,7 @@ func (socket *SocketUDP) Answer(Pkt *codec.Pkt, addr *net.UDPAddr) error {
 }
 
 func Answer(Pkt *codec.Pkt, writer func(*bytes.Buffer) error) error {
-	logger := logrus.WithFields(logrus.Fields{"type": Pkt.Type, "HEX": Pkt.Send})
+	logger := logrus.WithFields(logrus.Fields{"type": Pkt.Message, "HEX": Pkt.Send})
 
 	encoder := codec.NewEncoder()
 	buf, err := encoder.EncodePkt(Pkt)

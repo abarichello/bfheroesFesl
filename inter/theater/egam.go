@@ -72,7 +72,7 @@ func (tm *Theater) EGAM(event network.EventClientProcess) {
 	pid := event.Client.HashState.Get("id")
 
 	event.Client.Answer(&codec.Pkt{
-		Type: thtrEGAM,
+		Message: thtrEGAM,
 		Content: ansEGAM{
 			event.Process.Msg["TID"],
 			lobbyID,
@@ -105,7 +105,7 @@ func (tm *Theater) EGAM(event network.EventClientProcess) {
 
 		// Server
 		gameServer.Answer(&codec.Pkt{
-			Type: thtrEGRQ,
+			Message: thtrEGRQ,
 			Content: ansEGRQ{
 				TheaterID:    "0",
 				Name:         stats["heroName"],
@@ -139,7 +139,7 @@ func (tm *Theater) EGAM(event network.EventClientProcess) {
 
 		// Client
 		event.Client.Answer(&codec.Pkt{
-			Type: thtrEGEG,
+			Message: thtrEGEG,
 			Content: ansEGEG{
 				TheaterID: "0",
 				Platform:  "pc",

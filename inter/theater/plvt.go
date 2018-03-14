@@ -58,7 +58,7 @@ func (tM *Theater) PLVT(event network.EventClientProcess) {
 	}
 
 	event.Client.Answer(&codec.Pkt{
-		Type: thtrKICK,
+		Message: thtrKICK,
 		Content: ansKICK{
 			event.Process.Msg["PID"],
 			event.Process.Msg["LID"],
@@ -67,7 +67,7 @@ func (tM *Theater) PLVT(event network.EventClientProcess) {
 	})
 
 	event.Client.Answer(&codec.Pkt{
-		Type:    thtrPLVT,
+		Message:    thtrPLVT,
 		Content: ansPLVT{event.Process.Msg["TID"]},
 	})
 }

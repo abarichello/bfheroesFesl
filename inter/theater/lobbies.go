@@ -21,7 +21,7 @@ type ansLDAT struct {
 
 func (tm *Theater) LobbyData(event network.EventClientProcess) {
 	event.Client.Answer(&codec.Pkt{
-		Type: thtrLDAT,
+		Message: thtrLDAT,
 		Content: ansLDAT{
 			TID:             "1",
 			FavoriteGames:   "0",
@@ -45,7 +45,7 @@ type ansLLST struct {
 // LLST - CLIENT (???) unknown, potentially bookmarks
 func (tm *Theater) LLST(event network.EventClientProcess) {
 	event.Client.Answer(&codec.Pkt{
-		Type:    thtrLLST,
+		Message:    thtrLLST,
 		Content: ansLLST{event.Process.Msg["TID"], 1},
 	})
 }

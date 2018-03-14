@@ -18,7 +18,7 @@ func (tm *Theater) ECNL(event network.EventClientProcess) {
 	logrus.Println("HeroRQ")
 
 	event.Client.Answer(&codec.Pkt{
-		Type: thtrENCL,
+		Message: thtrENCL,
 		Content: ansECNL{
 			event.Process.Msg["TID"],
 			event.Process.Msg["GID"],

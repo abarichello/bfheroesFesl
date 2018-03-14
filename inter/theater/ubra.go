@@ -25,7 +25,7 @@ func (tM *Theater) UBRA(event network.EventClientProcess) {
 	}
 
 		event.Client.Answer(&codec.Pkt{
-			Type: thtrUBRA,
+			Message: thtrUBRA,
 			Content: ansUBRA{event.Process.Msg["TID"],
 		},
 	})

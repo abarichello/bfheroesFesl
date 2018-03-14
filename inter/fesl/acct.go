@@ -2,10 +2,11 @@ package fesl
 
 import (
 	"fmt"
+	"strconv"
+
 	"github.com/Synaxis/bfheroesFesl/inter/network"
 	"github.com/Synaxis/bfheroesFesl/inter/network/codec"
 	"github.com/sirupsen/logrus"
-	"strconv"
 )
 
 const (
@@ -71,8 +72,8 @@ func (fm *FeslManager) NuLogin(event network.EventClientProcess) {
 				Code:    120,
 			},
 
-			Send: event.Process.HEX,
-			Type: event.Process.Query,
+			Send:    event.Process.HEX,
+			Message: event.Process.Query,
 		})
 		return
 	}
@@ -102,8 +103,8 @@ func (fm *FeslManager) NuLogin(event network.EventClientProcess) {
 			NucleusID: username,
 			Lkey:      lkey,
 		},
-		Send: event.Process.HEX,
-		Type: acct,
+		Send:    event.Process.HEX,
+		Message: acct,
 	})
 }
 
@@ -121,8 +122,8 @@ func (fm *FeslManager) NuLoginServer(event network.EventClientProcess) {
 				Message: `"Wrong Server "`,
 				Code:    122,
 			},
-			Send: event.Process.HEX,
-			Type: acct,
+			Send:    event.Process.HEX,
+			Message: acct,
 		})
 		return
 	}
@@ -151,8 +152,8 @@ func (fm *FeslManager) NuLoginServer(event network.EventClientProcess) {
 			NucleusID: username,
 			Lkey:      lkey,
 		},
-		Send: event.Process.HEX,
-		Type: acct,
+		Send:    event.Process.HEX,
+		Message: acct,
 	})
 }
 
@@ -195,7 +196,7 @@ func (fm *FeslManager) NuLookupUserInfo(event network.EventClientProcess) {
 	event.Client.Answer(&codec.Pkt{
 		Content: ans,
 		Send:    event.Process.HEX,
-		Type:    acct,
+		Message: acct,
 	})
 
 }
@@ -226,8 +227,8 @@ func (fm *FeslManager) NuLookupUserInfoServer(event network.EventClientProcess) 
 				},
 			},
 		},
-		Send: event.Process.HEX,
-		Type: acct,
+		Send:    event.Process.HEX,
+		Message: acct,
 	})
 }
 
@@ -283,8 +284,8 @@ func (fm *FeslManager) NuLoginPersona(event network.EventClientProcess) {
 			UserID:    userID,
 			Lkey:      lkey,
 		},
-		Send: event.Process.HEX,
-		Type: acct,
+		Send:    event.Process.HEX,
+		Message: acct,
 	})
 }
 
@@ -331,8 +332,8 @@ func (fm *FeslManager) NuLoginPersonaServer(event network.EventClientProcess) {
 			UserID:    id,
 			Lkey:      lkey,
 		},
-		Send: event.Process.HEX,
-		Type: acct,
+		Send:    event.Process.HEX,
+		Message: acct,
 	})
 }
 
@@ -376,7 +377,7 @@ func (fm *FeslManager) NuGetPersonas(event network.EventClientProcess) {
 
 	event.Client.Answer(&codec.Pkt{
 		Send:    event.Process.HEX,
-		Type:    acct,
+		Message: acct,
 		Content: ans,
 	})
 }
@@ -386,7 +387,7 @@ func (fm *FeslManager) NuGrantEntitlement(event network.EventClientProcess) {
 	logrus.Println("GRANT ENTITLEMENT")
 
 	event.Client.Answer(&codec.Pkt{
-		Type:    acct,
+		Message: acct,
 		Content: "TXN",
 		Send:    event.Process.HEX,
 	})
@@ -428,8 +429,8 @@ func (fm *FeslManager) NuGetPersonasServer(event network.EventClientProcess) {
 					Code:    120,
 				},
 
-				Send: event.Process.HEX,
-				Type: event.Process.Query,
+				Send:    event.Process.HEX,
+				Message: event.Process.Query,
 			})
 			return
 		}
@@ -440,7 +441,7 @@ func (fm *FeslManager) NuGetPersonasServer(event network.EventClientProcess) {
 
 	event.Client.Answer(&codec.Pkt{
 		Send:    event.Process.HEX,
-		Type:    acct,
+		Message: acct,
 		Content: ans,
 	})
 }
@@ -471,7 +472,7 @@ type ansNuGetAccount struct {
 
 func (fm *FeslManager) acctNuGetAccount(event *network.EventClientProcess) {
 	event.Client.Answer(&codec.Pkt{
-		Type: acct,
+		Message: acct,
 		Content: ansNuGetAccount{
 			TXN:            acctNuGetAccount,
 			Country:        "US",

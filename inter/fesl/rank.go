@@ -92,7 +92,7 @@ func (fm *FeslManager) GetStats(event network.EventClientProcess) {
 	event.Client.Answer(&codec.Pkt{
 		Content: ans,
 		Send:    event.Process.HEX,
-		Type:    rank,
+		Message:    rank,
 	})
 }
 
@@ -214,7 +214,7 @@ func (fm *FeslManager) UpdateStats(event network.EventClientProcess) {
 		for j := 0; j < keys; j++ {
 
 			if event.Process.Msg["u."+strconv.Itoa(i)+".s."+strconv.Itoa(j)+".ut"] != "3" {
-				logrus.Println("Update new Type:", event.Process.Msg["u."+strconv.Itoa(i)+".s."+strconv.Itoa(j)+".k"], event.Process.Msg["u."+strconv.Itoa(i)+".s."+strconv.Itoa(j)+".t"], event.Process.Msg["u."+strconv.Itoa(i)+".s."+strconv.Itoa(j)+".ut"], event.Process.Msg["u."+strconv.Itoa(i)+".s."+strconv.Itoa(j)+".v"], event.Process.Msg["u."+strconv.Itoa(i)+".s."+strconv.Itoa(j)+".pt"])
+				logrus.Println("Update new Message:", event.Process.Msg["u."+strconv.Itoa(i)+".s."+strconv.Itoa(j)+".k"], event.Process.Msg["u."+strconv.Itoa(i)+".s."+strconv.Itoa(j)+".t"], event.Process.Msg["u."+strconv.Itoa(i)+".s."+strconv.Itoa(j)+".ut"], event.Process.Msg["u."+strconv.Itoa(i)+".s."+strconv.Itoa(j)+".v"], event.Process.Msg["u."+strconv.Itoa(i)+".s."+strconv.Itoa(j)+".pt"])
 			}
 
 			key := event.Process.Msg["u."+strconv.Itoa(i)+".s."+strconv.Itoa(j)+".k"]
@@ -233,7 +233,7 @@ func (fm *FeslManager) UpdateStats(event network.EventClientProcess) {
 						logrus.Errorln("Skipping stat "+key, err)
 						event.Client.Answer(&codec.Pkt{
 							Send:    event.Process.HEX,
-							Type:    rank,
+							Message:    rank,
 							Content: ansUpdateStats{TXN: rankUpdateStats},
 						})
 						return
@@ -247,7 +247,7 @@ func (fm *FeslManager) UpdateStats(event network.EventClientProcess) {
 							logrus.Errorln("Not allowed to process stat. c_wallet_hero lower than 0", key)
 							event.Client.Answer(&codec.Pkt{
 								Send:    event.Process.HEX,
-								Type:    rank,
+								Message:    rank,
 								Content: ansUpdateStats{TXN: rankUpdateStats},
 							})
 							return
@@ -258,7 +258,7 @@ func (fm *FeslManager) UpdateStats(event network.EventClientProcess) {
 						logrus.Errorln("Not allowed to process stat", key)
 						event.Client.Answer(&codec.Pkt{
 							Send:    event.Process.HEX,
-							Type:    rank,
+							Message:    rank,
 							Content: ansUpdateStats{TXN: rankUpdateStats},
 						})
 						return
@@ -283,7 +283,7 @@ func (fm *FeslManager) UpdateStats(event network.EventClientProcess) {
 
 	event.Client.Answer(&codec.Pkt{
 		Send:    event.Process.HEX,
-		Type:    rank,
+		Message:    rank,
 		Content: ans,
 	})
 }
@@ -385,7 +385,7 @@ func (fm *FeslManager) GetStatsForOwners(event network.EventClientProcess) {
 
 	event.Client.Answer(&codec.Pkt{
 		Send:    0xC0000007,
-		Type:    rank,
+		Message:    rank,
 		Content: ans,
 	})
 }

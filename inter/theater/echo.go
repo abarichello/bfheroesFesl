@@ -11,7 +11,7 @@ type ansECHO struct {
 	IP        string `fesl:"IP"`
 	Port      int    `fesl:"PORT"`
 	ErrStatus int    `fesl:"ERR"`
-	Type      int    `fesl:"TYPE"`
+	Message      int    `fesl:"TYPE"`
 }
 
 //TODO check typo network.EventClientProcess
@@ -19,14 +19,14 @@ type ansECHO struct {
 func (tm *Theater) ECHO(event network.SocketUDPEvent) {
 	Process := event.Data.(*network.ProcessFESL)
 		tm.socketUDP.Answer(&codec.Pkt{
-		Type: thtrECHO,
+		Message: thtrECHO,
 		Content: ansECHO{
 			TID:       Process.Msg["TID"],
 			TXN:       Process.Msg["TXN"],
 			IP:        event.Addr.IP.String(),
 			Port:      event.Addr.Port,
 			ErrStatus: 0,
-			Type:      1,
+			Message:      1,
 		},
 	}, event.Addr)
 }

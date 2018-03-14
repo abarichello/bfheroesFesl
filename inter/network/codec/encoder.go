@@ -62,7 +62,7 @@ func (e *Encoder) EncodePkt(Pkt *Pkt) (*bytes.Buffer, error) {
 	buf := new(bytes.Buffer)
 
 	// Append type
-	if _, err := buf.Write([]byte(Pkt.Type)); err != nil { // 4 bytes
+	if _, err := buf.Write([]byte(Pkt.Message)); err != nil { // 4 bytes
 		return nil, err
 	}
 

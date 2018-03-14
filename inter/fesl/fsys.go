@@ -16,28 +16,23 @@ const (
 	fsys             = "fsys"
 	fsysGetPingSites = "GetPingSites"
 	fsysHello        = "Hello"
-	fsysMemCheck     = "MemCheck"
 	fsysPing         = "Ping"
 )
 
 type ansMemCheck struct {
-	TXN    string `fesl:"TXN"`
-	Result string `fesl:"result"`
-	Salt   string `fesl:"salt"`
-}
-
-type memCheck struct {
-	Length int    `fesl:"len"`
-	Addr   string `fesl:"addr"`
+	TXN      string `fesl:"TXN"`
+	Salt     string `fesl:"salt"`
+	mtype    string `fesl:"type"`
+	memcheck string `fesl:"memcheck.[]`
 }
 
 func (fm *FeslManager) fsysMemCheck(event *network.EventNewClient) {
 	event.Client.Answer(&codec.Pkt{
-		Type: fsys,
+		Message: fsys,
 		Content: ansMemCheck{
-			TXN:    fsysMemCheck,
-			Salt:   "5",
-			Result: "0",
+			TXN:      "MemCheck",
+			memcheck: "0",
+			Salt:     "",
 		},
 		Send: 0xC0000000,
 	})
@@ -106,7 +101,7 @@ func (fm *FeslManager) hello(event network.EventClientProcess) {
 
 	event.Client.Answer(&codec.Pkt{
 		Content: ans,
-		Type:    fsys,
+		Message: fsys,
 		Send:    0xC0000001,
 	})
 }
@@ -124,9 +119,9 @@ type ansGetPingSites struct {
 }
 
 type pingSite struct {
-	Addr string `fesl:"addr"`
-	Name string `fesl:"name"`
-	Type int    `fesl:"type"`
+	Addr    string `fesl:"addr"`
+	Name    string `fesl:"name"`
+	Message int    `fesl:"type"`
 }
 
 // GetPingSites - Get Pings for something
@@ -137,13 +132,13 @@ func (fm *FeslManager) GetPingSites(event network.EventClientProcess) {
 	}
 
 	event.Client.Answer(&codec.Pkt{
-		Type: event.Process.Query,
-		Send: event.Process.HEX,
+		Message: event.Process.Query,
+		Send:    0x80000000,
 		Content: ansGetPingSites{
 			TXN:      fsysGetPingSites,
-			MinPings: 0,
+			MinPings: 1,
 			PingSites: []pingSite{
-				{"8.8.8.8",
+				{"127.0.0.1",
 					location,
 					0}, //0 = MS
 			},

@@ -24,7 +24,7 @@ func (tm *Theater) CONN(event network.EventClientProcess) {
 	}
 
 	event.Client.Answer(&codec.Pkt{
-		Type: thtrCONN,
+		Message: thtrCONN,
 		Content: ansClientConnected{
 			TheaterID:   event.Process.Msg["TID"],
 			ConnectedAt: time.Now().UTC().Unix(),

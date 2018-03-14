@@ -112,7 +112,7 @@ func readFesl(data []byte, fireEvent eventReadFesl) []byte {
 // 	ID: stPartition{1, event.Process.Msg[partition]},
 // 	},
 // 	Send: 0xc000000d,
-// 	Type: pnow,
+// 	Message: pnow,
 // })
 type ProcessFESL struct {
 	Msg   map[string]string

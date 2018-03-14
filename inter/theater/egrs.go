@@ -4,7 +4,6 @@ import (
 	"github.com/Synaxis/bfheroesFesl/inter/network"
 	"github.com/Synaxis/bfheroesFesl/inter/network/codec"
 	"github.com/sirupsen/logrus"
-
 )
 
 type ansEGRS struct {
@@ -19,11 +18,11 @@ func (tm *Theater) EGRS(event network.EventClientProcess) {
 	logrus.Println("==EGRS==")
 
 	if event.Process.Msg["ALLOWED"] == "1" {
-	 tm.db.stmtGameIncreaseJoining.Exec(event.Process.Msg["GID"])
+		tm.db.stmtGameIncreaseJoining.Exec(event.Process.Msg["GID"])
 	}
 
 	event.Client.Answer(&codec.Pkt{
-		Type:    thtrEGRS,
+		Message:    thtrEGRS,
 		Content: ansEGRS{event.Process.Msg["TID"]},
 	})
 }

@@ -19,6 +19,7 @@ const (
 	thtrEGEG = "EGEG"
 	thtrEGRQ = "EGRQ"
 	thtrEGRS = "EGRS"
+	thtrUQUE = "UQUE"
 	thtrENCL = "ENCL"
 	thtrGDAT = "GDAT"
 	thtrKICK = "KICK"
@@ -106,6 +107,8 @@ func (tm *Theater) Listen() {
 				go tm.UGAM(event.Data.(network.EventClientProcess))
 			case "client.command.EGRS":
 				go tm.EGRS(event.Data.(network.EventClientProcess))
+			case "client.command.UQUE":
+				go tm.UQUE(event.Data.(network.EventClientProcess))
 			case "client.command.PENT":
 				go tm.PENT(event.Data.(network.EventClientProcess))
 			case "client.command.PLVT":
@@ -135,7 +138,7 @@ func (tm *Theater) newClient(event network.EventNewClient) {
 	logrus.Println("Jtheater")
 
 	// Start Heartbeat
-	event.Client.State.HeartTicker = time.NewTicker(55 * time.Second)
+	event.Client.State.HeartTicker = time.NewTicker(5 * time.Second)
 	go func() {
 		for event.Client.IsActive {
 			select {

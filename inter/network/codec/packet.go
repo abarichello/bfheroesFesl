@@ -1,7 +1,7 @@
 package codec
 
 type Pkt struct {
-	Type    string
+	Message string
 	Send    uint32
 	Content interface{}
 }

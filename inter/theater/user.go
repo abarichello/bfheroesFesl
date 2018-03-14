@@ -41,7 +41,7 @@ func (tm *Theater) USER(event network.EventClientProcess) {
 	redisState.Set("name", lkeyRedis.Get("name"))
 
 	event.Client.Answer(&codec.Pkt{
-		Type: thtrUSER,
+		Message: thtrUSER,
 		Content: answerUSER{
 			TheaterID: event.Process.Msg["TID"],
 			Name:      lkeyRedis.Get("name"),

@@ -92,7 +92,7 @@ func (tm *Theater) CGAM(event network.EventClientProcess) {
 	}
 
 	event.Client.Answer(&codec.Pkt{
-		Type: thtrCGAM,
+		Message: thtrCGAM,
 		Content: ansCGAM{
 			TheaterID:  event.Process.Msg["TID"],
 			LobbyID:    "1",
