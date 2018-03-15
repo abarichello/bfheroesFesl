@@ -1,4 +1,4 @@
-# Open Source Heroes Backend (FESL)
+# Open Heroes Backend (FESL)
 
 ```CODE IS UNFINISHED```
 
@@ -43,10 +43,10 @@ DATABASE_HOST=127.0.0.1
 DATABASE_PASSWORD=dbPass
 LOG_LEVEL=DEBUG /INFO.. /WARNING..
 =================================================================================================================================
-#  PROTOCOL
+# FESL PROTOCOL
 This provides the info about the Backend or FESL . Between the Master server , Fesl Server and Theather Server
 
-## General  overview
+## Overview
 
 Battlefield Heroes has a network structure similar to many other online games. It is based on previous games that also used the Refractor 2 game engine, such as Battlefield 2 or Battlefield 2142. Need For Speed Carbon , and others
 
@@ -83,9 +83,9 @@ Known offsets of the FESL server address are:
 The default value is "bfwest-server.fesl.ea.com".
 The default port is 18270 for the game client and 18051 for the game server.
 
-Communication is encrypted using TLS. By default, the game checks if the TLS certificate and disconnects if it does not match a preset EA certificate.
-After the patch, the game client/server will accept more but not all certificates.(see FESL patch)
-
+Communication is encrypted with TLS. The game checks if the TLS certificate is Valid and disconnects if it doesn't match the EA certificate.
+After the FESLPatch BOTH will accept more but not all certificates(And Keep pinging)
+http://aluigi.altervista.org/patches/fesl.lpatch
 ### Packet structure
 After the TLS handshake, FESL The format for these messages is as follows:
 
@@ -102,7 +102,6 @@ For example:
 Key1=Value1
 Key2=Value2
 ```
-
 ### Message types
 One of the keys in the FESLData key-value store is 'TXN'. This entry determines the message type , and Order
 Depending on the message type, and whether the message is to or from the FESL server, other fields may be present in the FESLData.
@@ -113,39 +112,39 @@ This is the first Pkt that is sent when a FESL connection is made.
 
 |Key                       |Example value              |Note                           |
 |--------------------------|---------------------------|-------------------------------|
-|SDKVersion                |5.0.0.0.0                  |magma sdk                      |
+|SDKVersion                |5.0.0.0.0                  |GameSpy SDK version            |
 |clientPlatform            |PC                         |                               |
 |clientString              |bfwest-pc                  |                               |
 |clientType                |server                     |GameServer.exe                 |
 |clientVersion             |1.46.222034                |Static only                    |
 |locale                    |en_US                      |                               |
 |sku                       |125170                     |                               |
-|protocolVersion           |2.0                        |                               |
-|fragmentSize              |8096                       |max buffer size                |
+|protocolVersion           |2.0                        |TLS version                    |
+|fragmentSize              |8096                       |Max buffer size                |
 
 #### TXN = Hello, FESL server => game client/server
 
 |Key                       |Example value              |Note                                             |
 |--------------------------|---------------------------|-------------------------------------------------|
 |domainPartition.domain    |eagames                    |                                                 |
-|domainPartition.subDomain |bfwest-server              |bfwest-server if the connected party is a server.|
-|                          |                           |bfwest-dedicated otherwise.                      |
+|domainPartition.subDomain |bfwest-server              |bfwest-server if it's gameServer.exe             |
+|                          |                           |bfwest-dedicated for gameClient.exe              |
 |curTime                   |Nov-02-2017 22:29:00 UTC   |                                                 |
-|activityTimeoutSecs       |3600                       |                                                 |
-|messengerIp               |messaging.ea.com           |This server is not required to play the game.    |
-|messengerPort             |13505                      |this was used by EA in the past                  |
-|theaterIp                 |bfwest-pc.theater.ea.com   |                                                 |
+|activityTimeoutSecs       |3600                       |AFK timeout                                      |
+|messengerIp               |messaging.ea.com           |This is not required to play the game.           |
+|messengerPort             |13505                      |this was used by EA in the past (friendlist?)    |
+|theaterIp                 |bfwest-pc.theater.ea.com   |this needs to be redirected                      |
 |theaterPort               |18056                      |By default, 18056 is for game servers and        |
 |                          |                           |18275 for game clients                           |
 
 #### TXN = MemCheck, FESL server => game client/server
-This message is sent every 10 seconds, and acts a heartbeat Packet. 
-If either stops receiving the MemCheck messages, connection loss is assumed. (Like a ping)
+This message is sent every 10 seconds, and acts a heartbeat. 
+If either stops receiving the MemCheck messages, connection loss is assumed.
 
 |Key                       |Example value              |Note                           |
 |--------------------------|---------------------------|-------------------------------|
-|memcheck.[]               |0                          |                               |
-|salt                      |5                          |                               |
+|memcheck.[]               |0  (guessed response)      |                               |
+|salt                      |5  (guessed response)      |                               |
 
 #### TXN = MemCheck, game client/server => FESL server
 This message is always a response to a MemCheck query message by the FESL server.
@@ -169,15 +168,15 @@ This message is sent by clients/servers to authenticate.
 |Key                       |Example value              |Note                           |
 |--------------------------|---------------------------|-------------------------------|
 |localizedMessage          |Incorrect password.        |                               |
-|errorContainer.[]         |0                          |                               |
+|errorContainer.[]         |0                          |custom error message           |
 |errorCode                 |122                        |                               |
 
 #### TXN = NuLogin, FESL server => game client/server, on success
 
 |Key                       |Example value              |Note                                    |
 |--------------------------|---------------------------|----------------------------------------|
-|profileId                 |1                          |                                        |
-|userId                    |1                          |                                        |
+|profileId                 |1                          |PID                                     |
+|userId                    |1                          |uID                                     |
 |nuid                      |XxX_b3stP1ayer_XxX         |                                        |
 |lkey                      |OwPcFq[xA338SppTjx0Ybw4c   |A 24 character BF2Random (see Appendix) |
 
@@ -395,7 +394,6 @@ This message is sent to initiate a "playnow".
 On start, the game will connect to an HTTPS server. called MAGMA, this connection is encrypted using TLS. Multiple Magma server domains are in the game executable.
 
 The following HTTPS paths are listed in the game executable:
-* /
 * /dc/submit
 * /nucleus/authToken
 * /nucleus/check/%s/%I64d
@@ -411,7 +409,6 @@ The following HTTPS paths are listed in the game executable:
 * /nucleus/wallets/%I64d/%s/%d/%s
 * /ofb/products
 * /ofb/purchase/%I64d/%s
-* /persona
 * /relationships/acknowledge/nucleus:%I64d/%I64d
 * /relationships/acknowledge/server:%s/%I64d
 * /relationships/decrease/nucleus:%I64d/nucleus:%I64d/%s
@@ -430,11 +427,10 @@ The following HTTPS paths are listed in the game executable:
 * /user/updateUserProfile/%I64d
 
 ### /nucleus/authToken
-  For game servers:
+  For game servers: 
+    ```<success><token>$serverSECRET$</token></success>```
  
-    ```<success><token>$serverKey$</token></success>```
- 
-  with `$serverKey$` equal to the value of the `X-SERVER-KEY` cookie.
+  `$SECRET$` equal to the value of the `X-SERVER-KEY` and "+Secret" given in start parameter
  
   For game clients:
  
@@ -455,7 +451,7 @@ The following HTTPS paths are listed in the game executable:
     ```
   with $id$ equal to the id in the URL.
 
-### /nucleus/entitlements/{heroID}
+### /nucleus/entitlements/{heroID}  // this is not a valid response
 
     ```
     <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
@@ -543,20 +539,17 @@ The following HTTPS paths are listed in the game executable:
             </attributes>
         </product>
     </products>
-    ```
-    
-## Theater
-The 3rd type of connection is the Theater connection and runs over TCP and UDP. 
-The ports can be found inside the Readme.txt inside the original files
-A seperate set of  sockets is made for the game servers and the game clients. 
-The Theater network address and port is received by the game server/client through the FESL Hello message.
-
-Packets received or sent from the UDP port are decoded/encoded using the "gamespy XOR"
-
+    ``` 
 ### Generating a BF2Random
 
 A BF2Random of length `n` consists of `n` characters chosen randomly from the following string:
 `0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ][`
 ```
+Theater Protocol
+## Theater
+The 3rd type of connection is the Theater connection and runs over TCP and UDP 
+The ports can be found inside the Readme.txt inside the original files
+A set of sockets is used by gameServer.exe and the gameClient.exe
+Packets received or sent from the UDP port are decoded/encoded using the "gamespy XOR"
 
 Copyright Disclaimer Under Section 107 of the Copyright Act 1976, allowance is made for "fair use" for purposes such as criticism, comment, news reporting, teaching, scholarship, and research. Fair use is a use permitted by copyright statute that might otherwise be infringing. Non-profit, educational or personal use tips the balance in favor of fair use.
