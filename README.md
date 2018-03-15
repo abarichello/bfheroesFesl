@@ -1,14 +1,16 @@
 # Open Heroes Backend (FESL)
 
-```CODE IS UNFINISHED```
+```UNFINISHED CODE```
 
-Download Vendor Package
+==>Download Vendor Package
+Download glide and put inside repo folder
+==>```glide init```
 ==>```glide install```
 
 Remember to configure your GOPATH and type
-==>```go build``` 
+==>```go build main.go && ./main.go``` 
 
-`fesl`  the implementation of `GameSpy` network adapted for Battlefield Heroes & Educational Purposes Only
+`FESL`  the implementation of `GameSpy` network adapted for Battlefield Heroes & Educational Purposes Only
 
 ## Configuration
 
