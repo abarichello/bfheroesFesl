@@ -89,6 +89,7 @@ Communication is encrypted with TLS. The game checks if the TLS certificate is V
 After the FESLPatch BOTH will accept more but not all certificates(And Keep pinging)
 http://aluigi.altervista.org/patches/fesl.lpatch
 ### Packet structure
+http://old.zenhax.com/post10292.html
 After the TLS handshake, FESL The format for these messages is as follows:
 
 |Offset (bytes) |Length (bytes)     |Data type                          |Field name    |
