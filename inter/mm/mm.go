@@ -1,17 +1,23 @@
 package mm
 
-//mm = match making
+//mm=match making
 
 import (
 	"github.com/Synaxis/bfheroesFesl/inter/network"
+	"github.com/sirupsen/logrus"
 )
 
 var Games = make(map[string]*network.Client)
 
 func FindGIDs() string {
 	var gameID string
-	for z := range Games {
-		gameID = z
-	}
+
+	for id := range Games {
+		gameID = id
+		jsonStr := []string{id}
+		logrus.WithFields(logrus.Fields{
+			"json": jsonStr,
+		}).Info("Player Joined Game " + id) // TODO +uID joined Server
+	} 																		//Synaxis joined Server 123
 	return gameID
 }

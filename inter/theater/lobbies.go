@@ -23,7 +23,7 @@ func (tm *Theater) LobbyData(event network.EventClientProcess) {
 	event.Client.Answer(&codec.Packet{
 		Message: thtrLDAT,
 		Content: ansLDAT{
-			TID:             "1",
+			TID:             event.Process.Msg["TID"],
 			FavoriteGames:   "0",
 			FavoritePlayers: "0",
 			LobbyID:         "1",

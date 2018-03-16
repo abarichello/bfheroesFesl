@@ -12,10 +12,10 @@ const (
 )
 
 type Status struct {
-	TXN   string                 `fesl:"TXN"`
-	ID    stPartition            `fesl:"id"`
-	State string                 `fesl:"sessionState"`
-	Props map[string]interface{} `fesl:"props"`
+	TXN        string                 `fesl:"TXN"`
+	ID         stPartition            `fesl:"id"`
+	State      string                 `fesl:"sessionState"`
+	Props      map[string]interface{} `fesl:"props"`
 }
 
 type stGame struct {
@@ -44,6 +44,7 @@ func (fm *FeslManager) Status(event network.EventClientProcess) {
 			reply[partition]},
 		State: "COMPLETE",
 		Props: map[string]interface{}{
+			"debugLevel": "low",
 			"resultType": "JOIN",
 			"games": []stGame{
 				{
