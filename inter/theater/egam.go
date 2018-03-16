@@ -102,12 +102,12 @@ func (tm *Theater) EGAM(event network.EventClientProcess) {
 
 	if gameServer, ok := mm.Games[gameID]; ok {
 		gsData := tm.level.NewObject("gdata", gameID)
-
+		////WE Are doing a handshake here
 		// Server
 		gameServer.Answer(&codec.Packet{
 			Message: thtrEGRQ,
 			Content: ansEGRQ{
-				TID:          event.Process.Msg["TID"],
+				TID:          "0",
 				Name:         stats["heroName"],
 				UserID:       stats["userID"],
 				PlayerID:     pid,
@@ -137,11 +137,12 @@ func (tm *Theater) EGAM(event network.EventClientProcess) {
 			},
 		})
 
+		////WE Are doing a handshake here
 		// Client
 		event.Client.Answer(&codec.Packet{
 			Message: thtrEGEG,
 			Content: ansEGEG{
-				TID:      event.Process.Msg["TID"],
+				TID:      "0",
 				Platform: "pc",
 				Ticket:   "2018751182",
 				PlayerID: pid,

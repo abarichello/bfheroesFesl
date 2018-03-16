@@ -23,7 +23,7 @@ type ansMemCheck struct {
 	TXN      string `fesl:"TXN"`
 	Salt     string `fesl:"salt"`
 	mtype    string `fesl:"type"`
-	memcheck string `fesl:"memcheck.[]`
+	memcheck string `fesl:"memcheck.[]"`
 	result   string `fesl:"result"`
 }
 
@@ -33,7 +33,7 @@ func (fm *FeslManager) fsysMemCheck(event *network.EventNewClient) {
 		Content: ansMemCheck{
 			TXN:      "MemCheck",
 			memcheck: "0",
-			Salt:     "3",
+			Salt:     "5",
 			result:   "",
 		},
 		Send: 0xC0000000,
