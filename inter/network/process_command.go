@@ -92,7 +92,7 @@ func readFesl(data []byte, fireEvent eventReadFesl) []byte {
 
 		out := &ProcessFESL{
 			Query: ContentType,
-			HEX:   HEX, //ContentID like 0xc000000d 
+			HEX:   HEX, //ContentID like 0xc000000d
 			Msg:   Content,
 		}
 		fireEvent(out, ContentType)
@@ -103,9 +103,8 @@ func readFesl(data []byte, fireEvent eventReadFesl) []byte {
 	return nil
 }
 
-// this is not important just do  
+// this is not important just do
 //		Send: 0xc000000d,
-
 
 type ProcessFESL struct {
 	Msg   map[string]string

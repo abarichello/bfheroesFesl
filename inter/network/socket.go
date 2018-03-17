@@ -2,11 +2,11 @@ package network
 
 import (
 	"crypto/tls"
+	"github.com/Synaxis/bfheroesFesl/config"
+	"github.com/sirupsen/logrus"
 	"net"
 	"strings"
 	"time"
-	"github.com/Synaxis/bfheroesFesl/config"
-	"github.com/sirupsen/logrus"
 )
 
 // Socket is a basic event-based TCP-Server
@@ -118,7 +118,6 @@ func (socket *Socket) removeClient(client *Client) {
 }
 
 type connAcceptFunc func(conn net.Conn)
-
 
 func (socket *Socket) run(connect connAcceptFunc) {
 	for {

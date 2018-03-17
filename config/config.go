@@ -13,19 +13,19 @@ var (
 )
 
 type cfg struct {
-	LogLevel string       `envconfig:"LOG_LEVEL" default:"DEBUG"`
+	LogLevel string `envconfig:"LOG_LEVEL" default:"DEBUG"`
 
-	GameSpyIP string       `envconfig:"GAMESPY_IP" default:"0.0.0.0"`
+	GameSpyIP string `envconfig:"GAMESPY_IP" default:"0.0.0.0"`
 
-	FeslClientPort int    `envconfig:"FESL_CLIENT_PORT" default:"18270"`
-	FeslServerPort int    `envconfig:"FESL_SERVER_PORT" default:"18051"`
+	FeslClientPort int `envconfig:"FESL_CLIENT_PORT" default:"18270"`
+	FeslServerPort int `envconfig:"FESL_SERVER_PORT" default:"18051"`
 
 	ThtrClientPort int    `envconfig:"THEATER_CLIENT_PORT" default:"18275"`
 	ThtrServerPort int    `envconfig:"THEATER_SERVER_PORT" default:"18056"`
-	ThtrAddr string       `envconfig:"THEATER_ADDR" default:"191.232.247.235"`
+	ThtrAddr       string `envconfig:"THEATER_ADDR" default:"191.232.247.235"`
 
-    MessengerAddr string   `envconfig:"MESSENGER_ADDR" default:"191.232.247.235"`
-    LevelDBPath string     `envconfig:"LEVEL_DB_PATH" default:"_data/lvl.db"`
+	MessengerAddr string `envconfig:"MESSENGER_ADDR" default:"191.232.247.235"`
+	LevelDBPath   string `envconfig:"LEVEL_DB_PATH" default:"_data/lvl.db"`
 }
 
 type MySQL struct {
@@ -44,7 +44,6 @@ func Initialize() {
 		logrus.WithError(err).Fatal("config: Initialize values for Database")
 	}
 }
-
 
 // LogLevel parses a default log level from a string
 func LogLevel() logrus.Level {
