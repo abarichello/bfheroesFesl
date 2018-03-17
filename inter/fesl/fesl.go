@@ -107,7 +107,7 @@ func (fm *FeslManager) newClient(event network.EventNewClient) {
 	fm.fsysMemCheck(&event)
 
 	// Start Heartbeat
-	event.Client.State.HeartTicker = time.NewTicker(time.Second * 5)
+	event.Client.State.HeartTicker = time.NewTicker(55 * time.Second)
 	go func() {
 		for event.Client.IsActive {
 			select {
