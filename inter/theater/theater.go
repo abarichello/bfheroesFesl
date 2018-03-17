@@ -138,7 +138,7 @@ func (tm *Theater) newClient(event network.EventNewClient) {
 	logrus.Println("Jtheater")
 
 	// Start Heartbeat
-	event.Client.State.HeartTicker = time.NewTicker(5 * time.Second)
+	event.Client.State.HeartTicker = time.NewTicker(time.Second * 5)
 	go func() {
 		for event.Client.IsActive {
 			select {

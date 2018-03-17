@@ -12,10 +12,10 @@ const (
 )
 
 type Status struct {
-	TXN        string                 `fesl:"TXN"`
-	ID         stPartition            `fesl:"id"`
-	State      string                 `fesl:"sessionState"`
-	Props      map[string]interface{} `fesl:"props"`
+	TXN   string                 `fesl:"TXN"`
+	ID    stPartition            `fesl:"id"`
+	State string                 `fesl:"sessionState"`
+	Props map[string]interface{} `fesl:"props"`
 }
 
 type stGame struct {
@@ -31,7 +31,6 @@ type stPartition struct {
 
 // Status comes after Start. tells info about desired server
 func (fm *FeslManager) Status(event network.EventClientProcess) {
-	hex := event.Process.HEX
 	reply := event.Process.Msg
 	answer := event.Client.Answer
 	logrus.Println("=Status=")
@@ -44,12 +43,12 @@ func (fm *FeslManager) Status(event network.EventClientProcess) {
 			reply[partition]},
 		State: "COMPLETE",
 		Props: map[string]interface{}{
-			"debugLevel": "low",
+			"debugLevel": "high",
 			"resultType": "JOIN",
 			"games": []stGame{
 				{
 					LobbyID: 1,
-					Fit:     1000,
+					Fit:     1001,
 					GID:     gameID,
 				},
 			},
@@ -57,7 +56,7 @@ func (fm *FeslManager) Status(event network.EventClientProcess) {
 	}
 	answer(&codec.Packet{
 		Content: ans,
-		Send:    hex,
+		Send:    0x80000000,
 		Message: "pnow",
 	})
 }

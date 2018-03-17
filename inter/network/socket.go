@@ -5,7 +5,7 @@ import (
 	"net"
 	"strings"
 	"time"
-
+	"github.com/Synaxis/bfheroesFesl/config"
 	"github.com/sirupsen/logrus"
 )
 
@@ -42,9 +42,9 @@ func NewSocketTCP(name, bind string, fesl bool) (*Socket, error) {
 	return socket, nil
 }
 
-func NewSocketTLS(name, bind string, tlsCert, tlsKey string) (*Socket, error) {
+func NewSocketTLS(name, bind string) (*Socket, error) {
 	socket := newSocket(name, bind, true)
-	listener, err := socket.listenTLS(tlsCert, tlsKey)
+	listener, err := socket.listenTLS()
 	if err != nil {
 		return nil, err
 	}
@@ -63,28 +63,14 @@ func (socket *Socket) listenTCP() (net.Listener, error) {
 	return listener, nil
 }
 
-func (socket *Socket) listenTLS(tlsCert, tlsKey string) (net.Listener, error) {
-	config, err := loadCert(tlsCert, tlsKey)
-	if err != nil {
-		return nil, err
-	}
-	listener, err := tls.Listen("tcp", socket.bind, config)
-	if err != nil {
-		logrus.Errorf("%s: Listening on %s threw an error.\n%v", socket.name, socket.bind, err)
-		return nil, err
-	}
-
-	return listener, nil
-}
-
-func loadCert(tlsCert, tlsKey string) (*tls.Config, error) {
-	cer, err := tls.LoadX509KeyPair(tlsCert, tlsKey)
+func (socket *Socket) listenTLS() (net.Listener, error) {
+	cert, err := config.ParseCertificate()
 	if err != nil {
 		return nil, err
 	}
 
 	config := &tls.Config{
-		Certificates:       []tls.Certificate{cer},
+		Certificates:       []tls.Certificate{cert},
 		ClientAuth:         tls.NoClientCert,
 		MinVersion:         tls.VersionSSL30,
 		InsecureSkipVerify: true,
@@ -93,7 +79,14 @@ func loadCert(tlsCert, tlsKey string) (*tls.Config, error) {
 			tls.TLS_RSA_WITH_RC4_128_SHA,
 		},
 	}
-	return config, nil
+
+	listener, err := tls.Listen("tcp", socket.bind, config)
+	if err != nil {
+		logrus.WithError(err).Errorf("Listening on %s threw an error", socket.bind)
+		return nil, err
+	}
+
+	return listener, nil
 }
 
 func (socket *Socket) handleClientEvents(client *Client) {
@@ -127,13 +120,13 @@ func (socket *Socket) removeClient(client *Client) {
 
 type connAcceptFunc func(conn net.Conn)
 
+
 func (socket *Socket) run(connect connAcceptFunc) {
 	for {
 		// Wait and listen for incomming connection
 		conn, err := socket.listen.Accept()
 		if err != nil {
-			logrus.Errorf("%s: A new client connecting threw an error.\n%v", socket.name, err)
-			socket.EventChan <- socket.FireError(err)
+			logrus.WithError(err).Errorf("A new client connecting to %s threw an error", socket.bind)
 			continue
 		}
 
@@ -157,7 +150,7 @@ func (socket *Socket) createClientTLS(conn net.Conn) {
 		return
 	}
 
-	tlscon.SetDeadline(time.Now().Add(time.Second * 12))
+	tlscon.SetDeadline(time.Now().Add(time.Second * 10))
 	err := tlscon.Handshake()
 	if err != nil {
 		logrus.Errorf("%s: A new client connecting threw an error.\n%v\n%v", socket.name, err, tlscon.RemoteAddr())

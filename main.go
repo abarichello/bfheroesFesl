@@ -7,16 +7,11 @@ import (
 	"github.com/Synaxis/bfheroesFesl/config"
 	"github.com/Synaxis/bfheroesFesl/inter/fesl"
 	"github.com/Synaxis/bfheroesFesl/inter/theater"
-	"github.com/Synaxis/bfheroesFesl/server"
 	"github.com/Synaxis/bfheroesFesl/storage/database"
 	"github.com/Synaxis/bfheroesFesl/storage/level"
 
 	"github.com/sirupsen/logrus"
 	"github.com/subosito/gotenv"
-)
-
-var (
-	configFile string
 )
 
 func main() {
@@ -34,9 +29,12 @@ func main() {
 }
 
 func initConfig() {
+	var (
+		configFile string
+	)
 	flag.StringVar(&configFile, "config", ".env", "Path to configuration file")
-
 	flag.Parse()
+
 	gotenv.Load(configFile)
 	config.Initialize()
 }
@@ -63,15 +61,9 @@ func newLevelDB() (*level.Level, error) {
 }
 
 func startServer(mdb *sql.DB, ldb *level.Level) {
-	fesl.New("FM", config.FeslClientAddr(), config.Cert, false, mdb, ldb)
-	fesl.New("SFM", config.FeslServerAddr(), config.Cert, true, mdb, ldb)
+	fesl.New("FM", config.FeslClientAddr(),  false, mdb, ldb)
+	fesl.New("SFM", config.FeslServerAddr(), true, mdb, ldb)
 
 	theater.New("TM", config.ThtrClientAddr(), mdb, ldb)
 	theater.New("STM", config.ThtrServerAddr(), mdb, ldb)
-
-	srv := server.New(config.Cert)
-	srv.ListenAndServe(
-		config.General.HTTPBind,
-		config.General.HTTPSBind,
-	)
 }

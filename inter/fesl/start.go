@@ -12,10 +12,8 @@ import (
 // 'Cancel'
 
 type Start struct {
-	ID             stPartition `fesl:"id"`
-	TXN            string      `fesl:"TXN"`
-	enableEasyZone string      `fesl:"enableEasyZone"`
-	debugLevel     string      `fesl:"debugLevel"`
+	ID  stPartition `fesl:"id"`
+	TXN string      `fesl:"TXN"`
 }
 
 // Start handles pnow.Start
@@ -79,9 +77,7 @@ func (fm *FeslManager) Start(event network.EventClientProcess) {
 
 	event.Client.Answer(&codec.Packet{
 		Content: Start{
-			TXN:            "Start",
-			enableEasyZone: "0",
-			debugLevel:     "low",
+			TXN: "Start",
 			ID: stPartition{1,
 				event.Process.Msg[partition]},
 		},

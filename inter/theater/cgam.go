@@ -101,13 +101,13 @@ func (tm *Theater) CGAM(event network.EventClientProcess) {
 			EKEY:       `O65zZ2D2A58mNrZw1hmuJw%3d%3d`,
 			Secret:     `2587913`,
 			JOIN:       event.Process.Msg["JOIN"],
-			J:          event.Process.Msg["J"],
+			J:          event.Process.Msg["JOIN"],
 			GameID:     gameID,
 		},
 	})
 
 	// Create game in database
-	_, err = tm.db.stmtAddGame.Exec(gameID, addr.IP.String(), event.Process.Msg["NAME"], event.Process.Msg["PORT"], event.Process.Msg["B-version"], event.Process.Msg["JOIN"], event.Process.Msg["B-U-map"], 0, 0, event.Process.Msg["MAX-PLAYERS"], 0, 0, "")
+	_, err = tm.db.stmtAddGame.Exec(gameID, addr.IP.String(), event.Process.Msg["PORT"], event.Process.Msg["B-version"], event.Process.Msg["JOIN"], event.Process.Msg["B-U-map"], 0, 0, event.Process.Msg["MAX-PLAYERS"], 0, 0, "")
 	if err != nil {
 		logrus.Errorf("Failed to add game: %v", err)
 	}

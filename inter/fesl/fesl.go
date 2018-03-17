@@ -6,7 +6,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/Synaxis/bfheroesFesl/config"
 	"github.com/Synaxis/bfheroesFesl/inter/network"
 	"github.com/Synaxis/bfheroesFesl/storage/level"
 
@@ -23,13 +22,13 @@ type FeslManager struct {
 }
 
 // New creates and starts a new ClientManager
-func New(name, bind string, cert config.Fixtures, server bool, conn *sql.DB, lvl *level.Level) *FeslManager {
+func New(name, bind string, server bool, conn *sql.DB, lvl *level.Level) *FeslManager {
 	db, err := NewDatabase(conn)
 	if err != nil {
 		return nil
 	}
 
-	socket, err := network.NewSocketTLS(name, bind, cert.Path, cert.PrivateKey)
+	socket, err := network.NewSocketTLS(name, bind)
 	if err != nil {
 		logrus.Fatal(err)
 		return nil
@@ -100,16 +99,19 @@ func (fm *FeslManager) run() {
 // TLS
 func (fm *FeslManager) newClient(event network.EventNewClient) {
 	if !event.Client.IsActive {
-		logrus.Println("C Left")
+		logrus.Println("Client Left")
 		return
 	}
 
 	fm.fsysMemCheck(&event)
 
 	// Start Heartbeat
-	event.Client.State.HeartTicker = time.NewTicker(55 * time.Second)
+	event.Client.State.HeartTicker = time.NewTicker(time.Second * 5)
 	go func() {
-		for event.Client.IsActive {
+		for {
+			if !event.Client.IsActive {
+				return
+			}
 			select {
 			case <-event.Client.State.HeartTicker.C:
 				if !event.Client.IsActive {
@@ -120,7 +122,8 @@ func (fm *FeslManager) newClient(event network.EventNewClient) {
 		}
 	}()
 
-	logrus.Println("New Client")
+	logrus.Println("Client Connecting")
+
 }
 
 // TLS

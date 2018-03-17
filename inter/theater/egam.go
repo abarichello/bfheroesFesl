@@ -107,7 +107,7 @@ func (tm *Theater) EGAM(event network.EventClientProcess) {
 		gameServer.Answer(&codec.Packet{
 			Message: thtrEGRQ,
 			Content: ansEGRQ{
-				TID:          event.Process.Msg["TID"],
+				TID:          "0",
 				Name:         stats["heroName"],
 				UserID:       stats["userID"],
 				PlayerID:     pid,
@@ -141,8 +141,7 @@ func (tm *Theater) EGAM(event network.EventClientProcess) {
 		event.Client.Answer(&codec.Packet{
 			Message: thtrEGEG,
 			Content: ansEGEG{
-				TID:      event.Process.Msg["TID"],
-				Platform: "pc",
+				TID:      "0",
 				Ticket:   "2018751182",
 				PlayerID: pid,
 				IP:       gsData.Get("IP"),
