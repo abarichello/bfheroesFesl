@@ -74,7 +74,6 @@ func (socket *Socket) listenTLS() (net.Listener, error) {
 		ClientAuth:         tls.NoClientCert,
 		MinVersion:         tls.VersionSSL30,
 		InsecureSkipVerify: true,
-		//MaxVersion:   tls.VersionSSL30,
 		CipherSuites: []uint16{
 			tls.TLS_RSA_WITH_RC4_128_SHA,
 		},
@@ -159,7 +158,7 @@ func (socket *Socket) createClientTLS(conn net.Conn) {
 	}
 
 	state := tlscon.ConnectionState()
-	logrus.Debugf("Conn handshake complete %t, %v", state.HandshakeComplete, state)
+	logrus.Debugf("===HANDSHAKE DONE=== %t, %v", state.HandshakeComplete, state)
 
 	// reset deadline after handshake
 	tlscon.SetDeadline(time.Time{})

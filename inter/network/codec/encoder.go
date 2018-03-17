@@ -73,7 +73,7 @@ func (e *Encoder) EncodePacket(Packet *Packet) (*bytes.Buffer, error) {
 		return nil, err
 	}
 
-	// Encode Content
+	// Encode Content (payload)
 	if err := e.Encode(Packet.Content); err != nil {
 		return nil, err
 	}
@@ -85,7 +85,7 @@ func (e *Encoder) EncodePacket(Packet *Packet) (*bytes.Buffer, error) {
 		return nil, err
 	}
 
-	// Append Content
+	// Append Content(payload)
 	if _, err := buf.Write(e.wr.Bytes()); err != nil {
 		return nil, err
 	}

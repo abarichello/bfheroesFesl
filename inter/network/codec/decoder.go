@@ -1,5 +1,4 @@
 package codec
-
 func DecodeFESL(data []byte) map[string]string {
 	out := map[string]string{}
 	key := []byte{}

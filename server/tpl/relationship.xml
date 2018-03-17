@@ -1,2 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
-<update><id>1</id><name>Test-Server</name><state>ACTIVE</state><type>server</type><status>Online</status><realid>{{ .ServerID }}</realid></update>

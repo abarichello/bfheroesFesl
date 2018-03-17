@@ -22,10 +22,10 @@ type cfg struct {
 
 	ThtrClientPort int    `envconfig:"THEATER_CLIENT_PORT" default:"18275"`
 	ThtrServerPort int    `envconfig:"THEATER_SERVER_PORT" default:"18056"`
-	ThtrAddr string       `envconfig:"THEATER_ADDR" default:"127.0.0.1"`
+	ThtrAddr string       `envconfig:"THEATER_ADDR" default:"191.232.247.235"`
 
- MessengerAddr string   `envconfig:"MESSENGER_ADDR" default:"127.0.0.1"`
- LevelDBPath string     `envconfig:"LEVEL_DB_PATH" default:"_data/lvl.db"`
+    MessengerAddr string   `envconfig:"MESSENGER_ADDR" default:"191.232.247.235"`
+    LevelDBPath string     `envconfig:"LEVEL_DB_PATH" default:"_data/lvl.db"`
 }
 
 type MySQL struct {

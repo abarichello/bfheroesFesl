@@ -103,17 +103,10 @@ func readFesl(data []byte, fireEvent eventReadFesl) []byte {
 	return nil
 }
 
-// this is not important just do like 
+// this is not important just do  
 //		Send: 0xc000000d,
 
-// event.Client.Answer(&codec.Packet{
-// Content: Start{
-// 	TXN: "Start",
-// 	ID: stPartition{1, event.Process.Msg[partition]},
-// 	},
-// 	Send: 0xc000000d,
-// 	Message: pnow,
-// })
+
 type ProcessFESL struct {
 	Msg   map[string]string
 	Query string

@@ -252,6 +252,11 @@ func (fm *FeslManager) UpdateStats(event network.EventClientProcess) {
 							})
 							return
 						}
+						// level := stats[key].value
+						// if key == "lvl" && level < 0 {
+						// 	logrus.Errorln("Negative STATS", key)
+						// 	"lvl" > 1
+						// }
 
 						value = strconv.FormatFloat(newValue, 'f', 4, 64)
 					} else {
