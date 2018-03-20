@@ -52,7 +52,7 @@ func (fm *FeslManager) GetStats(event network.EventClientProcess) {
 	}
 
 	ans := ansGetStats{
-		TXN:       rankGetStats,
+		TXN:       "GetStats",
 		OwnerID:   owner,
 		OwnerType: 1,
 	}
@@ -326,7 +326,7 @@ func (fm *FeslManager) GetStatsForOwners(event network.EventClientProcess) {
 	convert := strconv.Itoa
 
 	ans := ansGetStatsForOwners{
-		TXN:   rankGetStats, // really? is it a typo? GetStatsForOwners?
+		TXN:   "rankGetStats", 
 		Stats: []statsContainer{},
 	}
 

@@ -33,7 +33,6 @@ type stPartition struct {
 func (fm *FeslManager) Status(event network.EventClientProcess) {
 	logrus.Println("=Status=")
 	reply := event.Process.Msg
-	answer := event.Client.Answer
 	gameID := mm.FindGIDs()
 
 	games := []stGame{
@@ -43,19 +42,16 @@ func (fm *FeslManager) Status(event network.EventClientProcess) {
 			Fit: 1001,
 		},
 	}
-
-	payload := Status{
-		TXN: "Status",
-		ID: stPartition{1, reply[partition]},
-		State: "COMPLETE",
-		Props: map[string]interface{}{
-			"resultType": "JOIN",
-			"games": games,				
-			},
-		}
-
-		answer(&codec.Packet{
-		Content: payload,
+	event.Client.Answer(&codec.Packet{
+		Content: Status{
+			TXN: "Status",
+			State: "COMPLETE",
+			ID: stPartition{1, reply[partition]},
+			Props: map[string]interface{}{
+				"resultType": "JOIN",
+				"games": games,
+			},			
+		},
 		Send:    0x80000000,
 		Message: "pnow",
 	})
@@ -66,12 +62,10 @@ type Cancel struct {
 	ID     stPartition `fesl:"id"`
 	State  string      `fesl:"sessionState"`
 	Props map[string]interface{} `fesl:"props"`
-
 }
 
 // Cancel - cancel pnow
 func (fm *FeslManager) Cancel(event network.EventClientProcess) {
-	logrus.Println("==Cancel Q==")
 	reply := event.Process.Msg
 
 	event.Client.Answer(&codec.Packet{

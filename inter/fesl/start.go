@@ -18,12 +18,11 @@ type Start struct {
 // Start handles pnow.Start
 func (fm *FeslManager) Start(event network.EventClientProcess) {
 	logrus.Println("==START==")
+	reply := event.Process.Msg
 
 	event.Client.Answer(&codec.Packet{
-		Content: Start{
-			TXN: "Start",
-			ID: stPartition{1,
-				event.Process.Msg[partition]},
+		Content: Start{TXN: "Start",
+			ID: stPartition{1, reply[partition]},
 		},
 		Send:    event.Process.HEX,
 		Message: "pnow",
