@@ -31,32 +31,60 @@ type stPartition struct {
 
 // Status comes after Start. tells info about desired server
 func (fm *FeslManager) Status(event network.EventClientProcess) {
+	logrus.Println("=Status=")
 	reply := event.Process.Msg
 	answer := event.Client.Answer
-	logrus.Println("=Status=")
 	gameID := mm.FindGIDs()
 
-	//@TODO refactor this
-	ans := Status{
-		TXN: "Status",
-		ID: stPartition{1,
-			reply[partition]},
-		State: "COMPLETE",
-		Props: map[string]interface{}{
-			"debugLevel": "high",
-			"resultType": "JOIN",
-			"games": []stGame{
-				{
-					LobbyID: 1,
-					Fit:     1001,
-					GID:     gameID,
-				},
-			},
+	games := []stGame{
+		{
+			LobbyID:   1,
+			GID:    gameID,
+			Fit: 1001,
 		},
 	}
-	answer(&codec.Packet{
-		Content: ans,
+
+	payload := Status{
+		TXN: "Status",
+		ID: stPartition{1, reply[partition]},
+		State: "COMPLETE",
+		Props: map[string]interface{}{
+			"resultType": "JOIN",
+			"games": games,				
+			},
+		}
+
+		answer(&codec.Packet{
+		Content: payload,
 		Send:    0x80000000,
 		Message: "pnow",
 	})
 }
+
+type Cancel struct {
+	TXN    string      `fesl:"TXN"`
+	ID     stPartition `fesl:"id"`
+	State  string      `fesl:"sessionState"`
+	Props map[string]interface{} `fesl:"props"`
+
+}
+
+// Cancel - cancel pnow
+func (fm *FeslManager) Cancel(event network.EventClientProcess) {
+	logrus.Println("==Cancel Q==")
+	reply := event.Process.Msg
+
+	event.Client.Answer(&codec.Packet{
+		Content: Cancel{
+			TXN: "Cancel",
+			State: "CANCELLED",
+			ID: stPartition{1, reply[partition]},
+			Props: map[string]interface{}{
+				"resultType": "CANCEL",
+			},			
+		},
+		Send:    event.Process.HEX,
+		Message: event.Process.Query,
+	})
+}
+

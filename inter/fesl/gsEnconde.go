@@ -25,7 +25,7 @@ func BF2randUnsafe(randLen int) string {
 // BF2rand generates rand valid BF2string
 func BF2rand(randLen int, source rand.Source) string {
 	b := make([]byte, randLen)
-	// A source.Int63() generates 63 rand bits
+	// Generates 63 rand bits
 	for i, cache, remain := randLen-1, source.Int63(), gsLettersIdxMax; i >= 0; {
 		if remain == 0 {
 			cache, remain = source.Int63(), gsLettersIdxMax

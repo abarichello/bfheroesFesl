@@ -82,6 +82,8 @@ func (fm *FeslManager) run() {
 				fm.UpdateStats(event.Data.(network.EventClientProcess))
 			case "client.command.Start":
 				fm.Start(event.Data.(network.EventClientProcess))
+			case "client.command.Cancel":
+				fm.Cancel(event.Data.(network.EventClientProcess))
 			case "client.close":
 				fm.close(event.Data.(network.EventClientClose)) // TLS
 			case "client.command":
