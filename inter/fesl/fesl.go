@@ -90,7 +90,9 @@ func (fm *FeslManager) run() {
 				TXN := event.Data.(network.EventClientProcess).Process.Msg["TXN"]
 				logrus.WithFields(logrus.Fields{
 					"func": fm.name,
+					"Event": event.Command.Message,
 					"message": fmt.Sprintf("%s/TXN:%s",
+					"query":   event.Command.Query,
 						event.Name, TXN),
 				})
 			}

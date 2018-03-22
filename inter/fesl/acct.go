@@ -454,7 +454,7 @@ func (fm *FeslManager) NuGetAccount(event network.EventClientProcess) {
 		return
 	}
 
-	fm.acctNuGetAccount(&event)
+	/*call*/fm.acctNuGetAccount(&event)
 }
 
 type ansNuGetAccount struct {

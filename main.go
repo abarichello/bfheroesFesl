@@ -61,7 +61,7 @@ func newLevelDB() (*level.Level, error) {
 }
 
 func startServer(mdb *sql.DB, ldb *level.Level) {
-	fesl.New("FM", config.FeslClientAddr(),  false, mdb, ldb)
+	fesl.New("FM", config.FeslClientAddr(), false, mdb, ldb)
 	fesl.New("SFM", config.FeslServerAddr(), true, mdb, ldb)
 
 	theater.New("TM", config.ThtrClientAddr(), mdb, ldb)
