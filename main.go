@@ -23,7 +23,9 @@ func main() {
 
 	startServer(mdb, ldb)
 
-	logrus.Println("Serving..")
+	logrus.Println("FESL Started")
+        logrus.Println("Theater Started")
+
 	a := make(chan bool)
 	<-a
 }
