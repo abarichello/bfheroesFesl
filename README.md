@@ -1,4 +1,6 @@
 # Open Heroes Backend (FESL)
+```For easier setup , choose (easy) branch```
+
 
 ```UNFINISHED CODE```
 
