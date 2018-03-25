@@ -468,7 +468,7 @@ type ansNuGetAccount struct {
 	Country        string `fesl:"country"`
 	Language       string `fesl:"language"`
 	GlobalOptIn    bool   `fesl:"globalOptin"`
-	ThidPartyOptIn bool   `fesl:"thidPartyOptin"`
+	ThirdPartyOptIn bool   `fesl:"thirdPartyOptin"`
 }
 
 func (fm *FeslManager) acctNuGetAccount(event *network.EventClientProcess) {
@@ -482,7 +482,7 @@ func (fm *FeslManager) acctNuGetAccount(event *network.EventClientProcess) {
 			DobMonth:       1,
 			DobYear:        1992,
 			GlobalOptIn:    false,
-			ThidPartyOptIn: false,
+			ThirdPartyOptIn: false,
 			NucleusID:      event.Client.HashState.Get("email"),
 			HeroName:       event.Client.HashState.Get("username"),
 			UserID:         event.Client.HashState.Get("uID"),
