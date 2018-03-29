@@ -15,11 +15,13 @@ func (tm *Theater) EGRS(event network.EventClientProcess) {
 	if !event.Client.IsActive {
 		return
 	}
-	logrus.Println("==EGRS==")
 
-	if event.Process.Msg["ALLOWED"] == "1" {
-		tm.db.stmtGameIncreaseJoining.Exec(event.Process.Msg["GID"])
+	if event.Process.Msg["ALLOWED"] != "1" {
+		return
 	}
+
+	logrus.Println("==EGRS==")
+	tm.db.stmtGameIncreaseJoining.Exec(event.Process.Msg["GID"])
 
 	event.Client.Answer(&codec.Packet{
 		Message: thtrEGRS,
