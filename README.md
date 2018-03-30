@@ -1,23 +1,15 @@
 [![HitCount](http://hits.dwyl.io/Synaxis/bfheroesFesl.svg)](http://hits.dwyl.io/Synaxis/bfheroesFesl)
 # Open Heroes Backend (FESL)
-```For easier setup , choose (easy) branch```
 ```UNFINISHED CODE```
 
-==>Download Vendor Package
-Download glide and put inside repo folder
-==>```glide init```
-==>```glide install```
-
 Remember to configure your GOPATH and type
-==>```go build main.go && ./main.go``` 
-
-`FESL`  the implementation of `GameSpy` network adapted for Battlefield Heroes & Educational Purposes Only
+==>```go build main.go && ./main.go```
 
 ## Configuration
 
-Below is a table with all enviroment (.env) variables You can refer to `config/config.go` if you need more information for more info
+Enviroment (.env) variables You can look in `./config/config.go` for more details
 
-| Name                  | Default value        |
+| String Name           | Default value        |
 |-----------------------|----------------------|
 | `LOG_LEVEL`           | `INFO`               |
 | `HTTP_BIND`           | `0.0.0.0:8080`       |
@@ -33,29 +25,27 @@ Below is a table with all enviroment (.env) variables You can refer to `config/c
 | `DATABASE_PASSWORD`   |                      |
 | `DATABASE_HOST`       | `127.0.0.1`          |
 | `DATABASE_PORT`       | `3306`               |
-| `DATABASE_NAME`       | `open-heroes`        |
-| `CERT_PATH`           | `./config/cert.pem`  |
-| `PRIVATE_KEY_PATH`    | `./config/key.pem`   |
+| `DATABASE_NAME`       | `tutorialDB`         |
 
-Warn for testing environment and production environment!!,use safe values!
+WARNING for testing environment! Use Safe values in Production!
 
 ### Example `.env` file
 ```ini
-DATABASE_NAME=open-heroes
+DATABASE_NAME=tutorialDB
 DATABASE_HOST=127.0.0.1
 DATABASE_PASSWORD=dbPass
-LOG_LEVEL=DEBUG /INFO.. /WARNING..
+LOG_LEVEL=DEBUG /INFO.
 =================================================================================================================================
 # FESL PROTOCOL
-This provides the info about the Backend or FESL . Between the Master server , Fesl Server and Theather Server
+This provides the info about the Backend/FESL . Between the Master server , Fesl Server and Theather Server
 
 ## Overview
 
-Battlefield Heroes has a network structure similar to many other online games. It is based on previous games that also used the Refractor 2 game engine, such as Battlefield 2 or Battlefield 2142. Need For Speed Carbon , and others
+Battlefield Heroes has a network structure similar to many other online games. It is based on previous games that also used the gamespy protocol, such as Battlefield 2 or Battlefield 2142. Need For Speed Carbon , and others
 
 The general  consists of the following components:
-1. Game client: the front-end software that runs on the player's computer. Consists mainly of a graphical userinterface and some game-logic.
-2. Game server: the back-end server that acts as a central game coordinator for the players in a match. Consists mainly of game logic and connections to game clients.
+1. gameClient.exe: the front-end software that runs on the player's computer. Consists mainly of a graphical userinterface and some game-logic.
+2. gameServer.exe: the back-end server that acts as a central game coordinator for the players in a match. Consists mainly of game logic and connections to game clients.
 3. Master server: the back-end server that stores player and server data and does match-making. This server provides persistance in between matches.
 
 This specification provides details on the communication between the game client and master server, and the game server and the master server. 
@@ -74,24 +64,16 @@ A game client will first connect to the FESL server, then the HTTP server, then 
 
 ### TLS
 On Start, both the game client and the game server will first connect to their respective, seperate FESL server. 
-The address and port of the FESL server is inside the game client/server exe HEX. these values can be changed with Hex editor , or redirected with hosts file
-Known offsets of the FESL server address are:
-
-|Version       |Product     |Offset     |
-|--------------|------------|-----------|
-|1.46.222034.0 |Game client |0x00951EA4 |
-|1.42.217478.0 |Game server |0x0067329B |
-##this is not important since you can connect any .exe that uses Magma
+The address of the FESL server is inside the game client/server exe HEX. 
+They are changed with an Hex editor.
 
 The default value is "bfwest-server.fesl.ea.com".
-The default port is 18270 for the game client and 18051 for the game server.
 
 Communication is encrypted with TLS. The game checks if the TLS certificate is Valid and disconnects if it doesn't match the EA certificate.
-After the FESLPatch BOTH will accept more but not all certificates(And Keep pinging)
+We use the FESL Patch , from Aluigi , to patch this Check
 http://aluigi.altervista.org/patches/fesl.lpatch
-### Packet structure
-http://old.zenhax.com/post10292.html
-After the TLS handshake, FESL The format for these messages is as follows:
+
+After the TLS handshake, FESL format these messages like this:
 
 |Offset (bytes) |Length (bytes)     |Data type                          |Field name    |
 |---------------|-------------------|-----------------------------------|--------------|
@@ -99,6 +81,9 @@ After the TLS handshake, FESL The format for these messages is as follows:
 |0x4            |4                  |32-bit big-endian unsigned integer |ID            |
 |0x8            |4                  |32-bit big-endian unsigned integer |              |
 |0xC            |Pkt length - 12    |ASCII string (no null terminator)  |FESLData      |
+
+### Packet structure
+http://old.zenhax.com/post10292.html
 
 The FESLData field is a key-value map where each pair is seperated by a newline (\n), and the key and value are seperated by '='.
 For example:
