@@ -17,7 +17,7 @@ type ansPLVT struct {
 	TID string `fesl:"TID"`
 }
 
-// PENT - SERVER sent up when a player joins (entitle player?)
+// PENT - Entitles Hero in Matchmaking
 func (tM *Theater) PLVT(event network.EventClientProcess) {
 	if !event.Client.IsActive {
 		return
