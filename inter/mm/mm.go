@@ -1,6 +1,6 @@
 package mm
 
-//mm=match making
+//match making
 
 import (
 	"github.com/Synaxis/bfheroesFesl/inter/network"
