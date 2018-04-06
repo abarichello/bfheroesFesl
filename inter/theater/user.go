@@ -20,7 +20,7 @@ func (tm *Theater) NewState(ident string) *level.State {
 	return tm.level.NewState(ident)
 }
 
-// USER - SHARED Called to get user data about client? No idea
+// USER - Check User for Login - server not working atm
 func (tm *Theater) USER(event network.EventClientProcess) {
 	if !event.Client.IsActive {
 		logrus.Println("Cli Left")
