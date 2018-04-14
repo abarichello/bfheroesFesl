@@ -1,9 +1,9 @@
 [![HitCount](http://hits.dwyl.io/Synaxis/bfheroesFesl.svg)](http://hits.dwyl.io/Synaxis/bfheroesFesl)
-# Open Heroes Backend (FESL)
+# Open Heroes Backend
 ```UNFINISHED CODE```
 
 Remember to configure your GOPATH and type
-==>```go build main.go && ./main.go```
+==>```go build && ./bfheroesFesl```
 
 ## Configuration
 
@@ -102,7 +102,7 @@ This is the first Pkt that is sent when a FESL connection is made.
 |Key                       |Example value              |Note                           |
 |--------------------------|---------------------------|-------------------------------|
 |SDKVersion                |5.0.0.0.0                  |GameSpy SDK version            |
-|clientPlatform            |PC                         |                               |
+|clientPlatform            |PC                         |Platform                       |
 |clientString              |bfwest-pc                  |                               |
 |clientType                |server                     |GameServer.exe                 |
 |clientVersion             |1.46.222034                |Static only                    |
@@ -258,7 +258,7 @@ This message is sent to retrieve info about a character/user.
 |ownerType                 |1                          |                                         |
 |periodId                  |0                          |                                         |
 |periodPast                |0                          |                                         |
-|keys.*i*                  |c_items(abilities)         |One entry for every stat to be retrieved |
+|keys.*i*                  |c_items(abilities)         |One entry for each stat field            |
 |keys.[]                   |1                          |Amount of stats to be retrieved          |
 
 #### TXN = GetStats, FESL server => game client/server
@@ -274,14 +274,16 @@ This message is sent to retrieve info about a character/user.
 
 
 #### TXN = NuLookupUserInfo, game client/server => FESL server
-This message is sent to retrieve basic information about a user.
+This Packet is to GET basic information about a user.
 
 |Key                       |Example value              |Note                              |
 |--------------------------|---------------------------|----------------------------------|
 |userInfo.*i*.userName     |xXx_1337Sn1per_xXx         |Names of the characters to lookup |
 |userInfo.[]               |1                          |Amount of characters to lookup    |
 
-#### TXN = NuLookupUserInfo, FESL server => game client/server
+#### TXN = NuLookupUserInfo, Retrive info about User . ClientID / EA ID (not working anymore)
+and Account Name
+=> Request By both client & gameServer
 
 |Key                       |Example value              |Note                              |
 |--------------------------|---------------------------|----------------------------------|
@@ -290,25 +292,25 @@ This message is sent to retrieve basic information about a user.
 |userInfo.*i*.masterUserId |1                          |                                  |
 |userInfo.*i*.namespace    |MAIN                       |                                  |
 |userInfo.*i*.xuid         |24                         |                                  |
-|userInfo.*i*.cid          |1                          |client ID(not implemented         |
+|userInfo.*i*.cid          |1                          |client ID(not implemented atm)    |
 |userInfo.[]               |3                          |Amount of users to lookup info of |
 
 This is a query for a list of endpoints to test for the lowest latency on a game client.
 This is not working at the moment, maybe EA used it to change from DataCenters , based on Ping
-like LoadBalancer
+like a LoadBalancer 
 #### TXN = GetPingSites, FESL server => game client/server
 
 |Key                       |Example value              |Note                           |
 |--------------------------|---------------------------|-------------------------------|
-|minPingSitesToPing        |1                          |this was used in the past tho  |
+|minPingSitesToPing        |1                          |Number of DNS to ping          |
 |pingSites.*i*.addr        |8.8.8.8                    |it doesnt seem to work. check  | 
-|pingSites.*i*.name        |iad                        | valid response ?              |
-|pingSites.*i*.type        |0                          | or it's just telemetric shit  |
+|pingSites.*i*.name        |iad                        | region abreviation            |
+|pingSites.*i*.type        |0                          |                               |
 |pingSites.[]              |1                          |                               |
 
 
 #### TXN = UpdateStats, game client/server => FESL server
-This message is sent to update character stats.
+This Packet is sent to update character stats/ranks
 
 |Key                       |Example value              |Note                           |
 |--------------------------|---------------------------|-------------------------------|
@@ -336,14 +338,6 @@ This message is sent to update character stats.
 |u.[]                      |                           |                                 |
 
 
-#### TXN = GetTelemetryToken, game client/server => FESL server
-Returns a unique token for game telemetry.
-This is only used in 2009 client ?
-
-|Key                       |Example value              |Note                           |
-|--------------------------|---------------------------|-------------------------------|
-|                          |                           |                               |
-
 #### TXN = GetTelemetryToken, FESL server => game client/server
 #### only requested in 2009 client
 |Key                       |Example value              |Note                           |
@@ -359,8 +353,17 @@ This is only used in 2009 client ?
 |filters                   |*empty*                    |                               |
 |disabled                  |*empty*                    |                               |
 
+
 #### TXN = Start, game client/server => FESL server
-This message is sent to initiate a "playnow".
+This Packet is the PlayNow button
+
+|Key                       |Example value              |Note                           |
+|--------------------------|---------------------------|-------------------------------|
+|id.id                     |1                          |                               |
+|id.partition              |/eagames/bfwest-dedicated  |this is used from Hello Packet |
+
+#### TXN = Status  => game client FESL server 
+This is a request to get a Status of Overall Available Lobbies
 
 |Key                               |Example value              |Note                                  |
 |----------------------------------|---------------------------|--------------------------------------|
@@ -370,13 +373,6 @@ This message is sent to initiate a "playnow".
 |players.*i*.ownerType             |1                          |                                      |
 |players.*i*.props.{*propertykey*} |3                          |Example *propertykey* is pref-lvl_avg |
 |players.[]                        |1                          |                                      |
-
-#### TXN = Start, FESL server => game client/server
-
-|Key                       |Example value              |Note                           |
-|--------------------------|---------------------------|-------------------------------|
-|id.id                     |1                          |                               |
-|id.partition              |/eagames/bfwest-dedicated  |                               |
 
 ## Magma server
 
