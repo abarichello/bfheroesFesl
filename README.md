@@ -6,7 +6,7 @@ Remember to configure your GOPATH and type
 
 ## Configuration
 
-This is the nviroment (.env) config. Check `./config/config.go` for more details
+This is the Enviroment(.env) config. Check `./config/config.go` for more details
 
 | String Name           | Default value        |
 |-----------------------|----------------------|
