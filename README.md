@@ -1,5 +1,4 @@
 [![HitCount](http://hits.dwyl.io/Synaxis/bfheroesFesl.svg)](http://hits.dwyl.io/Synaxis/bfheroesFesl)
-# Open Heroes Backend
 ```UNFINISHED CODE```
 
 Remember to configure your GOPATH and type
@@ -7,7 +6,7 @@ Remember to configure your GOPATH and type
 
 ## Configuration
 
-Enviroment (.env) variables You can look in `./config/config.go` for more details
+This is the nviroment (.env) config. Check `./config/config.go` for more details
 
 | String Name           | Default value        |
 |-----------------------|----------------------|
@@ -27,17 +26,19 @@ Enviroment (.env) variables You can look in `./config/config.go` for more detail
 | `DATABASE_PORT`       | `3306`               |
 | `DATABASE_NAME`       | `tutorialDB`         |
 
-WARNING for testing environment! Use Safe values in Production!
+WARNING test environment! If you're going to expose it.
+Use Safe values with Your Own Setup!
 
 ### Example `.env` file
 ```ini
 DATABASE_NAME=tutorialDB
 DATABASE_HOST=127.0.0.1
 DATABASE_PASSWORD=dbPass
-LOG_LEVEL=DEBUG /INFO.
+LOG_LEVEL=DEBUG /INFO
+
 =================================================================================================================================
 # FESL PROTOCOL
-This provides the info about the Backend/FESL . Between the Master server , Fesl Server and Theather Server
+This provides the info about the Backend . Between the Master server , Fesl Server and Theather Server
 
 ## Overview
 
@@ -205,7 +206,7 @@ This message retrieves general account information, based on the parameters sent
 |DOBYear                   |1992                       |                               |
 |userId                    |1                          |                               |
 |globalOptin               |0                          |always 0                       |
-|thidPartyOptin            |0                          |always 0                       |
+|thirdPartyOptin           |0                          |always 0                       |
 |language                  |enUS                       |                               |
 |country                   |US                         |                               |
 
@@ -227,6 +228,7 @@ This message is sent to login to a character/server.
 
 #### TXN = GetStatsForOwners, game client/server => FESL server
 This message is sent to retrieve info for the character selection screen.
+It's only Request ONE time
 
 |Key                       |Example value              |Note                                     |
 |--------------------------|---------------------------|-----------------------------------------|
@@ -295,7 +297,7 @@ and Account Name
 |userInfo.*i*.cid          |1                          |client ID(not implemented atm)    |
 |userInfo.[]               |3                          |Amount of users to lookup info of |
 
-This is a query for a list of endpoints to test for the lowest latency on a game client.
+This is a query pinging for the lowest latency to a server
 This is not working at the moment, maybe EA used it to change from DataCenters , based on Ping
 like a LoadBalancer 
 #### TXN = GetPingSites, FESL server => game client/server
@@ -538,5 +540,3 @@ A set of sockets is used by gameServer.exe and the gameClient.exe
 Packets received or sent from the UDP port are decoded/encoded using the "gamespy XOR"
 
 Copyright Disclaimer Under Section 107 of the Copyright Act 1976, allowance is made for "fair use" for purposes such as criticism, comment, news reporting, teaching, scholarship, and research. Fair use is a use permitted by copyright statute that might otherwise be infringing. Non-profit, educational or personal use tips the balance in favor of fair use.
-
-
