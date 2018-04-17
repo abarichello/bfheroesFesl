@@ -21,7 +21,7 @@ type Status struct {
 type stGame struct {
 	LobbyID int    `fesl:"lid"`
 	Fit     int    `fesl:"fit"`
-	GID     string `fesl:"gid"`
+	GID     string `fesl:"gid"` //gameID
 }
 
 type stPartition struct {
@@ -37,20 +37,20 @@ func (fm *FeslManager) Status(event network.EventClientProcess) {
 
 	games := []stGame{
 		{
-			LobbyID:   1,
-			GID:    gameID,
-			Fit: 1001,
+			LobbyID: 1,
+			GID:     gameID,
+			Fit:     1001,
 		},
 	}
 	event.Client.Answer(&codec.Packet{
 		Content: Status{
-			TXN: "Status",
+			TXN:   "Status",
 			State: "COMPLETE",
-			ID: stPartition{1, reply[partition]},
+			ID:    stPartition{1, reply[partition]},
 			Props: map[string]interface{}{
 				"resultType": "JOIN",
-				"games": games,
-			},			
+				"games":      games,
+			},
 		},
 		Send:    0x80000000,
 		Message: "pnow",
@@ -58,9 +58,9 @@ func (fm *FeslManager) Status(event network.EventClientProcess) {
 }
 
 type Cancel struct {
-	TXN    string      `fesl:"TXN"`
-	ID     stPartition `fesl:"id"`
-	State  string      `fesl:"sessionState"`
+	TXN   string                 `fesl:"TXN"`
+	ID    stPartition            `fesl:"id"`
+	State string                 `fesl:"sessionState"`
 	Props map[string]interface{} `fesl:"props"`
 }
 
@@ -70,15 +70,14 @@ func (fm *FeslManager) Cancel(event network.EventClientProcess) {
 
 	event.Client.Answer(&codec.Packet{
 		Content: Cancel{
-			TXN: "Cancel",
+			TXN:   "Cancel",
 			State: "CANCELLED",
-			ID: stPartition{1, reply[partition]},
+			ID:    stPartition{1, reply[partition]},
 			Props: map[string]interface{}{
 				"resultType": "CANCEL",
-			},			
+			},
 		},
 		Send:    event.Process.HEX,
 		Message: event.Process.Query,
 	})
 }
-

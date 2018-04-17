@@ -31,6 +31,7 @@ const (
 	thtrUBRA = "UBRA"
 	thtrUPLA = "UPLA"
 	thtrUSER = "USER"
+	thtrRGAM = "RGAM"
 )
 
 // Theater Handles incoming and outgoing theater communication
@@ -103,6 +104,8 @@ func (tm *Theater) Listen() {
 				go tm.CGAM(event.Data.(network.EventClientProcess))
 			case "client.command.UBRA":
 				go tm.UBRA(event.Data.(network.EventClientProcess))
+			case "client.command.RGAM":
+				go tm.UGAM(event.Data.(network.EventClientProcess))
 			case "client.command.UGAM":
 				go tm.UGAM(event.Data.(network.EventClientProcess))
 			case "client.command.EGRS":

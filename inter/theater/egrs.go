@@ -8,9 +8,10 @@ import (
 
 type ansEGRS struct {
 	TID string `fesl:"TID"`
+	PID string `fesl:"PID"`
 }
 
-// EGRS - SERVER sent up, tell us if client is 'allowed' to join
+// EGRS - Enter Game Response
 func (tm *Theater) EGRS(event network.EventClientProcess) {
 	if !event.Client.IsActive {
 		return
@@ -25,6 +26,9 @@ func (tm *Theater) EGRS(event network.EventClientProcess) {
 
 	event.Client.Answer(&codec.Packet{
 		Message: thtrEGRS,
-		Content: ansEGRS{event.Process.Msg["TID"]},
+		Content: ansEGRS{
+			event.Process.Msg["TID"],
+			event.Process.Msg["PID"],
+		},
 	})
 }

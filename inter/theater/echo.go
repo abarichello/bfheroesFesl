@@ -12,6 +12,8 @@ type ansECHO struct {
 	Port      int    `fesl:"PORT"`
 	ErrStatus int    `fesl:"ERR"`
 	Message   int    `fesl:"TYPE"`
+	Send      string `fesl:"->D"`
+
 }
 
 //TODO check typo network.EventClientProcess

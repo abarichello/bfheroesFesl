@@ -15,6 +15,7 @@ type Database struct {
 	stmtDeleteGameByGIDAnd                *sql.Stmt
 	stmtAddGame                           *sql.Stmt
 	stmtGameIncreaseJoining               *sql.Stmt
+	UpdateGid                             *sql.Stmt
 	stmtGameIncreaseTeam1                 *sql.Stmt
 	stmtGameIncreaseTeam2                 *sql.Stmt
 	stmtGameDecreaseTeam1                 *sql.Stmt
@@ -204,6 +205,32 @@ func (d *Database) setServerStatsStatement(statsAmount int) *sql.Stmt {
 		"	ON DUPLICATE KEY UPDATE" +
 		"	statsValue=VALUES(statsValue)," +
 		"   updated_at=NOW()"
+
+	d.mapSetServerStatsVariableAmount[statsAmount], err = d.db.Prepare(sql)
+	if err != nil {
+		logrus.Fatalln("Error preparing setServerStatsStatement with "+sql+" query.", err.Error())
+	}
+
+	return d.mapSetServerStatsVariableAmount[statsAmount]
+}
+
+func (d *Database) setServerGidStatement(statsAmount int) *sql.Stmt {
+	var err error
+
+	// Check if we already have a statement prepared for that amount of stats
+	if statement, ok := d.mapSetServerStatsVariableAmount[statsAmount]; ok {
+		return statement
+	}
+
+	var query string
+	for i := 1; i < statsAmount; i++ {
+		query += "(?, ?, ?, NOW()), "
+	}
+
+	sql := "INSERT INTO game_server_stats" +
+		"	(gid)" +
+		"	VALUES " + query + "(?)" +
+		"	ON DUPLICATE KEY UPDATE"
 
 	d.mapSetServerStatsVariableAmount[statsAmount], err = d.db.Prepare(sql)
 	if err != nil {

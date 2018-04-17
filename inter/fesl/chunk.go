@@ -3,6 +3,7 @@ package fesl
 import (
 	"github.com/Synaxis/bfheroesFesl/inter/network"
 	"github.com/Synaxis/bfheroesFesl/inter/network/codec"
+	"github.com/sirupsen/logrus"
 )
 
 const (
@@ -17,6 +18,7 @@ type ansChunk struct {
 
 func (fm *FeslManager) Chunk(event network.EventClientProcess) {
 	hex := event.Process.HEX
+	logrus.Println("================CHUNK MESSAGE========")
 	event.Client.Answer(&codec.Packet{
 		Content: ansChunk{TXN: Nextchunk},
 		Message: "Chunk",
