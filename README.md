@@ -1,7 +1,7 @@
 [![HitCount](http://hits.dwyl.io/Synaxis/bfheroesFesl.svg)](http://hits.dwyl.io/Synaxis/bfheroesFesl)
 ```UNFINISHED CODE```
-```Import Packages are broken a the moment , Download and place the whole folder in your GOPATH
-like ¨yourGoWorkspace¨/src/github.com/Synaxis/bfheroesFesl```
+``Import Packages are broken a the moment , Download and place the whole folder in your GOPATH
+  like ¨yourGoWorkspace¨/src/github.com/Synaxis/bfheroesFesl``
 
 Remember to configure your GOPATH and type
 ==>```go build && ./bfheroesFesl```
