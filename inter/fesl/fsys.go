@@ -87,7 +87,7 @@ func (fm *FeslManager) hello(event network.EventClientProcess) {
 
 	ans := ansHello{
 		TXN:         fsysHello,
-		ConnTTL:     int((55 * time.Hour).Seconds()),
+		ConnTTL:     int((1 * time.Hour).Seconds()),
 		ConnectedAt: time.Now().Format("Jan-02-2006 15:04:05 MST"),
 		TheaterIP:   config.General.ThtrAddr,
 		MessengerIP: config.General.MessengerAddr,

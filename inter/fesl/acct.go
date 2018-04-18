@@ -47,7 +47,6 @@ type ansNuLogin struct {
 	UserID    string `fesl:"userId"`
 	NucleusID string `fesl:"nuid"`
 	Lkey      string `fesl:"lkey"`
-	Encrypt   string `fesl:"encryptedInfo"`
 }
 
 // NuLogin - master login command
@@ -84,7 +83,7 @@ func (fm *FeslManager) NuLogin(event network.EventClientProcess) {
 		"username":  username,
 		"sessionId": gameToken,
 		"email":     email,
-		"keyHash":   event.Process.Msg["encryptedInfo"],
+		"returnEncryptedInfo":   "1",
 	}
 	event.Client.HashState.SetM(saveRedis)
 
@@ -101,7 +100,6 @@ func (fm *FeslManager) NuLogin(event network.EventClientProcess) {
 			TXN:       acctNuLogin,
 			ProfileID: id,
 			UserID:    id,
-			Encrypt:   "1",
 			NucleusID: username,
 			Lkey:      lkey,
 		},
@@ -204,7 +202,7 @@ func (fm *FeslManager) NuLookupUserInfo(event network.EventClientProcess) {
 
 }
 
-// NuLookupUserInfoServer - Gets basic information about a game user
+// NuLookupUserInfoServer - Server Login 1step
 func (fm *FeslManager) NuLookupUserInfoServer(event network.EventClientProcess) {
 	var err error
 
