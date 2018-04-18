@@ -47,6 +47,7 @@ type ansNuLogin struct {
 	UserID    string `fesl:"userId"`
 	NucleusID string `fesl:"nuid"`
 	Lkey      string `fesl:"lkey"`
+	Encrypt   string `fesl:"encryptedInfo"`
 }
 
 // NuLogin - master login command
@@ -81,7 +82,7 @@ func (fm *FeslManager) NuLogin(event network.EventClientProcess) {
 	saveRedis := map[string]interface{}{
 		"uID":       id,
 		"username":  username,
-		"sessionID": gameToken,
+		"sessionId": gameToken,
 		"email":     email,
 		"keyHash":   event.Process.Msg["encryptedInfo"],
 	}
@@ -100,6 +101,7 @@ func (fm *FeslManager) NuLogin(event network.EventClientProcess) {
 			TXN:       acctNuLogin,
 			ProfileID: id,
 			UserID:    id,
+			Encrypt:   "1",
 			NucleusID: username,
 			Lkey:      lkey,
 		},

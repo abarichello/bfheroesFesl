@@ -2,9 +2,7 @@ package theater
 
 import (
 	"strings"
-
 	"github.com/Synaxis/bfheroesFesl/inter/network"
-
 	"github.com/sirupsen/logrus"
 )
 
@@ -21,7 +19,6 @@ func (tM *Theater) UGAM(event network.EventClientProcess) {
 	logrus.Println("Updating GameServer " + gameID)
 
 	var args []interface{}
-
 	keys := 0
 	for index, value := range event.Process.Msg {
 		if index == "TID" {

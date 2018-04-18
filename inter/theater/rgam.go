@@ -12,9 +12,9 @@ type ansRGAM struct {
 	LobbyID string `fesl:"LID"`
 }
 
-// RGAM - A
+// RGAM - TEST
 func (tm *Theater) RGAM(event network.EventClientProcess) {
-	logrus.Println("RGAM REQUEST")
+	logrus.Println("====================RGAM REQUEST===================")
 
 	event.Client.Answer(&codec.Packet{
 		Message: thtrENCL,

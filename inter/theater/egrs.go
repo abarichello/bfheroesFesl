@@ -11,17 +11,19 @@ type ansEGRS struct {
 	PID string `fesl:"PID"`
 }
 
-// EGRS - Enter Game Response
+// EGRS - Enter Game Host Response
 func (tm *Theater) EGRS(event network.EventClientProcess) {
 	if !event.Client.IsActive {
 		return
 	}
 
 	if event.Process.Msg["ALLOWED"] != "1" {
+		// if ( !isAllowed )
+ 	   	// Fesl::Transaction::AddString(ft, "REASON", &reasonStr[4]);
 		return
 	}
 
-	logrus.Println("==EGRS==")
+	logrus.Println("======EGRS=====")
 	tm.db.stmtGameIncreaseJoining.Exec(event.Process.Msg["GID"])
 
 	event.Client.Answer(&codec.Packet{
@@ -29,6 +31,25 @@ func (tm *Theater) EGRS(event network.EventClientProcess) {
 		Content: ansEGRS{
 			event.Process.Msg["TID"],
 			event.Process.Msg["PID"],
+		},
+	})
+}
+
+// GREM - Enter Game Host Response
+func (tm *Theater) GREM(event network.EventClientProcess) {
+	if !event.Client.IsActive {
+		return
+	}
+	
+
+	logrus.Println("======GREM=====")
+	tm.db.stmtGameIncreaseJoining.Exec(event.Process.Msg["GID"])
+
+	event.Client.Answer(&codec.Packet{
+		Message: thtrEGRS,
+		Content: ansEGRS{
+			event.Process.Msg["LID"],
+			event.Process.Msg["GID"],
 		},
 	})
 }

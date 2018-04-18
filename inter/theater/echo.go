@@ -11,8 +11,12 @@ type ansECHO struct {
 	IP        string `fesl:"IP"`
 	Port      int    `fesl:"PORT"`
 	ErrStatus int    `fesl:"ERR"`
-	Message   int    `fesl:"TYPE"`
+	TYPE   int    `fesl:"TYPE"`
 	Send      string `fesl:"->D"`
+	UGID       string `fesl:"UGID"`
+	UID       string `fesl:"UID"`
+	//SECRET    string `fesl:"SECRET"`
+
 
 }
 
@@ -27,10 +31,13 @@ func (tm *Theater) ECHO(event network.SocketUDPEvent) {
 		Content: ansECHO{
 			TID:       ECHO["TID"],
 			TXN:       ECHO["TXN"],
+			Send:      ECHO["->D"],
+			UGID:      ECHO["UGID"],
+			TYPE:      1,
+			UID:       ECHO["UID"],
 			IP:        event.Addr.IP.String(),
 			Port:      event.Addr.Port,
-			ErrStatus: 0,
-			Message:   1,
+			ErrStatus: 0,						
 		},
 	}, event.Addr)
 }

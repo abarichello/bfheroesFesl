@@ -18,11 +18,12 @@ type ansCGAM struct {
 	UGID       string `fesl:"UGID"`
 	Secret     string `fesl:"SECRET"`
 	JOIN       string `fesl:"JOIN"`
+	JoinMode   string  `fesl:"JoindMode"`
 	J          string `fesl:"J"`
 	GameID     string `fesl:"GID"`
 }
 
-// CGAM - SERVER called to create a game
+// CGAM - CreateGameParameters
 func (tm *Theater) CGAM(event network.EventClientProcess) {
 	addr, ok := event.Client.IpAddr.(*net.TCPAddr)
 	if !ok {
@@ -101,6 +102,7 @@ func (tm *Theater) CGAM(event network.EventClientProcess) {
 			EKEY:       `O65zZ2D2A58mNrZw1hmuJw%3d%3d`,
 			Secret:     `2587913`,
 			JOIN:       event.Process.Msg["JOIN"],
+			JoinMode: 	"1",
 			J:          event.Process.Msg["JOIN"],
 			GameID:     gameID,
 		},

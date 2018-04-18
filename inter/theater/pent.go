@@ -12,7 +12,7 @@ type ansPENT struct {
 	PlayerID string `fesl:"PID"`
 }
 
-// PENT - SERVER sent up when a player joins (entitle player?)
+// PENT - PlayerEntered
 func (tM *Theater) PENT(event network.EventClientProcess) {
 	if !event.Client.IsActive {
 		return

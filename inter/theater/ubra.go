@@ -9,9 +9,13 @@ import (
 
 type ansUBRA struct {
 	TID string `fesl:"TID"`
+	LID string `fesl:"LID"`
+	// START string `fesl:"START"`
+
+
 }
 
-// UBRA - SERVER Called to  update server data
+// UBRA - "UpdateBracket" updates players connected
 func (tM *Theater) UBRA(event network.EventClientProcess) {
 	if !event.Client.IsActive {
 		logrus.Println("Cli Left")
@@ -20,14 +24,19 @@ func (tM *Theater) UBRA(event network.EventClientProcess) {
 
 	gdata := tM.level.NewObject("gdata", event.Process.Msg["GID"])
 
-	if event.Process.Msg["Start"] == "1" {
-		if event.Process.Msg["Status"] == "1" {
-			gdata.Set("AP", "0")
-		}
+	if event.Process.Msg["Start"] == "0" {
+		gdata.Set("AP", "0")
+		// if event.Process.Msg["Status"] !== "1" {
+		// 	gdata.Set("AP", "0")
+		// }
 	}
 
 	event.Client.Answer(&codec.Packet{
 		Message: thtrUBRA,
-		Content: ansUBRA{event.Process.Msg["TID"]},
-	})
+		Content: ansUBRA{
+			event.Process.Msg["TID"],
+			// event.Process.Msg["START"],
+			event.Process.Msg["LID"],
+		}})
+
 }

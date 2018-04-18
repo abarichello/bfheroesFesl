@@ -24,6 +24,7 @@ const (
 	thtrGDAT = "GDAT"
 	thtrKICK = "KICK"
 	thtrLDAT = "LDAT"
+	thtrHTSN = "HTSN" //testing mode
 	thtrLLST = "LLST"
 	thtrPENT = "PENT"
 	thtrPING = "PING"
@@ -118,6 +119,10 @@ func (tm *Theater) Listen() {
 				go tm.PLVT(event.Data.(network.EventClientProcess))
 			case "client.command.UPLA":
 				go tm.UPLA(event.Data.(network.EventClientProcess))
+			case "client.command.HTSN":
+				go tm.UPLA(event.Data.(network.EventClientProcess))
+			case "client.command.GREM":
+				go tm.GREM(event.Data.(network.EventClientProcess))
 			case "client.close":
 				tm.close(event.Data.(network.EventClientClose))
 			case "client.command":
@@ -141,7 +146,7 @@ func (tm *Theater) newClient(event network.EventNewClient) {
 	logrus.Println("Jtheater")
 
 	// Start Heartbeat
-	event.Client.State.HeartTicker = time.NewTicker(time.Second * 5)
+	event.Client.State.HeartTicker = time.NewTicker(time.Second * 55)
 	go func() {
 		for event.Client.IsActive {
 			select {
