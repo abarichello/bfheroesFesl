@@ -35,7 +35,6 @@ func (tM *Theater) UBRA(event network.EventClientProcess) {
 		Message: thtrUBRA,
 		Content: ansUBRA{
 			event.Process.Msg["TID"],
-			// event.Process.Msg["START"],
 			event.Process.Msg["LID"],
 		}})
 

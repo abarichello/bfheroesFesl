@@ -13,7 +13,7 @@ type ansECNL struct {
 	LobbyID string `fesl:"LID"`
 }
 
-// ECNL - CLIENT calls when they want to leave
+// ECNL - Called when Hero RQ/ Leave MM
 func (tm *Theater) ECNL(event network.EventClientProcess) {
 	logrus.Println("HeroRQ")
 

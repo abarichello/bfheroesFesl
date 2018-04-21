@@ -30,7 +30,7 @@ type Database struct {
 func NewDatabase(conn *sql.DB) (*Database, error) {
 	db := &Database{db: conn}
 
-	// Prepare database statements
+	// Prepare DB statements
 	db.mapGetStatsVariableAmount = make(map[int]*sql.Stmt)
 	db.mapSetServerStatsVariableAmount = make(map[int]*sql.Stmt)
 	db.mapSetServerPlayerStatsVariableAmount = make(map[int]*sql.Stmt)

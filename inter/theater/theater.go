@@ -19,12 +19,12 @@ const (
 	thtrEGEG = "EGEG"
 	thtrEGRQ = "EGRQ"
 	thtrEGRS = "EGRS"
-	thtrUQUE = "UQUE"
+	thtrUQUE = "UQUE"//testing
 	thtrENCL = "ENCL"
 	thtrGDAT = "GDAT"
 	thtrKICK = "KICK"
 	thtrLDAT = "LDAT"
-	thtrHTSN = "HTSN" //testing mode
+	thtrHTSN = "HTSN" //testing 
 	thtrLLST = "LLST"
 	thtrPENT = "PENT"
 	thtrPING = "PING"
@@ -32,7 +32,7 @@ const (
 	thtrUBRA = "UBRA"
 	thtrUPLA = "UPLA"
 	thtrUSER = "USER"
-	thtrRGAM = "RGAM"
+	thtrRGAM = "RGAM" //testing
 )
 
 // Theater Handles incoming and outgoing theater communication

@@ -25,6 +25,9 @@ type ansCGAM struct {
 
 // CGAM - CreateGameParameters
 func (tm *Theater) CGAM(event network.EventClientProcess) {
+
+	answer := event.Process.Msg
+
 	addr, ok := event.Client.IpAddr.(*net.TCPAddr)
 	if !ok {
 		logrus.Errorln("Failed turning IpAddr to net.TCPAddr")
@@ -32,11 +35,11 @@ func (tm *Theater) CGAM(event network.EventClientProcess) {
 	}
 
 	res, err := tm.db.stmtCreateServer.Exec(
-		event.Process.Msg["NAME"],
-		event.Process.Msg["B-U-community_name"],
-		event.Process.Msg["INT-IP"],
-		event.Process.Msg["INT-PORT"],
-		event.Process.Msg["B-version"],
+		answer["NAME"],
+		answer["B-U-community_name"],
+		answer["INT-IP"],
+		answer["INT-PORT"],
+		answer["B-version"],
 	)
 	if err != nil {
 		logrus.Error("Cannot create New server", err)
@@ -57,7 +60,7 @@ func (tm *Theater) CGAM(event network.EventClientProcess) {
 	keys := 0
 
 	// Stores what we know about this game in the redis db
-	for index, value := range event.Process.Msg {
+	for index, value := range answer {
 		if index == "TID" {
 			continue
 		}
@@ -95,21 +98,21 @@ func (tm *Theater) CGAM(event network.EventClientProcess) {
 	event.Client.Answer(&codec.Packet{
 		Message: thtrCGAM,
 		Content: ansCGAM{
-			TID:        event.Process.Msg["TID"],
+			TID:        answer["TID"],
 			LobbyID:    "1",
-			UGID:       event.Process.Msg["UGID"],
-			MaxPlayers: event.Process.Msg["MAX-PLAYERS"],
+			UGID:       answer["UGID"],
+			MaxPlayers: answer["MAX-PLAYERS"],
 			EKEY:       `O65zZ2D2A58mNrZw1hmuJw%3d%3d`,
 			Secret:     `2587913`,
-			JOIN:       event.Process.Msg["JOIN"],
+			JOIN:       answer["JOIN"],
 			JoinMode: 	"1",
-			J:          event.Process.Msg["JOIN"],
+			J:          answer["J"],
 			GameID:     gameID,
 		},
 	})
 
 	// Create game in database
-	_, err = tm.db.stmtAddGame.Exec(gameID, addr.IP.String(), event.Process.Msg["PORT"], event.Process.Msg["B-version"], event.Process.Msg["JOIN"], event.Process.Msg["B-U-map"], 0, 0, event.Process.Msg["MAX-PLAYERS"], 0, 0, "")
+	_, err = tm.db.stmtAddGame.Exec(gameID, addr.IP.String(), answer["PORT"], answer["B-version"], answer["JOIN"], answer["B-U-map"], 0, 0, answer["MAX-PLAYERS"], 0, 0, "")
 	if err != nil {
 		logrus.Errorf("Failed to add game: %v", err)
 	}

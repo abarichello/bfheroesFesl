@@ -50,7 +50,6 @@ type ansNuLogin struct {
 }
 
 // NuLogin - master login command
-// TODO: Here we can implement a banlist/permission check if player is allowed to play/join
 func (fm *Fesl) NuLogin(event network.EventClientProcess) {
 
 	if event.Client.HashState.Get("clientType") == "server" {
@@ -62,7 +61,7 @@ func (fm *Fesl) NuLogin(event network.EventClientProcess) {
 	var id, username, email, birthday, language, country, gameToken string
 
 	err := fm.db.stmtGetUserByGameToken.QueryRow(event.Process.Msg["encryptedInfo"]).Scan(&id, &username, //CONTINUE
-		&email, &birthday, &language, &country, &gameToken)
+		&email, &birthday, &language, &country, &gameToken) //todo add + checks 4 security
 
 	if err != nil {
 		event.Client.Answer(&codec.Packet{
@@ -83,7 +82,6 @@ func (fm *Fesl) NuLogin(event network.EventClientProcess) {
 		"username":  username,
 		"sessionId": gameToken,
 		"email":     email,
-		"returnEncryptedInfo":   "1",
 	}
 	event.Client.HashState.SetM(saveRedis)
 
@@ -135,7 +133,6 @@ func (fm *Fesl) NuLoginServer(event network.EventClientProcess) {
 	saveRedis["username"] = username
 	saveRedis["apikey"] = event.Process.Msg["encryptedInfo"]
 	saveRedis["keyHash"] = event.Process.Msg["password"]
-	saveRedis["returnEncryptedInfo"] =   "1"
 	event.Client.HashState.SetM(saveRedis)
 
 	// Setup a new key for new persona
@@ -344,7 +341,7 @@ type ansNuGetPersonas struct {
 	Personas []string `fesl:"personas"`
 }
 
-// NuGetPersonas . Display all Personas to the User
+// NuGetPersonas . Display all Personas/Heroes
 func (fm *Fesl) NuGetPersonas(event network.EventClientProcess) {
 	if !event.Client.IsActive {
 		logrus.Println("Client Left")
@@ -389,7 +386,7 @@ func (fm *Fesl) NuGrantEntitlement(event network.EventClientProcess) {
 	logrus.Println("GRANT ENTITLEMENT")
 
 	event.Client.Answer(&codec.Packet{
-		Message: acct,
+		Message: "NuGrantEntitlement",
 		Content: "TXN",
 		Send:    event.Process.HEX,
 	})
@@ -459,7 +456,7 @@ type ansNuGetAccount struct {
 	Country        string `fesl:"country"`
 	Language       string `fesl:"language"`
 	GlobalOptIn    bool   `fesl:"globalOptin"`
-	ThirdPartyOptIn bool   `fesl:"thirdPartyOptin"`
+	ThirdPartyOptIn bool  `fesl:"thirdPartyOptin"`
 }
 
 // NuGetAccount - General account information retrieved, based on parameters sent
@@ -477,17 +474,17 @@ func (fm *Fesl) acctNuGetAccount(event *network.EventClientProcess) {
 	event.Client.Answer(&codec.Packet{
 		Message: acct,
 		Content: ansNuGetAccount{
-			TXN:            acctNuGetAccount,
-			Country:        "US",
-			Language:       "en_US",
-			DobDay:         1,
-			DobMonth:       1,
-			DobYear:        1992,
-			GlobalOptIn:    false,
-			ThirdPartyOptIn: false,
-			NucleusID:      event.Client.HashState.Get("email"),
-			HeroName:       event.Client.HashState.Get("username"),
-			UserID:         event.Client.HashState.Get("uID"),
+			TXN:           		acctNuGetAccount,
+			Country:        	"US",
+			Language:       	"en_US",
+			DobDay:         	1,
+			DobMonth:       	1,
+			DobYear:        	1992,
+			GlobalOptIn:    	false,
+			ThirdPartyOptIn:	false,
+			NucleusID:      	event.Client.HashState.Get("email"),
+			HeroName:       	event.Client.HashState.Get("username"),
+			UserID:         	event.Client.HashState.Get("uID"),
 		},
 		Send: event.Process.HEX,
 	})

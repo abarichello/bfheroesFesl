@@ -12,7 +12,7 @@ func (tM *Theater) UGAM(event network.EventClientProcess) {
 		return
 	}
 
-	gameID := event.Process.Msg["GID"] // ll m matchmakingcfro
+	gameID := event.Process.Msg["GID"] // TODO gameID := mm.FindGuids()
 
 	gdata := tM.level.NewObject("gdata", gameID)
 

@@ -14,7 +14,7 @@ type ansRGAM struct {
 
 // RGAM - TEST
 func (tm *Theater) RGAM(event network.EventClientProcess) {
-	logrus.Println("====================RGAM REQUEST===================")
+	logrus.Println("=====RGAM REQUEST======")
 
 	event.Client.Answer(&codec.Packet{
 		Message: thtrENCL,
