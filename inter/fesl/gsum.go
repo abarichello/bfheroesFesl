@@ -9,7 +9,7 @@ type ansGetSessionID struct {
 	TXN string `fesl:"TXN"`
 }
 
-func (fm *FeslManager) gsumGetSessionID(event network.EventClientProcess) {
+func (fm *Fesl) gsumGetSessionID(event network.EventClientProcess) {
 	event.Client.Answer(&codec.Packet{
 		Content: ansGetSessionID{TXN: "GetSessionID"},
 		Message: "gsum",

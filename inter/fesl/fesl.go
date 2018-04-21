@@ -13,7 +13,7 @@ import (
 )
 
 // Fesl - handles incoming and outgoing FESL data
-type FeslManager struct {
+type Fesl struct {
 	name   string
 	db     *Database
 	level  *level.Level
@@ -22,7 +22,7 @@ type FeslManager struct {
 }
 
 // New creates and starts a new ClientManager
-func New(name, bind string, server bool, conn *sql.DB, lvl *level.Level) *FeslManager {
+func New(name, bind string, server bool, conn *sql.DB, lvl *level.Level) *Fesl {
 	db, err := NewDatabase(conn)
 	if err != nil {
 		return nil
@@ -34,7 +34,7 @@ func New(name, bind string, server bool, conn *sql.DB, lvl *level.Level) *FeslMa
 		return nil
 	}
 
-	fm := &FeslManager{
+	fm := &Fesl{
 		db:     db,
 		level:  lvl,
 		name:   name,
@@ -46,7 +46,7 @@ func New(name, bind string, server bool, conn *sql.DB, lvl *level.Level) *FeslMa
 	return fm
 }
 
-func (fm *FeslManager) run() {
+func (fm *Fesl) run() {
 	// Close all database statements
 	defer fm.db.closeStatements()
 
@@ -99,7 +99,7 @@ func (fm *FeslManager) run() {
 }
 
 // TLS
-func (fm *FeslManager) newClient(event network.EventNewClient) {
+func (fm *Fesl) newClient(event network.EventNewClient) {
 	if !event.Client.IsActive {
 		logrus.Println("Client Left")
 		return
@@ -108,7 +108,7 @@ func (fm *FeslManager) newClient(event network.EventNewClient) {
 	fm.fsysMemCheck(&event)
 
 	// Start Heartbeat
-	event.Client.State.HeartTicker = time.NewTicker(time.Second * 5)
+	event.Client.State.HeartTicker = time.NewTicker(time.Second * 30)
 	go func() {
 		for {
 			if !event.Client.IsActive {
@@ -129,7 +129,7 @@ func (fm *FeslManager) newClient(event network.EventNewClient) {
 }
 
 // TLS
-func (fm *FeslManager) close(event network.EventClientClose) {
+func (fm *Fesl) close(event network.EventClientClose) {
 	logrus.Println("Client closed.")
 
 	if event.Client.HashState != nil {
@@ -149,6 +149,6 @@ func (fm *FeslManager) close(event network.EventClientClose) {
 	}
 }
 
-func (fm *FeslManager) createState(ident string) *level.State {
+func (fm *Fesl) createState(ident string) *level.State {
 	return fm.level.NewState(ident)
 }

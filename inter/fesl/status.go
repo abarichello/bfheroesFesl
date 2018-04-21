@@ -30,7 +30,7 @@ type stPartition struct {
 }
 
 // Status comes after Start. tells info about desired server
-func (fm *FeslManager) Status(event network.EventClientProcess) {
+func (fm *Fesl) Status(event network.EventClientProcess) {
 	logrus.Println("=Status=")
 	reply := event.Process.Msg
 	gameID := mm.FindGIDs()
@@ -65,7 +65,7 @@ type Cancel struct {
 }
 
 // Cancel - cancel pnow
-func (fm *FeslManager) Cancel(event network.EventClientProcess) {
+func (fm *Fesl) Cancel(event network.EventClientProcess) {
 	reply := event.Process.Msg
 
 	event.Client.Answer(&codec.Packet{

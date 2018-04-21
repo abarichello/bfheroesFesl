@@ -51,7 +51,7 @@ type ansNuLogin struct {
 
 // NuLogin - master login command
 // TODO: Here we can implement a banlist/permission check if player is allowed to play/join
-func (fm *FeslManager) NuLogin(event network.EventClientProcess) {
+func (fm *Fesl) NuLogin(event network.EventClientProcess) {
 
 	if event.Client.HashState.Get("clientType") == "server" {
 		// Server login
@@ -73,7 +73,7 @@ func (fm *FeslManager) NuLogin(event network.EventClientProcess) {
 			},
 
 			Send:    event.Process.HEX,
-			Message: event.Process.Query,
+			Message: acct,
 		})
 		return
 	}
@@ -109,7 +109,7 @@ func (fm *FeslManager) NuLogin(event network.EventClientProcess) {
 }
 
 // NuLoginServer - login command for servers
-func (fm *FeslManager) NuLoginServer(event network.EventClientProcess) {
+func (fm *Fesl) NuLoginServer(event network.EventClientProcess) {
 
 	var id, userID, servername, secretKey, username string
 
@@ -135,6 +135,7 @@ func (fm *FeslManager) NuLoginServer(event network.EventClientProcess) {
 	saveRedis["username"] = username
 	saveRedis["apikey"] = event.Process.Msg["encryptedInfo"]
 	saveRedis["keyHash"] = event.Process.Msg["password"]
+	saveRedis["returnEncryptedInfo"] =   "1"
 	event.Client.HashState.SetM(saveRedis)
 
 	// Setup a new key for new persona
@@ -163,7 +164,7 @@ type ansNuLookupUserInfo struct {
 	UserInfo []userInfo `fesl:"userInfo"`
 }
 
-func (fm *FeslManager) NuLookupUserInfo(event network.EventClientProcess) {
+func (fm *Fesl) NuLookupUserInfo(event network.EventClientProcess) {
 	if !event.Client.IsActive {
 		logrus.Println("Cli DC")
 		return
@@ -203,7 +204,7 @@ func (fm *FeslManager) NuLookupUserInfo(event network.EventClientProcess) {
 }
 
 // NuLookupUserInfoServer - Server Login 1step
-func (fm *FeslManager) NuLookupUserInfoServer(event network.EventClientProcess) {
+func (fm *Fesl) NuLookupUserInfoServer(event network.EventClientProcess) {
 	var err error
 
 	var id, userID, servername, secretKey, username string
@@ -246,7 +247,7 @@ type ansNuLoginPersona struct {
 }
 
 // User log in with selected Hero
-func (fm *FeslManager) NuLoginPersona(event network.EventClientProcess) {
+func (fm *Fesl) NuLoginPersona(event network.EventClientProcess) {
 	if !event.Client.IsActive {
 		logrus.Println("C Left")
 		return
@@ -291,7 +292,7 @@ func (fm *FeslManager) NuLoginPersona(event network.EventClientProcess) {
 }
 
 //NuLoginPersonaServer Pre-Server Login (out of order ?)
-func (fm *FeslManager) NuLoginPersonaServer(event network.EventClientProcess) {
+func (fm *Fesl) NuLoginPersonaServer(event network.EventClientProcess) {
 	if !event.Client.IsActive {
 		logrus.Println("Client Left")
 		return
@@ -344,7 +345,7 @@ type ansNuGetPersonas struct {
 }
 
 // NuGetPersonas . Display all Personas to the User
-func (fm *FeslManager) NuGetPersonas(event network.EventClientProcess) {
+func (fm *Fesl) NuGetPersonas(event network.EventClientProcess) {
 	if !event.Client.IsActive {
 		logrus.Println("Client Left")
 		return
@@ -384,7 +385,7 @@ func (fm *FeslManager) NuGetPersonas(event network.EventClientProcess) {
 }
 
 // test stuff
-func (fm *FeslManager) NuGrantEntitlement(event network.EventClientProcess) {
+func (fm *Fesl) NuGrantEntitlement(event network.EventClientProcess) {
 	logrus.Println("GRANT ENTITLEMENT")
 
 	event.Client.Answer(&codec.Packet{
@@ -395,7 +396,7 @@ func (fm *FeslManager) NuGrantEntitlement(event network.EventClientProcess) {
 }
 
 // NuGetPersonasServer - Soldier data lookup call for servers
-func (fm *FeslManager) NuGetPersonasServer(event network.EventClientProcess) {
+func (fm *Fesl) NuGetPersonasServer(event network.EventClientProcess) {
 	logrus.Println("======SERVER CONNECTING=====")
 
 	var id, userID, servername, secretKey, username string
@@ -442,19 +443,9 @@ func (fm *FeslManager) NuGetPersonasServer(event network.EventClientProcess) {
 
 	event.Client.Answer(&codec.Packet{
 		Send:    event.Process.HEX,
-		Message: acct,
+		Message: "acct",
 		Content: ans,
 	})
-}
-
-// NuGetAccount - General account information retrieved, based on parameters sent
-func (fm *FeslManager) NuGetAccount(event network.EventClientProcess) {
-	if !event.Client.IsActive {
-		logrus.Println("Client Left")
-		return
-	}
-
-	/*call*/fm.acctNuGetAccount(&event)
 }
 
 type ansNuGetAccount struct {
@@ -471,7 +462,18 @@ type ansNuGetAccount struct {
 	ThirdPartyOptIn bool   `fesl:"thirdPartyOptin"`
 }
 
-func (fm *FeslManager) acctNuGetAccount(event *network.EventClientProcess) {
+// NuGetAccount - General account information retrieved, based on parameters sent
+func (fm *Fesl) NuGetAccount(event network.EventClientProcess) {
+	if !event.Client.IsActive {
+		logrus.Println("Client Left")
+		return
+	}
+
+	fm.acctNuGetAccount(&event)
+}
+
+
+func (fm *Fesl) acctNuGetAccount(event *network.EventClientProcess) {
 	event.Client.Answer(&codec.Packet{
 		Message: acct,
 		Content: ansNuGetAccount{

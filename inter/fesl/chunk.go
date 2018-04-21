@@ -16,7 +16,7 @@ type ansChunk struct {
 	next  string `fesl:"GetNextChunk"`
 }
 
-func (fm *FeslManager) Chunk(event network.EventClientProcess) {
+func (fm *Fesl) Chunk(event network.EventClientProcess) {
 	hex := event.Process.HEX
 	logrus.Println("================CHUNK MESSAGE========")
 	event.Client.Answer(&codec.Packet{

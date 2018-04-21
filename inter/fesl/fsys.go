@@ -27,7 +27,7 @@ type ansMemCheck struct {
 	result   string `fesl:"result"`
 }
 
-func (fm *FeslManager) fsysMemCheck(event *network.EventNewClient) {
+func (fm *Fesl) fsysMemCheck(event *network.EventNewClient) {
 	event.Client.Answer(&codec.Packet{
 		Message: fsys,
 		Content: ansMemCheck{
@@ -56,7 +56,7 @@ type domainPartition struct {
 	SubName string `fesl:"subDomain"`
 }
 
-func (fm *FeslManager) hello(event network.EventClientProcess) {
+func (fm *Fesl) hello(event network.EventClientProcess) {
 	if !event.Client.IsActive {
 		logrus.Println("Cli Left")
 		return
@@ -87,7 +87,7 @@ func (fm *FeslManager) hello(event network.EventClientProcess) {
 
 	ans := ansHello{
 		TXN:         fsysHello,
-		ConnTTL:     int((1 * time.Hour).Seconds()),
+		ConnTTL:     int((30 * time.Hour).Seconds()),
 		ConnectedAt: time.Now().Format("Jan-02-2006 15:04:05 MST"),
 		TheaterIP:   config.General.ThtrAddr,
 		MessengerIP: config.General.MessengerAddr,
@@ -126,7 +126,7 @@ type pingSite struct {
 }
 
 // GetPingSites - Get Pings for something
-func (fm *FeslManager) GetPingSites(event network.EventClientProcess) {
+func (fm *Fesl) GetPingSites(event network.EventClientProcess) {
 	if !event.Client.IsActive {
 		logrus.Println("Cli Left")
 		return
