@@ -84,7 +84,7 @@ func (fm *Fesl) hello(event network.EvProcess) {
 
 	ans := ansHello{
 		TXN:         fsysHello,
-		ConnTTL:     int((30 * time.Hour).Seconds()),
+		ConnTTL:     int((60 * time.Hour).Seconds()),
 		ConnectedAt: time.Now().Format("Jan-02-2006 15:04:05 MST"),
 		TheaterIP:   config.General.ThtrAddr,
 		MessengerIP: config.General.MessengerAddr,
@@ -98,11 +98,10 @@ func (fm *Fesl) hello(event network.EvProcess) {
 		ans.TheaterPort = config.General.ThtrClientPort
 	}
 
-	hex := event.Process.HEX
 	event.Client.Answer(&codec.Packet{
 		Content: ans,
 		Message: fsys,
-		Send:    hex,
+		Send:    0xC0000001,
 	})
 }
 

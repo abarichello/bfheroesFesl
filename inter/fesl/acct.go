@@ -48,6 +48,7 @@ type ansNuLogin struct {
 	ProfileID string `fesl:"profileId"`
 	UserID    string `fesl:"userId"`
 	NucleusID string `fesl:"nuid"`
+	Encrypt   int   `fesl:"returnEncryptedInfo"`
 	Lkey      string `fesl:"lkey"`
 }
 
@@ -99,6 +100,7 @@ func (fm *Fesl) NuLogin(event network.EvProcess) {
 		Content: ansNuLogin{
 			TXN:       acctNuLogin,
 			ProfileID: id,
+			Encrypt:   1,
 			UserID:    id,
 			NucleusID: username,
 			Lkey:      lkey,
