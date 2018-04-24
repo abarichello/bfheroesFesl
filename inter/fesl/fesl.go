@@ -57,37 +57,39 @@ func (fm *Fesl) run() {
 			case "newClient":
 				fm.newClient(event.Data.(network.EventNewClient)) // TLS
 			case "client.command.Hello":
-				fm.hello(event.Data.(network.EventClientProcess))
+				fm.hello(event.Data.(network.EvProcess))
 			case "client.command.Chunk":
-				fm.Chunk(event.Data.(network.EventClientProcess))
+				fm.Chunk(event.Data.(network.EvProcess))
 			case "client.command.NuLogin":
-				fm.NuLogin(event.Data.(network.EventClientProcess))
+				fm.NuLogin(event.Data.(network.EvProcess))
 			case "client.command.NuGetPersonas":
-				fm.NuGetPersonas(event.Data.(network.EventClientProcess))
+				fm.NuGetPersonas(event.Data.(network.EvProcess))
 			case "client.command.NuGetAccount":
-				fm.NuGetAccount(event.Data.(network.EventClientProcess))
+				fm.NuGetAccount(event.Data.(network.EvProcess))
 			case "client.command.GetStats":
-				fm.GetStats(event.Data.(network.EventClientProcess))
+				fm.GetStats(event.Data.(network.EvProcess))
 			case "client.command.NuLookupUserInfo":
-				fm.NuLookupUserInfo(event.Data.(network.EventClientProcess))
+				fm.NuLookupUserInfo(event.Data.(network.EvProcess))
 			case "client.command.NuLoginPersona":
-				fm.NuLoginPersona(event.Data.(network.EventClientProcess))
+				fm.NuLoginPersona(event.Data.(network.EvProcess))
 			case "client.command.NuGrantEntitlement":
-				fm.NuGrantEntitlement(event.Data.(network.EventClientProcess))
+				fm.NuGrantEntitlement(event.Data.(network.EvProcess))
 			case "client.command.GetStatsForOwners":
-				fm.GetStatsForOwners(event.Data.(network.EventClientProcess))
+				fm.GetStatsForOwners(event.Data.(network.EvProcess))
 			case "client.command.GetPingSites":
-				fm.GetPingSites(event.Data.(network.EventClientProcess))
+				fm.GetPingSites(event.Data.(network.EvProcess))
 			case "client.command.UpdateStats":
-				fm.UpdateStats(event.Data.(network.EventClientProcess))
+				fm.UpdateStats(event.Data.(network.EvProcess))
 			case "client.command.Start":
-				fm.Start(event.Data.(network.EventClientProcess))
+				fm.Start(event.Data.(network.EvProcess))
 			case "client.command.Cancel":
-				fm.Cancel(event.Data.(network.EventClientProcess))
+				fm.Cancel(event.Data.(network.EvProcess))
+			case "client.Goodbye":
+				fm.Goodbye(event.Data.(network.EvProcess))
 			case "client.close":
 				fm.close(event.Data.(network.EventClientClose)) // TLS
 			case "client.command":
-				TXN := event.Data.(network.EventClientProcess).Process.Msg["TXN"]
+				TXN := event.Data.(network.EvProcess).Process.Msg["TXN"]
 				logrus.WithFields(logrus.Fields{
 					"func": fm.name,
 					"message": fmt.Sprintf("%s/TXN:%s",

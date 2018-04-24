@@ -8,7 +8,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-func (tM *Theater) UPLA(event network.EventClientProcess) {
+func (tM *Theater) UPLA(event network.EvProcess) {
 	if !event.Client.IsActive {
 		return
 	}

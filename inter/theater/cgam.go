@@ -24,7 +24,7 @@ type ansCGAM struct {
 }
 
 // CGAM - CreateGameParameters
-func (tm *Theater) CGAM(event network.EventClientProcess) {
+func (tm *Theater) CGAM(event network.EvProcess) {
 
 	answer := event.Process.Msg
 

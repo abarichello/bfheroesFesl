@@ -16,7 +16,7 @@ type Start struct {
 }
 
 // Start handles pnow.Start
-func (fm *Fesl) Start(event network.EventClientProcess) {
+func (fm *Fesl) Start(event network.EvProcess) {
 	logrus.Println("==START==")
 	reply := event.Process.Msg
 

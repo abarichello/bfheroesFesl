@@ -6,7 +6,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-func (tM *Theater) UGAM(event network.EventClientProcess) {
+func (tM *Theater) UGAM(event network.EvProcess) {
 	if !event.Client.IsActive {
 		logrus.Println("Cli Left")
 		return

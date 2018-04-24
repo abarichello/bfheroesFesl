@@ -17,7 +17,7 @@ type ansHTSN struct {
 }
 
 // HTSN - TEst2
-func (tm *Theater) HTSN(event network.EventClientProcess) {
+func (tm *Theater) HTSN(event network.EvProcess) {
 		logrus.Println("HTSN HTSN===")
 		// Client
 		event.Client.Answer(&codec.Packet{

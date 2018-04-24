@@ -27,7 +27,7 @@ type statsPair struct {
 }
 
 // GetStats - Get basic stats about a soldier/owner (account holder)
-func (fm *Fesl) GetStats(event network.EventClientProcess) {
+func (fm *Fesl) GetStats(event network.EvProcess) {
 	if !event.Client.IsActive {
 		logrus.Println("Cli Left")
 		return
@@ -121,7 +121,7 @@ type updateStat struct {
 }
 
 // UpdateStats - updates stats about a soldier
-func (fm *Fesl) UpdateStats(event network.EventClientProcess) {
+func (fm *Fesl) UpdateStats(event network.EvProcess) {
 	if !event.Client.IsActive {
 		logrus.Println("Cli Left")
 		return
@@ -315,7 +315,7 @@ type statsContainer struct {
 }
 
 // GetStatsForOwners - Gives a bunch of info for the Hero selection screen?
-func (fm *Fesl) GetStatsForOwners(event network.EventClientProcess) {
+func (fm *Fesl) GetStatsForOwners(event network.EvProcess) {
 	if !event.Client.IsActive {
 		logrus.Println("Cli Left")
 		return

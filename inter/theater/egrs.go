@@ -12,7 +12,7 @@ type ansEGRS struct {
 }
 
 // EGRS - Enter Game Host Response
-func (tm *Theater) EGRS(event network.EventClientProcess) {
+func (tm *Theater) EGRS(event network.EvProcess) {
 	if !event.Client.IsActive {
 		return
 	}
@@ -36,7 +36,7 @@ func (tm *Theater) EGRS(event network.EventClientProcess) {
 }
 
 // GREM - Enter Game Host Response
-func (tm *Theater) GREM(event network.EventClientProcess) {
+func (tm *Theater) GREM(event network.EvProcess) {
 	if !event.Client.IsActive {
 		return
 	}

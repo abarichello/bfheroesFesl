@@ -16,7 +16,7 @@ type ansUBRA struct {
 }
 
 // UBRA - "UpdateBracket" updates players connected
-func (tM *Theater) UBRA(event network.EventClientProcess) {
+func (tM *Theater) UBRA(event network.EvProcess) {
 	if !event.Client.IsActive {
 		logrus.Println("Cli Left")
 		return

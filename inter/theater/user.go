@@ -21,7 +21,7 @@ func (tm *Theater) NewState(ident string) *level.State {
 }
 
 // USER - Check User for Login - server not working atm
-func (tm *Theater) USER(event network.EventClientProcess) {
+func (tm *Theater) USER(event network.EvProcess) {
 	if !event.Client.IsActive {
 		logrus.Println("Cli Left")
 		return

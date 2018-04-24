@@ -19,7 +19,7 @@ type ansLDAT struct {
 	Passing         string `fesl:"PASSING"`
 }
 
-func (tm *Theater) LobbyData(event network.EventClientProcess) {
+func (tm *Theater) LobbyData(event network.EvProcess) {
 	event.Client.Answer(&codec.Packet{
 		Message: thtrLDAT,
 		Content: ansLDAT{
@@ -43,7 +43,7 @@ type ansLLST struct {
 }
 
 // LLST - CLIENT (???) unknown, potentially bookmarks
-func (tm *Theater) LLST(event network.EventClientProcess) {
+func (tm *Theater) LLST(event network.EvProcess) {
 	event.Client.Answer(&codec.Packet{
 		Message: thtrLLST,
 		Content: ansLLST{event.Process.Msg["TID"], 1},
@@ -51,7 +51,7 @@ func (tm *Theater) LLST(event network.EventClientProcess) {
 }
 
 // GLST - CLIENT called to get a list of game servers? Irrelevant for heroes.
-func (tm *Theater) GLST(event network.EventClientProcess) {
+func (tm *Theater) GLST(event network.EvProcess) {
 	if !event.Client.IsActive {
 		logrus.Println("Cli Left")
 		return

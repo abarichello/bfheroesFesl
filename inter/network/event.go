@@ -33,7 +33,7 @@ type EventClientError struct {
 	Client *Client
 	Error  error
 }
-type EventClientProcess struct {
+type EvProcess struct {
 	Client  *Client
 	Process *ProcessFESL // If TLS (theater then we ignore HEX - it is always 0x0)
 }
@@ -77,7 +77,7 @@ func (c *Client) FireClientData(event ClientEvent) SocketEvent {
 func (c *Client) FireClientCommand(event ClientEvent) SocketEvent {
 	return SocketEvent{
 		Name: "client." + event.Name,
-		Data: EventClientProcess{
+		Data: EvProcess{
 			Client:  c,
 			Process: event.Data.(*ProcessFESL),
 		},

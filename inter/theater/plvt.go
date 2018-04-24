@@ -18,7 +18,7 @@ type ansPLVT struct {
 }
 
 // PENT - Entitles Hero in Matchmaking
-func (tM *Theater) PLVT(event network.EventClientProcess) {
+func (tM *Theater) PLVT(event network.EvProcess) {
 	if !event.Client.IsActive {
 		return
 	}

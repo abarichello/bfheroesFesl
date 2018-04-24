@@ -22,9 +22,7 @@ const (
 type ansMemCheck struct {
 	TXN      string `fesl:"TXN"`
 	Salt     string `fesl:"salt"`
-	mtype    string `fesl:"type"`
 	memcheck string `fesl:"memcheck.[]"`
-	result   string `fesl:"result"`
 }
 
 func (fm *Fesl) fsysMemCheck(event *network.EventNewClient) {
@@ -33,8 +31,7 @@ func (fm *Fesl) fsysMemCheck(event *network.EventNewClient) {
 		Content: ansMemCheck{
 			TXN:      "MemCheck",
 			memcheck: "0",
-			Salt:     "5",
-			result:   "",
+			Salt:     "",
 		},
 		Send: 0xC0000000,
 	})
@@ -56,7 +53,7 @@ type domainPartition struct {
 	SubName string `fesl:"subDomain"`
 }
 
-func (fm *Fesl) hello(event network.EventClientProcess) {
+func (fm *Fesl) hello(event network.EvProcess) {
 	if !event.Client.IsActive {
 		logrus.Println("Cli Left")
 		return
@@ -109,6 +106,32 @@ func (fm *Fesl) hello(event network.EventClientProcess) {
 	})
 }
 
+
+///////////////////////////////////////////////
+type ansGoodbye struct {
+	TXN       string     `fesl:"TXN"`
+	Reason    string     `fesl:"reason"`
+	messageArr string    `fesl:"message"`
+}
+
+// Goodbye - Handle Client Close
+func (fm *Fesl) Goodbye(event network.EvProcess) {	
+	logrus.Println("Goodbye called for user")
+	
+	hex := event.Process.HEX
+	event.Client.Answer(&codec.Packet{
+		Message: event.Process.Query,
+		Send:    hex,
+		Content: ansGoodbye{
+			TXN:      "Goodbye",
+			Reason:   "GOODBYE_CLIENT_NORMAL",
+			messageArr: "n/a",			
+			},
+		},
+	)
+}
+
+///////////////////////////////////////
 const (
 	location = "iad"
 )
@@ -126,7 +149,7 @@ type pingSite struct {
 }
 
 // GetPingSites - Get Pings for something
-func (fm *Fesl) GetPingSites(event network.EventClientProcess) {
+func (fm *Fesl) GetPingSites(event network.EvProcess) {
 	if !event.Client.IsActive {
 		logrus.Println("Cli Left")
 		return

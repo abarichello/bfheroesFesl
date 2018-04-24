@@ -17,7 +17,7 @@ type ansClientConnected struct {
 }
 
 // CONN - SHARED (???) called on connection
-func (tm *Theater) CONN(event network.EventClientProcess) {
+func (tm *Theater) CONN(event network.EvProcess) {
 	if !event.Client.IsActive {
 		logrus.Println("Cli Left")
 		return

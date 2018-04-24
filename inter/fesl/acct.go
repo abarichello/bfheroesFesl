@@ -3,6 +3,8 @@ package fesl
 import (
 	"fmt"
 	"strconv"
+	uuid "github.com/satori/go.uuid"
+
 
 	"github.com/Synaxis/bfheroesFesl/inter/network"
 	"github.com/Synaxis/bfheroesFesl/inter/network/codec"
@@ -50,7 +52,7 @@ type ansNuLogin struct {
 }
 
 // NuLogin - master login command
-func (fm *Fesl) NuLogin(event network.EventClientProcess) {
+func (fm *Fesl) NuLogin(event network.EvProcess) {
 
 	if event.Client.HashState.Get("clientType") == "server" {
 		// Server login
@@ -86,7 +88,7 @@ func (fm *Fesl) NuLogin(event network.EventClientProcess) {
 	event.Client.HashState.SetM(saveRedis)
 
 	// Setup a new key for our persona
-	lkey := BF2RandomUnsafe(24)
+	lkey := uuid.NewV4().String()
 	lkeyRedis := fm.level.NewObject("lkeys", lkey)
 	lkeyRedis.Set("id", id)
 	lkeyRedis.Set("userID", id)
@@ -107,7 +109,7 @@ func (fm *Fesl) NuLogin(event network.EventClientProcess) {
 }
 
 // NuLoginServer - login command for servers
-func (fm *Fesl) NuLoginServer(event network.EventClientProcess) {
+func (fm *Fesl) NuLoginServer(event network.EvProcess) {
 
 	var id, userID, servername, secretKey, username string
 
@@ -135,8 +137,9 @@ func (fm *Fesl) NuLoginServer(event network.EventClientProcess) {
 	saveRedis["keyHash"] = event.Process.Msg["password"]
 	event.Client.HashState.SetM(saveRedis)
 
+
 	// Setup a new key for new persona
-	lkey := BF2RandomUnsafe(24)
+	lkey := uuid.NewV4().String()
 	lkeyRedis := fm.level.NewObject("lkeys", lkey)
 	lkeyRedis.Set("id", id)
 	lkeyRedis.Set("userID", userID)
@@ -161,7 +164,7 @@ type ansNuLookupUserInfo struct {
 	UserInfo []userInfo `fesl:"userInfo"`
 }
 
-func (fm *Fesl) NuLookupUserInfo(event network.EventClientProcess) {
+func (fm *Fesl) NuLookupUserInfo(event network.EvProcess) {
 	if !event.Client.IsActive {
 		logrus.Println("Cli DC")
 		return
@@ -201,7 +204,7 @@ func (fm *Fesl) NuLookupUserInfo(event network.EventClientProcess) {
 }
 
 // NuLookupUserInfoServer - Server Login 1step
-func (fm *Fesl) NuLookupUserInfoServer(event network.EventClientProcess) {
+func (fm *Fesl) NuLookupUserInfoServer(event network.EvProcess) {
 	var err error
 
 	var id, userID, servername, secretKey, username string
@@ -244,7 +247,7 @@ type ansNuLoginPersona struct {
 }
 
 // User log in with selected Hero
-func (fm *Fesl) NuLoginPersona(event network.EventClientProcess) {
+func (fm *Fesl) NuLoginPersona(event network.EvProcess) {
 	if !event.Client.IsActive {
 		logrus.Println("C Left")
 		return
@@ -264,7 +267,7 @@ func (fm *Fesl) NuLoginPersona(event network.EventClientProcess) {
 	}
 
 	// Setup a new key for our persona
-	lkey := BF2RandomUnsafe(24)
+	lkey := uuid.NewV4().String()
 	lkeyRedis := fm.level.NewObject("lkeys", lkey)
 	lkeyRedis.Set("id", id)
 	lkeyRedis.Set("userID", userID)
@@ -289,7 +292,7 @@ func (fm *Fesl) NuLoginPersona(event network.EventClientProcess) {
 }
 
 //NuLoginPersonaServer Pre-Server Login (out of order ?)
-func (fm *Fesl) NuLoginPersonaServer(event network.EventClientProcess) {
+func (fm *Fesl) NuLoginPersonaServer(event network.EvProcess) {
 	if !event.Client.IsActive {
 		logrus.Println("Client Left")
 		return
@@ -317,7 +320,7 @@ func (fm *Fesl) NuLoginPersonaServer(event network.EventClientProcess) {
 	}
 
 	// Setup a key for Server
-	lkey := BF2RandomUnsafe(24)
+	lkey := uuid.NewV4().String()
 	lkeyRedis := fm.level.NewObject("lkeys", lkey)
 	lkeyRedis.Set("id", userID)
 	lkeyRedis.Set("userID", userID)
@@ -342,7 +345,7 @@ type ansNuGetPersonas struct {
 }
 
 // NuGetPersonas . Display all Personas/Heroes
-func (fm *Fesl) NuGetPersonas(event network.EventClientProcess) {
+func (fm *Fesl) NuGetPersonas(event network.EvProcess) {
 	if !event.Client.IsActive {
 		logrus.Println("Client Left")
 		return
@@ -382,7 +385,7 @@ func (fm *Fesl) NuGetPersonas(event network.EventClientProcess) {
 }
 
 // test stuff
-func (fm *Fesl) NuGrantEntitlement(event network.EventClientProcess) {
+func (fm *Fesl) NuGrantEntitlement(event network.EvProcess) {
 	logrus.Println("GRANT ENTITLEMENT")
 
 	event.Client.Answer(&codec.Packet{
@@ -393,7 +396,7 @@ func (fm *Fesl) NuGrantEntitlement(event network.EventClientProcess) {
 }
 
 // NuGetPersonasServer - Soldier data lookup call for servers
-func (fm *Fesl) NuGetPersonasServer(event network.EventClientProcess) {
+func (fm *Fesl) NuGetPersonasServer(event network.EvProcess) {
 	logrus.Println("======SERVER CONNECTING=====")
 
 	var id, userID, servername, secretKey, username string
@@ -460,7 +463,7 @@ type ansNuGetAccount struct {
 }
 
 // NuGetAccount - General account information retrieved, based on parameters sent
-func (fm *Fesl) NuGetAccount(event network.EventClientProcess) {
+func (fm *Fesl) NuGetAccount(event network.EvProcess) {
 	if !event.Client.IsActive {
 		logrus.Println("Client Left")
 		return
@@ -470,7 +473,7 @@ func (fm *Fesl) NuGetAccount(event network.EventClientProcess) {
 }
 
 
-func (fm *Fesl) acctNuGetAccount(event *network.EventClientProcess) {
+func (fm *Fesl) acctNuGetAccount(event *network.EvProcess) {
 	event.Client.Answer(&codec.Packet{
 		Message: acct,
 		Content: ansNuGetAccount{

@@ -7,18 +7,20 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-type ansRGAM struct {
+type ansECNL struct {
+	TID     string `fesl:"TID"`
 	GameID  string `fesl:"GID"`
 	LobbyID string `fesl:"LID"`
 }
 
-// RGAM - TEST
-func (tm *Theater) RGAM(event network.EvProcess) {
-	logrus.Println("=====RGAM REQUEST======")
+// ECNL - CLIENT calls when they want to leave
+func (tm *Theater) ECNL(event network.EvProcess) {
+	logrus.Println("HeroRQ")
 
 	event.Client.Answer(&codec.Packet{
 		Message: thtrENCL,
-		Content: ansRGAM{
+		Content: ansECNL{
+			event.Process.Msg["TID"],
 			event.Process.Msg["GID"],
 			event.Process.Msg["LID"],
 		},

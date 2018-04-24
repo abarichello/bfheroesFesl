@@ -100,7 +100,7 @@ type ansGDAT struct {
 }
 
 // GDAT - CLIENT called to get data about the server
-func (tm *Theater) GDAT(event network.EventClientProcess) {
+func (tm *Theater) GDAT(event network.EvProcess) {
 
 	gameID := event.Process.Msg["GID"]
 	gameServer := tm.level.NewObject("gdata", gameID)

@@ -66,7 +66,7 @@ type ansEGEG struct {
 }
 
 // EGAM - EnterGameRequest
-func (tm *Theater) EGAM(event network.EventClientProcess) {
+func (tm *Theater) EGAM(event network.EvProcess) {
 	gameID := event.Process.Msg["GID"]
 	externalIP := event.Client.IpAddr.(*net.TCPAddr).IP.String()
 	lobbyID := event.Process.Msg["LID"]
