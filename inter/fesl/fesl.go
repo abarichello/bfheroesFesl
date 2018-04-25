@@ -72,8 +72,8 @@ func (fm *Fesl) run() {
 				fm.NuLookupUserInfo(event.Data.(network.EvProcess))
 			case "client.command.NuLoginPersona":
 				fm.NuLoginPersona(event.Data.(network.EvProcess))
-			case "client.command.NuGrantEntitlement":
-				fm.NuGrantEntitlement(event.Data.(network.EvProcess))
+			// case "client.command.NuGrantEntitlement":
+			// 	fm.NuGrantEntitlement(event.Data.(network.EvProcess))
 			case "client.command.GetStatsForOwners":
 				fm.GetStatsForOwners(event.Data.(network.EvProcess))
 			case "client.command.GetPingSites":

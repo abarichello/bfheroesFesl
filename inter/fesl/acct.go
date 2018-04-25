@@ -1,7 +1,6 @@
 package fesl
 
 import (
-	"fmt"
 	"strconv"
 	uuid "github.com/satori/go.uuid"
 
@@ -17,8 +16,6 @@ const (
 	acctNuGetPersonas    = "NuGetPersonas"
 	acctNuLogin          = "NuLogin"
 	acctNuLoginPersona   = "NuLoginPersona"
-	acctNuLookupUserInfo = "NuLookupUserInfo"
-	acctGrantEntitlement = "NuGrantEntitlement"
 )
 
 type userInfo struct {
@@ -52,7 +49,7 @@ type ansNuLogin struct {
 	Lkey      string `fesl:"lkey"`
 }
 
-// NuLogin - master login command
+// NuLogin - First Login Command
 func (fm *Fesl) NuLogin(event network.EvProcess) {
 
 	if event.Client.HashState.Get("clientType") == "server" {
@@ -161,80 +158,7 @@ func (fm *Fesl) NuLoginServer(event network.EvProcess) {
 	})
 }
 
-type ansNuLookupUserInfo struct {
-	TXN      string     `fesl:"TXN"`
-	UserInfo []userInfo `fesl:"userInfo"`
-}
 
-func (fm *Fesl) NuLookupUserInfo(event network.EvProcess) {
-	if !event.Client.IsActive {
-		logrus.Println("Cli DC")
-		return
-	}
-
-	ans := ansNuLookupUserInfo{
-		TXN:      acctNuLookupUserInfo,
-		UserInfo: []userInfo{}}
-
-	keys, _ := strconv.Atoi(event.Process.Msg["userInfo.[]"])
-	for i := 0; i < keys; i++ {
-		heroNamePkt := event.Process.Msg[fmt.Sprintf("userInfo.%d.userName", i)]
-
-		var id, userID, heroName, online string
-		err := fm.db.stmtGetHeroeByName.QueryRow(heroNamePkt).Scan(&id, &userID, //br
-			&heroName, &online)
-
-		if err != nil {
-			return
-		}
-
-		ans.UserInfo = append(ans.UserInfo, userInfo{
-			UserName:     heroName,
-			UserID:       id,
-			MasterUserID: id,
-			Namespace:    "MAIN",
-			XUID:         "24",
-		})
-	}
-
-	event.Client.Answer(&codec.Packet{
-		Content: ans,
-		Send:    event.Process.HEX,
-		Message: acct,
-	})
-
-}
-
-// NuLookupUserInfoServer - Server Login 1step
-func (fm *Fesl) NuLookupUserInfoServer(event network.EvProcess) {
-	var err error
-
-	var id, userID, servername, secretKey, username string
-	err = fm.db.stmtGetServerByID.QueryRow(event.Client.HashState.Get("sID")).Scan(&id, &userID, //br
-		&servername, &secretKey, &username)
-
-	if err != nil {
-		logrus.Errorln(err)
-		return
-	}
-	hex := event.Process.HEX
-	event.Client.Answer(&codec.Packet{
-		Content: ansNuLookupUserInfo{
-			TXN: acctNuLookupUserInfo,
-			UserInfo: []userInfo{
-				{
-					Namespace:    "MAIN",
-					XUID:         "24",
-					MasterUserID: "1",
-					UserID:       "1",
-					UserName:     servername,
-				},
-			},
-		},
-		Send:    hex,
-		Message: acct,
-	})
-}
 
 type reqNuLoginPersona struct {
 	Txn  string `fesl:"TXN"`  // =NuLoginPersona
@@ -386,16 +310,16 @@ func (fm *Fesl) NuGetPersonas(event network.EvProcess) {
 	})
 }
 
-// test stuff
-func (fm *Fesl) NuGrantEntitlement(event network.EvProcess) {
-	logrus.Println("GRANT ENTITLEMENT")
+// // test stuff
+// func (fm *Fesl) NuGrantEntitlement(event network.EvProcess) {
+// 	logrus.Println("GRANT ENTITLEMENT")
 
-	event.Client.Answer(&codec.Packet{
-		Message: "NuGrantEntitlement",
-		Content: "TXN",
-		Send:    event.Process.HEX,
-	})
-}
+// 	event.Client.Answer(&codec.Packet{
+// 		Message: "NuGrantEntitlement",
+// 		Content: "TXN",
+// 		Send:    event.Process.HEX,
+// 	})
+// }
 
 // NuGetPersonasServer - Soldier data lookup call for servers
 func (fm *Fesl) NuGetPersonasServer(event network.EvProcess) {
