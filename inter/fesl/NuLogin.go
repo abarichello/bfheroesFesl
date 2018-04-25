@@ -113,7 +113,7 @@ func (fm *Fesl) NuLoginServer(event network.EvProcess) {
 		event.Client.Answer(&codec.Packet{
 			Content: NuLoginErr{
 				TXN:     acctNuLogin,
-				Message: `"Wrong Server "`,
+				Message: `"Wrong Server"`,
 				Code:    122,
 			},
 			Send:    event.Process.HEX,
@@ -151,7 +151,6 @@ func (fm *Fesl) NuLoginServer(event network.EvProcess) {
 		Message: acct,
 	})
 }
-
 
 
 type reqNuLoginPersona struct {

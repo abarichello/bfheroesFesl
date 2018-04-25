@@ -147,10 +147,9 @@ type pingSite struct {
 	Message int    `fesl:"type"`
 }
 
-// GetPingSites - Get Pings for something
+// GetPingSites - Was used for Load-Balancer / Not working Atm
 func (fm *Fesl) GetPingSites(event network.EvProcess) {
 	if !event.Client.IsActive {
-		logrus.Println("Cli Left")
 		return
 	}
 

@@ -57,9 +57,7 @@ func (fm *Fesl) run() {
 			case "newClient":
 				fm.newClient(event.Data.(network.EventNewClient)) // TLS
 			case "client.command.Hello":
-				fm.hello(event.Data.(network.EvProcess))
-			case "client.command.Chunk":
-				fm.Chunk(event.Data.(network.EvProcess))
+				fm.hello(event.Data.(network.EvProcess))			
 			case "client.command.NuLogin":
 				fm.NuLogin(event.Data.(network.EvProcess))
 			case "client.command.NuGetPersonas":
@@ -71,9 +69,7 @@ func (fm *Fesl) run() {
 			case "client.command.NuLookupUserInfo":
 				fm.NuLookupUserInfo(event.Data.(network.EvProcess))
 			case "client.command.NuLoginPersona":
-				fm.NuLoginPersona(event.Data.(network.EvProcess))
-			// case "client.command.NuGrantEntitlement":
-			// 	fm.NuGrantEntitlement(event.Data.(network.EvProcess))
+				fm.NuLoginPersona(event.Data.(network.EvProcess))		
 			case "client.command.GetStatsForOwners":
 				fm.GetStatsForOwners(event.Data.(network.EvProcess))
 			case "client.command.GetPingSites":
