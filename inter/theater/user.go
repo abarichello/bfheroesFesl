@@ -12,8 +12,8 @@ import (
 
 type answerUSER struct {
 	TID      string `fesl:"TID"`
-	Name     string `fesl:"NAME"` // ServerName / ClientName
-	ClientID string `fesl:"CID"`  // ?
+	Name     string `fesl:"NAME"` // ServerName
+	ClientID string `fesl:"CID"`  //clientID
 }
 
 func (tm *Theater) NewState(ident string) *level.State {
@@ -43,6 +43,7 @@ func (tm *Theater) USER(event network.EvProcess) {
 	event.Client.Answer(&codec.Packet{
 		Message: thtrUSER,
 		Content: answerUSER{
+			ClientID: event.Process.Msg["CID"],
 			TID:  event.Process.Msg["TID"],
 			Name: lkeyRedis.Get("name"),
 		},

@@ -47,7 +47,7 @@ type GameServer struct {
 }
 
 type ansGDAT struct {
-	Ap                  string `fesl:"AP"`
+	Ap                  string `fesl:"AP"` //act players
 	ArmyDistribution    string `fesl:"B-U-army_distribution"`
 	AvailableVipsNation string `fesl:"B-U-avail_vips_national"`
 	AvailableVipsRoyal  string `fesl:"B-U-avail_vips_royal"`

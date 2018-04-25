@@ -9,19 +9,15 @@ import (
 type ansEGRS struct {
 	TID string `fesl:"TID"`
 	PID string `fesl:"PID"`
+	Allow string  `fesl:"ALLOWED"`
 }
 
 // EGRS - Enter Game Host Response
-func (tm *Theater) EGRS(event network.EvProcess) {
-	if !event.Client.IsActive {
-		return
-	}
+func (tm *Theater) EGRS(event network.EvProcess) {	
 
-	if event.Process.Msg["ALLOWED"] != "1" {
-		// if ( !isAllowed )
- 	   	// Fesl::Transaction::AddString(ft, "REASON", &reasonStr[4]);
-		return
-	}
+	// if event.Process.Msg["ALLOWED"] != "1" {		
+	// 	return
+	// }
 
 	logrus.Println("======EGRS=====")
 	tm.db.stmtGameIncreaseJoining.Exec(event.Process.Msg["GID"])
@@ -29,27 +25,30 @@ func (tm *Theater) EGRS(event network.EvProcess) {
 	event.Client.Answer(&codec.Packet{
 		Message: thtrEGRS,
 		Content: ansEGRS{
-			event.Process.Msg["TID"],
-			event.Process.Msg["PID"],
+			TID: event.Process.Msg["TID"],
+			PID: event.Process.Msg["PID"],
+			Allow: "1",
 		},
 	})
 }
 
+// Lobbies Data
+type ansGREM struct {
+	gameID   	string 	`fesl:"GID"`
+	LID         string  `fesl:"LID"`
+}
+
 // GREM - Enter Game Host Response
-func (tm *Theater) GREM(event network.EvProcess) {
-	if !event.Client.IsActive {
-		return
-	}
-	
+func (tm *Theater) GREM(event network.EvProcess) {	
 
 	logrus.Println("======GREM=====")
 	tm.db.stmtGameIncreaseJoining.Exec(event.Process.Msg["GID"])
 
 	event.Client.Answer(&codec.Packet{
-		Message: thtrEGRS,
-		Content: ansEGRS{
-			event.Process.Msg["LID"],
-			event.Process.Msg["GID"],
+		Message: thtrGREM,
+		Content: ansGREM{
+			event.Process.Msg["GID"],	
+			event.Process.Msg["LID"],		
 		},
 	})
 }

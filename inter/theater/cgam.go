@@ -48,8 +48,9 @@ func (tm *Theater) CGAM(event network.EvProcess) {
 
 	id, _ := res.LastInsertId()
 	gameID := fmt.Sprintf("%d", id)
+	LobbyID := event.Process.Msg["LID"]
 
-	// Store our server for easy access later
+	// Store gameID for access later
 	mm.Games[gameID] = event.Client
 
 	var args []interface{}
@@ -81,7 +82,7 @@ func (tm *Theater) CGAM(event network.EvProcess) {
 		args = append(args, value)
 	}
 
-	gameServer.Set("LID", "1")
+	gameServer.Set("LID", LobbyID)
 	gameServer.Set("GID", gameID)
 	gameServer.Set("IP", addr.IP.String())
 	gameServer.Set("AP", "0")
@@ -99,17 +100,19 @@ func (tm *Theater) CGAM(event network.EvProcess) {
 		Message: thtrCGAM,
 		Content: ansCGAM{
 			TID:        answer["TID"],
-			LobbyID:    "1",
+			LobbyID:    answer["LID"],
 			UGID:       answer["UGID"],
-			MaxPlayers: answer["MAX-PLAYERS"],
+			MaxPlayers: answer["32"],
 			EKEY:       `O65zZ2D2A58mNrZw1hmuJw%3d%3d`,
 			Secret:     `2587913`,
 			JOIN:       answer["JOIN"],
 			JoinMode: 	"1",
-			J:          answer["J"],
+			J:          answer["JOIN"],
 			GameID:     gameID,
 		},
 	})
+	logrus.Println("====CGAM====")
+
 
 	// Create game in database
 	_, err = tm.db.stmtAddGame.Exec(gameID, addr.IP.String(), answer["PORT"], answer["B-version"], answer["JOIN"], answer["B-U-map"], 0, 0, answer["MAX-PLAYERS"], 0, 0, "")

@@ -71,6 +71,7 @@ func (tm *Theater) EGAM(event network.EvProcess) {
 	externalIP := event.Client.IpAddr.(*net.TCPAddr).IP.String()
 	lobbyID := event.Process.Msg["LID"]
 	pid := event.Client.HashState.Get("id")  //playerID
+	logrus.Println("====EGAM==")
 
 	event.Client.Answer(&codec.Packet{
 		Message: thtrEGAM,
@@ -138,6 +139,8 @@ func (tm *Theater) EGAM(event network.EvProcess) {
 				GameID:       gameID,
 			},
 		})
+		logrus.Println("====EGRQ==")
+
 
 		// Client
 		event.Client.Answer(&codec.Packet{
@@ -159,5 +162,7 @@ func (tm *Theater) EGAM(event network.EvProcess) {
 				GameID:   gameID,
 			},
 		})
+		logrus.Println("====EGEG==")
+
 	}
 }

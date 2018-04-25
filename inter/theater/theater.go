@@ -19,7 +19,7 @@ const (
 	thtrEGEG = "EGEG"
 	thtrEGRQ = "EGRQ"
 	thtrEGRS = "EGRS"
-	thtrUQUE = "UQUE"//testing
+	thtrUQUE = "UQUE" //testing
 	thtrENCL = "ENCL"
 	thtrGDAT = "GDAT"
 	thtrKICK = "KICK"
@@ -31,6 +31,7 @@ const (
 	thtrPLVT = "PLVT"
 	thtrUBRA = "UBRA"
 	thtrUPLA = "UPLA"
+	thtrGREM = "GREM" //testing
 	thtrUSER = "USER"
 	thtrRGAM = "RGAM" //testing
 )
@@ -121,8 +122,8 @@ func (tm *Theater) Listen() {
 				go tm.UPLA(event.Data.(network.EvProcess))
 			case "client.command.HTSN":
 				go tm.UPLA(event.Data.(network.EvProcess))
-			case "client.command.GREM":
-				go tm.GREM(event.Data.(network.EvProcess))
+			 case "client.command.GREM":
+			 	go tm.GREM(event.Data.(network.EvProcess))
 			case "client.close":
 				tm.close(event.Data.(network.EventClientClose))
 			case "client.command":
@@ -143,7 +144,7 @@ func (tm *Theater) newClient(event network.EventNewClient) {
 		logrus.Println("Cli Left")
 		return
 	}
-	logrus.Println("Jtheater")
+	logrus.Println("Join Theather")
 
 	// Start Heartbeat
 	event.Client.State.HeartTicker = time.NewTicker(time.Second * 55)
@@ -154,7 +155,6 @@ func (tm *Theater) newClient(event network.EventNewClient) {
 				if !event.Client.IsActive {
 					return
 				}
-				tm.PING(&event)
 			}
 		}
 	}()

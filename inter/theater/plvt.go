@@ -14,10 +14,12 @@ type ansKICK struct {
 }
 
 type ansPLVT struct {
-	TID string `fesl:"TID"`
+	TID      string `fesl:"TID"`
+	PlayerID string `fesl:"PID"`
+
 }
 
-// PENT - Entitles Hero in Matchmaking
+// PLVT - PlayerLeaveTeam
 func (tM *Theater) PLVT(event network.EvProcess) {
 	if !event.Client.IsActive {
 		return
@@ -68,6 +70,9 @@ func (tM *Theater) PLVT(event network.EvProcess) {
 
 	event.Client.Answer(&codec.Packet{
 		Message: thtrPLVT,
-		Content: ansPLVT{event.Process.Msg["TID"]},
+		Content: ansPLVT{
+			event.Process.Msg["TID"],
+			event.Process.Msg["PID"],
+		},
 	})
 }

@@ -13,7 +13,7 @@ type ansHTSN struct {
 	hostID 	 	string 	`fesl:"HPID"`
 	UGID    	string 	`fesl:"UGID"`
 	Secret   	string 	`fesl:"SECRET"`
-	LobbyID   string  `fesl:"LID"`
+	LobbyID     string  `fesl:"LID"`
 }
 
 // HTSN - TEst2

@@ -13,8 +13,8 @@ type ansECNL struct {
 	LobbyID string `fesl:"LID"`
 }
 
-// ECNL - Called when Hero RQ/ Leave MM
-func (tm *Theater) ECNL(event network.EventClientProcess) {
+// ECNL - EnterConnectionLost
+func (tm *Theater) ECNL(event network.EvProcess) {
 	logrus.Println("HeroRQ")
 
 	event.Client.Answer(&codec.Packet{
