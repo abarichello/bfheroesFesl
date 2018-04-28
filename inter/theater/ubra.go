@@ -24,11 +24,8 @@ func (tM *Theater) UBRA(event network.EvProcess) {
 
 	gdata := tM.level.NewObject("gdata", event.Process.Msg["GID"])
 
-	if event.Process.Msg["Start"] == "0" {
-		gdata.Set("AP", "0")
-		// if event.Process.Msg["Status"] !== "1" {
-		// 	gdata.Set("AP", "0")
-		// }
+	if event.Process.Msg["Start"] == "1" {
+		gdata.Set("AP", "0")		
 	}
 
 	event.Client.Answer(&codec.Packet{

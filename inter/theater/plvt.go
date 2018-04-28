@@ -10,7 +10,6 @@ import (
 type ansKICK struct {
 	PlayerID string `fesl:"PID"`
 	LobbyID  string `fesl:"LID"`
-	GameID   string `fesl:"GID"`
 }
 
 type ansPLVT struct {
@@ -20,18 +19,15 @@ type ansPLVT struct {
 }
 
 // PLVT - PlayerLeaveTeam
-func (tM *Theater) PLVT(event network.EvProcess) {
-	if !event.Client.IsActive {
-		return
-	}
+func (tM *Theater) PLVT(event network.EvProcess) {	
 
 	pid := event.Process.Msg["PID"]
 
 	// Get 4 stats for PID
 	rows, err := tM.db.getStatsStatement(4).Query(pid, "c_kit", "c_team", "elo", "level")
-	if err != nil {
-		logrus.Errorln("Failed gettings stats for hero "+pid, err.Error())
-	}
+	// if err != nil {
+	// 	logrus.Errorln("Failed gettings stats for hero "+pid, err.Error())
+	// }
 
 	stats := make(map[string]string)
 
@@ -59,20 +55,21 @@ func (tM *Theater) PLVT(event network.EvProcess) {
 		logrus.Errorln("Invalid team " + stats["c_team"] + " for " + pid)
 	}
 
-	event.Client.Answer(&codec.Packet{
+	
+	event.Client.Answer(&codec.Packet{ // need to check this 
+		Message: thtrPLVT,
+		Content: ansPLVT{
+			event.Process.Msg["PID"],
+			event.Process.Msg["TID"],
+		},
+	})
+
+	event.Client.Answer(&codec.Packet{ // need to check this 
 		Message: thtrKICK,
 		Content: ansKICK{
 			event.Process.Msg["PID"],
 			event.Process.Msg["LID"],
-			event.Process.Msg["GID"],
 		},
 	})
 
-	event.Client.Answer(&codec.Packet{
-		Message: thtrPLVT,
-		Content: ansPLVT{
-			event.Process.Msg["TID"],
-			event.Process.Msg["PID"],
-		},
-	})
 }

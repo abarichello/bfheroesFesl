@@ -16,7 +16,7 @@ func (tm *Theater) UQUE(event network.EvProcess) {
 	if !event.Client.IsActive {
 		return
 	}
-	logrus.Println("==============UQUE==============")
+	logrus.Println("=====UQUE=======")
 
 	event.Client.Answer(&codec.Packet{
 		Message: thtrUQUE,

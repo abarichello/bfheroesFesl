@@ -96,7 +96,6 @@ type ansGDAT struct {
 	Secret               string `fesl:"SECRET"`
 	Message              string `fesl:"TYPE"`
 	Ugid                 string `fesl:"UGID"`
-	Allowed              string `fesl:"ALLOWED"`
 }
 
 // GDAT - CLIENT called to get data about the server

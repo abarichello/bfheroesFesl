@@ -62,6 +62,8 @@ func (fm *Fesl) run() {
 				fm.NuLogin(event.Data.(network.EvProcess))
 			case "client.command.NuGetPersonas":
 				fm.NuGetPersonas(event.Data.(network.EvProcess))
+			case "client.command.NuGetPersonasServer":
+				fm.NuGetPersonasServer(event.Data.(network.EvProcess))
 			case "client.command.NuGetAccount":
 				fm.NuGetAccount(event.Data.(network.EvProcess))
 			case "client.command.GetStats":
@@ -102,11 +104,11 @@ func (fm *Fesl) newClient(event network.EventNewClient) {
 		logrus.Println("Client Left")
 		return
 	}
-
 	fm.fsysMemCheck(&event)
 
+	logrus.Println("Client Connecting")
 	// Start Heartbeat
-	event.Client.State.HeartTicker = time.NewTicker(time.Second * 30)
+	event.Client.State.HeartTicker = time.NewTicker(time.Second * 5)
 	go func() {
 		for {
 			if !event.Client.IsActive {
@@ -121,8 +123,6 @@ func (fm *Fesl) newClient(event network.EventNewClient) {
 			}
 		}
 	}()
-
-	logrus.Println("Client Connecting")
 
 }
 

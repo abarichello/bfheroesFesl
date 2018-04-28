@@ -10,11 +10,18 @@ type GetSessionId struct {
 }
 
 func (fm *Fesl) gsumGetSessionID(event network.EvProcess) {
+
+	//Checks if we are a Server
+	if fm.server {
+		return
+	}
+	if event.Client.HashState.Get("clientType") == "server" {
+		return
+	}
+
 	event.Client.Answer(&codec.Packet{
 		Content: GetSessionId{
-			TXN: "GetSessionId"}, //pascal
+			TXN: "GetSessionId"}, //yep , case sensitive
 			Message: "gsum",
 	})
 }
-
-//fsys hello();

@@ -15,9 +15,9 @@ type ansEGRS struct {
 // EGRS - Enter Game Host Response
 func (tm *Theater) EGRS(event network.EvProcess) {	
 
-	// if event.Process.Msg["ALLOWED"] != "1" {		
-	// 	return
-	// }
+	if event.Process.Msg["ALLOWED"] == "1" {		
+		return
+	}
 
 	logrus.Println("======EGRS=====")
 	tm.db.stmtGameIncreaseJoining.Exec(event.Process.Msg["GID"])
@@ -42,8 +42,6 @@ type ansGREM struct {
 func (tm *Theater) GREM(event network.EvProcess) {	
 
 	logrus.Println("======GREM=====")
-	tm.db.stmtGameIncreaseJoining.Exec(event.Process.Msg["GID"])
-
 	event.Client.Answer(&codec.Packet{
 		Message: thtrGREM,
 		Content: ansGREM{

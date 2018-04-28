@@ -9,7 +9,7 @@ import (
 )
 const (
 	keysMult = "keys."
-	keysArr = "keys.[]"
+	keysArr  = "keys.[]"
 )
 
 type ansGetStats struct {
@@ -51,15 +51,9 @@ func (fm *Fesl) GetStats(event network.EvProcess) {
 			return
 		}
 
-		userId = userID
+		userId = userID //??????
 		logrus.Println("Server requesting stats")
-	}
-
-	ans := ansGetStats{
-		TXN:       "GetStats",
-		OwnerID:   owner,
-		OwnerType: 1,
-	}
+	}	
 
 	// Gen args list for statement -> heroID,userID,key1,key2,key3,..
 	var args []interface{}
@@ -77,6 +71,12 @@ func (fm *Fesl) GetStats(event network.EvProcess) {
 		logrus.Errorln("Failed gettings stats for hero "+owner, err.Error())
 	}
 
+	ans := ansGetStats{
+		TXN:       "GetStats",
+		OwnerID:   owner,
+		OwnerType: 1,
+	}
+
 	for rows.Next() {
 		var userID, heroID, statsKey, statsValue string
 		err := rows.Scan(&userID, &heroID, &statsKey, &statsValue)
@@ -90,12 +90,11 @@ func (fm *Fesl) GetStats(event network.EvProcess) {
 
 	// Send stats not found with default value of ""
 	for key := range statsKeys {
-		ans.Stats = append(ans.Stats, statsPair{
-			Key: key,
-			Text: "",
-			Value: "0",
-		})
-}
+	ans.Stats = append(ans.Stats, statsPair{
+		Key: key,
+		Text: "",
+		Value: "0",
+	})}	
 
 	event.Client.Answer(&codec.Packet{
 		Content: ans,

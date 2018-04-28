@@ -18,6 +18,6 @@ func FindGIDs() string {
 		logrus.WithFields(logrus.Fields{
 			" ": jsonStr,
 		}).Info("===Player Joined Game=== " + id) // TODO +uID joined Server
-	} //Synaxis joined Server 123
+	}
 	return gameID
 }

@@ -7,7 +7,6 @@ import (
 	"github.com/Synaxis/bfheroesFesl/config"
 	"github.com/Synaxis/bfheroesFesl/inter/network"
 	"github.com/Synaxis/bfheroesFesl/inter/network/codec"
-
 	"github.com/sirupsen/logrus"
 )
 
@@ -18,24 +17,6 @@ const (
 	fsysHello        = "Hello"
 	fsysPing         = "Ping"
 )
-
-type ansMemCheck struct {
-	TXN      string `fesl:"TXN"`
-	Salt     string `fesl:"salt"`
-	memcheck string `fesl:"memcheck.[]"`
-}
-
-func (fm *Fesl) fsysMemCheck(event *network.EventNewClient) {
-	event.Client.Answer(&codec.Packet{
-		Message: fsys,
-		Content: ansMemCheck{
-			TXN:      "MemCheck",
-			memcheck: "0",
-			Salt:     "",
-		},
-		Send: 0xC0000000,
-	})
-}
 
 type ansHello struct {
 	TXN           string          `fesl:"TXN"`
@@ -82,7 +63,7 @@ func (fm *Fesl) hello(event network.EvProcess) {
 	}
 	event.Client.HashState.SetM(saveRedis)
 
-	ans := ansHello{
+	answer := ansHello{
 		TXN:         fsysHello,
 		ConnTTL:     int((60 * time.Hour).Seconds()),
 		ConnectedAt: time.Now().Format("Jan-02-2006 15:04:05 MST"),
@@ -91,17 +72,43 @@ func (fm *Fesl) hello(event network.EvProcess) {
 	}
 
 	if fm.server {
-		ans.Domain = domainPartition{"eagames", "bfwest-server"}
-		ans.TheaterPort = config.General.ThtrServerPort
+		answer.Domain = domainPartition{"eagames", "bfwest-server"}
+		answer.TheaterPort = config.General.ThtrServerPort
 	} else {
-		ans.Domain = domainPartition{"eagames", "bfwest-dedicated"}
-		ans.TheaterPort = config.General.ThtrClientPort
+		answer.Domain = domainPartition{"eagames", "bfwest-dedicated"}
+		answer.TheaterPort = config.General.ThtrClientPort
+	}
+	if !event.Client.IsActive {
+		logrus.Println("Client AFK")
+		return
 	}
 
 	event.Client.Answer(&codec.Packet{
-		Content: ans,
+		Content: answer,
 		Message: fsys,
 		Send:    0xC0000001,
+	})
+}
+
+type ansMemCheck struct {
+	TXN      string `fesl:"TXN"`
+	Salt     string `fesl:"salt"`
+	memcheck string `fesl:"memcheck.[]"`
+}
+
+func (fm *Fesl) fsysMemCheck(event *network.EventNewClient) {
+	if !event.Client.IsActive {
+		logrus.Println("Client AFK")
+		return
+	}
+	event.Client.Answer(&codec.Packet{
+		Message: fsys,
+		Content: ansMemCheck{
+			TXN:      "MemCheck",
+			memcheck: "0",
+			Salt:     "5",
+		},
+		Send: 0xC0000000,
 	})
 }
 
@@ -115,12 +122,10 @@ type ansGoodbye struct {
 
 // Goodbye - Handle Client Close
 func (fm *Fesl) Goodbye(event network.EvProcess) {	
-	logrus.Println("Goodbye called for user")
-	
-	hex := event.Process.HEX
+	logrus.Println("Client Disconnected")	
 	event.Client.Answer(&codec.Packet{
 		Message: event.Process.Query,
-		Send:    hex,
+		Send:    event.Process.HEX,
 		Content: ansGoodbye{
 			TXN:      "Goodbye",
 			Reason:   "GOODBYE_CLIENT_NORMAL",
@@ -130,11 +135,7 @@ func (fm *Fesl) Goodbye(event network.EvProcess) {
 	)
 }
 
-///////////////////////////////////////
-const (
-	location = "iad"
-)
-
+///////////////////////////////////////////////
 type ansGetPingSites struct {
 	TXN       string     `fesl:"TXN"`
 	MinPings  int        `fesl:"minPingSitesToPing"`
@@ -147,21 +148,20 @@ type pingSite struct {
 	Message int    `fesl:"type"`
 }
 
-// GetPingSites - Was used for Load-Balancer / Not working Atm
+// GetPingSites - Was used for Load-Balancer / Not working Now (but it's requested)
 func (fm *Fesl) GetPingSites(event network.EvProcess) {
 	if !event.Client.IsActive {
 		return
 	}
 
-	hex := event.Process.HEX
 	event.Client.Answer(&codec.Packet{
 		Message: event.Process.Query,
-		Send:    hex,
+		Send:    event.Process.HEX,
 		Content: ansGetPingSites{
 			TXN:      fsysGetPingSites,
 			MinPings: 1,
 			PingSites: []pingSite{
-				{"127.0.0.1", location, 1},
+				{"127.0.0.1", "iad", 1},
 			},
 		},
 	})

@@ -155,7 +155,7 @@ func (tm *Theater) EGAM(event network.EvProcess) {
 				Ekey:     "O65zZ2D2A58mNrZw1hmuJw%3d%3d",
 				IntIP:    gsData.Get("INT-IP"),
 				IntPort:  gsData.Get("INT-PORT"),
-				Secret:   "2587913",
+				Secret:   "MargeSimpson",
 				Platform: event.Process.Msg["PC"],
 				Ugid:     gsData.Get("UGID"),
 				LobbyID:  lobbyID,
