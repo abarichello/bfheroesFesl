@@ -22,15 +22,14 @@ func (tm *Theater) CONN(event network.EvProcess) {
 		logrus.Println("Cli Left")
 		return
 	}
-	
-	
-	logrus.Println("====CONN==")
+
+	logrus.Println("======CONN===========")
 	event.Client.Answer(&codec.Packet{
 		Message: thtrCONN,
 		Content: ansCONN{
 			TID:         event.Process.Msg["TID"],
 			ConnectedAt: time.Now().UTC().Unix(),
-			ConnTTL:     int((60 * time.Minute).Seconds()),
+			ConnTTL:     999999, //useless,+gives random DC for servers/use RCON for AFK
 			Protocol:    event.Process.Msg["PROT"],
 		},
 	})

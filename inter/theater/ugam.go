@@ -11,7 +11,7 @@ func (tM *Theater) UGAM(event network.EvProcess) {
 		logrus.Println("Cli Left")
 		return
 	}
-
+	logrus.Println("==============UPDATE GAME==============")
 	gameID := event.Process.Msg["GID"] // TODO gameID := mm.FindGids()
 
 	gdata := tM.level.NewObject("gdata", gameID)
@@ -27,6 +27,7 @@ func (tM *Theater) UGAM(event network.EvProcess) {
 
 		keys++
 
+		// Strip quotes
 		value = strings.Trim(value, `"`)
 
 		gdata.Set(index, value)
@@ -36,16 +37,16 @@ func (tM *Theater) UGAM(event network.EvProcess) {
 	}
 	_, err := tM.db.stmtUpdateGame.Exec(gameID)
 	if err != nil {
-		logrus.Error("UGAM ", err)
+		logrus.Println("UGAM ", err)
 	}
 
 	_, err = tM.db.setServerStatsStatement(keys).Exec(args...)
 	if err != nil {
-		logrus.Errorln("Failed to update stats for game server "+gameID, err.Error())
+		logrus.Println("Failed to update stats for game server "+gameID, err.Error())
 		if err.Error() == "Error 1213: Deadlock found when trying to get lock; try restarting transaction" {
 			_, err = tM.db.setServerStatsStatement(keys).Exec(args...)
 			if err != nil {
-				logrus.Errorln("Failed to update stats for game server "+gameID+" on the second try", err.Error())
+				logrus.Println("Failed to update stats for game server "+gameID+" on the second try", err.Error())
 			}
 		}
 	}

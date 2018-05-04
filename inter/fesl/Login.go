@@ -40,7 +40,7 @@ func (fm *Fesl) NuLogin(event network.EvProcess) {
 
 	var id, username, email, birthday, language, country, gameToken string
 
-	err := fm.db.stmtGetUserByGameToken.QueryRow(event.Process.Msg["encryptedInfo"]).Scan(&id, &username, //CONTINUE
+	err := fm.db.stmtGetHeroByToken.QueryRow(event.Process.Msg["encryptedInfo"]).Scan(&id, &username, //CONTINUE
 		&email, &birthday, &language, &country, &gameToken) //todo add + checks 4 security
 
 	if err != nil {
@@ -99,7 +99,7 @@ func (fm *Fesl) NuLoginPersona(event network.EvProcess) {
 	}
 
 	var id, userID, heroName, online string
-	err := fm.db.stmtGetHeroeByName.QueryRow(event.Process.Msg["name"]).Scan(&id, &userID, &heroName, &online)
+	err := fm.db.stmtGetHeroByName.QueryRow(event.Process.Msg["name"]).Scan(&id, &userID, &heroName, &online)
 	if err != nil {
 		logrus.Println("Wrong Login")
 		return

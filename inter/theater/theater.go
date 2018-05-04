@@ -20,7 +20,7 @@ const (
 	thtrEGRQ = "EGRQ"
 	thtrEGRS = "EGRS"
 	thtrUQUE = "UQUE" //testing
-	thtrENCL = "ENCL"
+	thtrECNL = "ECNL"
 	thtrGDAT = "GDAT"
 	thtrKICK = "KICK"
 	thtrLDAT = "LDAT"
@@ -147,7 +147,7 @@ func (tm *Theater) newClient(event network.EventNewClient) {
 	logrus.Println("Join Theather")
 
 	// Start Heartbeat
-	event.Client.State.HeartTicker = time.NewTicker(time.Second * 55)
+	event.Client.State.HeartTicker = time.NewTicker(time.Second * 5)
 	go func() {
 		for event.Client.IsActive {
 			select {

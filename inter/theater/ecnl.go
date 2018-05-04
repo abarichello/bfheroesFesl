@@ -10,20 +10,21 @@ import (
 type ansECNL struct {
 	TID     string `fesl:"TID"`
 	GameID  string `fesl:"GID"`
-	//LobbyID string `fesl:"LID"`
+	LobbyID string `fesl:"LID"`
 }
 
 // ECNL - EnterConnectionLost
 func (tm *Theater) ECNL(event network.EvProcess) {
-	logrus.Println("============ECNL===========")
+	logrus.Println("=============ECNL==============")
+	logrus.Println("=========SENT Leave Announcement for Player=======")
 	logrus.Println("HeroRQ")
 
 	event.Client.Answer(&codec.Packet{
-		Message: thtrENCL,
+		Message: thtrECNL,
 		Content: ansECNL{
 			event.Process.Msg["TID"],
 			event.Process.Msg["GID"],
-			//event.Process.Msg["LID"],
+			event.Process.Msg["LID"],
 		},
 	})
 }

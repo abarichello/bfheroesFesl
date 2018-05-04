@@ -23,8 +23,8 @@ func main() {
 
 	startServer(mdb, ldb)
 
-	logrus.Println("FESL Started")
-        logrus.Println("Theater Started")
+	logrus.Println(" Fesl    Online")
+    logrus.Println(" Theater Online")
 
 	a := make(chan bool)
 	<-a

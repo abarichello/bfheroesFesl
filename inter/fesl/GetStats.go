@@ -45,7 +45,7 @@ func (fm *Fesl) GetStats(event network.EvProcess) {
 	if event.Client.HashState.Get("clientType") == "server" {
 
 		var id, userID, heroName, online string
-		err := fm.db.stmtGetHeroeByID.QueryRow(owner).Scan(&id, &userID, &heroName, &online)
+		err := fm.db.stmtGetHeroByID.QueryRow(owner).Scan(&id, &userID, &heroName, &online)
 		if err != nil {
 			logrus.Println("ServerLOGIN")
 			return

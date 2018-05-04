@@ -8,6 +8,7 @@ import (
 
 type ansEGRS struct {
 	TID string `fesl:"TID"`
+	LID string `fesl:"LID"`
 	PID string `fesl:"PID"`
 	Allow string  `fesl:"ALLOWED"`
 }
@@ -15,8 +16,10 @@ type ansEGRS struct {
 // EGRS - Enter Game Host Response
 func (tm *Theater) EGRS(event network.EvProcess) {	
 
-	if event.Process.Msg["ALLOWED"] == "1" {		
-		return
+	if event.Process.Msg["ALLOWED"] != "1" {		
+	}
+
+	if event.Process.Msg["ALLOWED"] == "1" {
 	}
 
 	logrus.Println("======EGRS=====")
@@ -27,6 +30,7 @@ func (tm *Theater) EGRS(event network.EvProcess) {
 		Content: ansEGRS{
 			TID: event.Process.Msg["TID"],
 			PID: event.Process.Msg["PID"],
+			LID: event.Process.Msg["LID"],
 			Allow: "1",
 		},
 	})

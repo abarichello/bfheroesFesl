@@ -21,6 +21,7 @@ type ansCGAM struct {
 	JoinMode   string  `fesl:"JoindMode"`
 	J          string `fesl:"J"`
 	GameID     string `fesl:"GID"`
+	isRanked   bool   `fesl:"B-U-RANKED"`
 }
 
 // CGAM - CreateGameParameters
@@ -85,7 +86,7 @@ func (tm *Theater) CGAM(event network.EvProcess) {
 	gameServer.Set("GID", gameID)
 	gameServer.Set("IP", addr.IP.String())
 	gameServer.Set("AP", "0")
-	gameServer.Set("QUEUE-LENGTH", "16")
+	gameServer.Set("QUEUE-LENGTH", "0")
 
 	event.Client.HashState.Set("gdata:GID", gameID)
 
@@ -94,28 +95,28 @@ func (tm *Theater) CGAM(event network.EvProcess) {
 		logrus.Error("Failed setting stats for game server "+gameID, err.Error())
 		return
 	}
-
+	logrus.Println("===========CGAM=============")
 	event.Client.Answer(&codec.Packet{
 		Message: thtrCGAM,
 		Content: ansCGAM{
 			TID:        answer["TID"],
-			LobbyID:    answer["1"],
+			LobbyID:    "1",  //should not be hardcoded
 			UGID:       answer["UGID"],
 			MaxPlayers: answer["MAX-PLAYERS"],
-			EKEY:       `O65zZ2D2A58mNrZw1hmuJw%3d%3d`,
-			Secret:     `2587913`,
+			EKEY:       "O65zZ2D2A58mNrZw1hmuJw%3d%3d",
+			Secret:     "MargeSimpson",
 			JOIN:       answer["JOIN"],
+			isRanked:	false,
+			J:          answer["JOIN"],
 			JoinMode: 	"1",
-			J:          answer["J"],
 			GameID:     gameID,
 		},
 	})
-	logrus.Println("====CGAM====")
-
 
 	// Create game in database
 	_, err = tm.db.stmtAddGame.Exec(gameID, addr.IP.String(), answer["PORT"], answer["B-version"], answer["JOIN"], answer["B-U-map"], 0, 0, answer["MAX-PLAYERS"], 0, 0, "")
 	if err != nil {
-		logrus.Errorf("Failed to add game: %v", err)
+		logrus.Println("Failed to add game: %v", err)
 	}
+	logrus.Println("Added GAMESERVER TO DB")
 }

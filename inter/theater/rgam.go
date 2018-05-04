@@ -17,7 +17,7 @@ func (tm *Theater) RGAM(event network.EvProcess) {
 	logrus.Println("=====RGAM REQUEST======")
 
 	event.Client.Answer(&codec.Packet{
-		Message: thtrENCL,
+		Message: thtrRGAM,
 		Content: ansRGAM{
 			event.Process.Msg["GID"],
 			event.Process.Msg["LID"],

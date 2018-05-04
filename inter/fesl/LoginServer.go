@@ -9,6 +9,10 @@ import (
 
 // NuLoginServer - NuLogin for gameServer.exe
 func (fm *Fesl) NuLoginServer(event network.EvProcess) {
+	if !event.Client.IsActive {
+		logrus.Println("C Left")
+		return
+	}
 
 	var id, userID, servername, secretKey, username string
 
@@ -58,7 +62,7 @@ func (fm *Fesl) NuLoginPersonaServer(event network.EvProcess) {
 	}
 
 	if event.Client.HashState.Get("clientType") != "server" {
-		logrus.Println("======Possible Exploit=======")
+		logrus.Println("====Possible Exploit====")
 		return
 	}
 
@@ -67,15 +71,20 @@ func (fm *Fesl) NuLoginPersonaServer(event network.EvProcess) {
 	err := fm.db.stmtGetServerByName.QueryRow(event.Process.Msg["name"]).Scan(&id, //continue
 		&userID, &servername, &secretKey, &username)
 
+	/////////////Checks///////////////////////
 	if event.Client.HashState.Get("clientType") != "server" {
 		logrus.Println("======Possible Exploit======")
 		return
 	}
-
 	if err != nil {
 		logrus.Println("Wrong Server Login")
 		return
 	}
+	if !event.Client.IsActive {
+		logrus.Println("C Left")
+		return
+	}
+	////////////Checks////////////////////////
 
 	// Setup a key for Server
 	lkey := uuid.NewV4().String()
@@ -91,9 +100,11 @@ func (fm *Fesl) NuLoginPersonaServer(event network.EvProcess) {
 			ProfileID: id,
 			UserID:    id,
 			Lkey:      lkey,
-			//nuid:      servername,
+			//nuid:      servername, TODO
 		},
 		Send:    event.Process.HEX,
 		Message: acct,
 	})
+
+logrus.Println("====NuLoginPersonaServer====")
 }

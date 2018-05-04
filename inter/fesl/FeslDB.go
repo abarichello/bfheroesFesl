@@ -12,31 +12,32 @@ type Database struct {
 	name string
 
 	// Database Statements
-	stmtGetUserByGameToken          *sql.Stmt
-	stmtGetServerBySecret           *sql.Stmt
-	stmtGetServerByID               *sql.Stmt
-	stmtGetServerByName             *sql.Stmt
-	stmtGetHeroesByUserID           *sql.Stmt
-	stmtGetHeroeByName              *sql.Stmt
-	stmtGetHeroeByID                *sql.Stmt
-	stmtClearGameServerStats        *sql.Stmt
-	mapGetStatsVariableAmount       map[int]*sql.Stmt
-	mapGetServerStatsVariableAmount map[int]*sql.Stmt
-	mapSetStatsVariableAmount       map[int]*sql.Stmt
-	mapSetServerStatsVariableAmount map[int]*sql.Stmt
+	stmtGetHeroByToken          *sql.Stmt
+	stmtGetServerBySecret       *sql.Stmt
+	stmtGetServerByID           *sql.Stmt
+	stmtGetServerByName         *sql.Stmt
+	stmtGetHeroesByUserID       *sql.Stmt
+	stmtGetHeroByName           *sql.Stmt
+	stmtGetHeroByID             *sql.Stmt
+	stmtClearServerStats        *sql.Stmt
+	MapGetStatsQuery       			map[int]*sql.Stmt
+	MapGetServerStatsQuery 			map[int]*sql.Stmt
+	MapSetStatsQuery       			map[int]*sql.Stmt
+	MapSetServerStatsQuery 			map[int]*sql.Stmt
 }
+
 
 func NewDatabase(conn *sql.DB) (*Database, error) {
 	db := &Database{db: conn}
 
-	db.mapGetStatsVariableAmount = make(map[int]*sql.Stmt)
-	db.mapGetServerStatsVariableAmount = make(map[int]*sql.Stmt)
-	db.mapSetStatsVariableAmount = make(map[int]*sql.Stmt)
+	db.MapGetStatsQuery = make(map[int]*sql.Stmt)
+	db.MapGetServerStatsQuery = make(map[int]*sql.Stmt)
+	db.MapSetStatsQuery = make(map[int]*sql.Stmt)
 
 	// Prepare database statements
 	db.prepareStatements()
 
-	_, err := db.stmtClearGameServerStats.Exec()
+	_, err := db.stmtClearServerStats.Exec()
 	if err != nil {
 		return nil, err
 	}
@@ -44,177 +45,6 @@ func NewDatabase(conn *sql.DB) (*Database, error) {
 	return db, nil
 }
 
-func (d *Database) getServerStatsVariableAmount(statsAmount int) *sql.Stmt {
-	var err error
-
-	// Check if we already have a statement prepared for that amount of stats
-	if statement, ok := d.mapGetServerStatsVariableAmount[statsAmount]; ok {
-		return statement
-	}
-
-	var query string
-	for i := 1; i < statsAmount; i++ {
-		query += "?, "
-	}
-
-	sql := "SELECT gid, statsKey, statsValue" +
-		"	FROM game_server_stats" +
-		"	WHERE gid=?" +
-		"		AND statsKey IN (" + query + "?)"
-
-	d.mapGetServerStatsVariableAmount[statsAmount], err = d.db.Prepare(sql)
-	if err != nil {
-		logrus.Fatalln("Error preparing mapGetServerStatsVariableAmount with "+sql+" query.", err.Error())
-	}
-
-	return d.mapGetServerStatsVariableAmount[statsAmount]
-}
-
-func (d *Database) getStatsStatement(statsAmount int) *sql.Stmt {
-	var err error
-
-	// Check if we already have a statement prepared for that amount of stats
-	if statement, ok := d.mapGetStatsVariableAmount[statsAmount]; ok {
-		return statement
-	}
-
-	var query string
-	for i := 1; i < statsAmount; i++ {
-		query += "?, "
-	}
-
-	sql := "SELECT user_id, heroID, statsKey, statsValue" +
-		"	FROM game_stats" +
-		"	WHERE heroID=?" +
-		"		AND user_id=?" +
-		"		AND statsKey IN (" + query + "?)"
-
-	d.mapGetStatsVariableAmount[statsAmount], err = d.db.Prepare(sql)
-	if err != nil {
-		logrus.Fatalln("Error preparing stmtGetStatsVariableAmount with "+sql+" query.", err.Error())
-	}
-
-	return d.mapGetStatsVariableAmount[statsAmount]
-}
-
-func (d *Database) setStatsStatement(statsAmount int) *sql.Stmt {
-	var err error
-
-	// Check if we already have a statement prepared for that amount of stats
-	if statement, ok := d.mapSetStatsVariableAmount[statsAmount]; ok {
-		return statement
-	}
-
-	var query string
-	for i := 1; i < statsAmount; i++ {
-		query += "(?, ?, ?, ?), "
-	}
-
-	sql := "INSERT INTO game_stats" +
-		"	(user_id, heroID, statsKey, statsValue)" +
-		"	VALUES " + query + "(?, ?, ?, ?)" +
-		"	ON DUPLICATE KEY UPDATE" +
-		"	statsValue=VALUES(statsValue)"
-
-	d.mapSetStatsVariableAmount[statsAmount], err = d.db.Prepare(sql)
-	if err != nil {
-		logrus.Fatalln("Error preparing stmtSetStatsVariableAmount with "+sql+" query.", err.Error())
-	}
-
-	return d.mapSetStatsVariableAmount[statsAmount]
-}
-
-func (d *Database) prepareStatements() {
-	var err error
-
-	d.stmtGetUserByGameToken, err = d.db.Prepare(
-		"SELECT id, username, email, birthday, language, country, game_token" +
-			"	FROM users" +
-			"	WHERE game_token = ?")
-	if err != nil {
-		logrus.Fatalln("Error preparing stmtGetUserByGameToken.", err.Error())
-	}
-
-	d.stmtGetHeroesByUserID, err = d.db.Prepare(
-		"SELECT id, user_id, heroName, online" +
-			"	FROM game_heroes" +
-			"	WHERE user_id = ?")
-	if err != nil {
-		logrus.Fatalln("Error preparing stmtGetHeroesByUserID.", err.Error())
-	}
-
-	d.stmtGetHeroeByName, err = d.db.Prepare(
-		"SELECT id, user_id, heroName, online" +
-			"	FROM game_heroes" +
-			"	WHERE heroName = ?")
-	if err != nil {
-		logrus.Fatalln("Error preparing stmtGetHeroesByUserID.", err.Error())
-	}
-
-	d.stmtGetHeroeByID, err = d.db.Prepare(
-		"SELECT id, user_id, heroName, online" +
-			"	FROM game_heroes" +
-			"	WHERE id = ?")
-	if err != nil {
-		logrus.Fatalln("Error preparing stmtGetHeroeByID.", err.Error())
-	}
-
-	d.stmtGetServerBySecret, err = d.db.Prepare(
-		"SELECT game_servers.id, users.id, game_servers.servername, game_servers.secretKey, users.username" +
-			"	FROM game_servers" +
-			"	LEFT JOIN users" +
-			"		ON users.id=game_servers.user_id" +
-			"	WHERE secretKey = ?")
-	if err != nil {
-		logrus.Fatalln("Error preparing stmtGetServerBySecret.", err.Error())
-	}
-
-	d.stmtGetServerByID, err = d.db.Prepare(
-		"SELECT game_servers.id, users.id, game_servers.servername, game_servers.secretKey, users.username" +
-			"	FROM game_servers" +
-			"	LEFT JOIN users" +
-			"		ON users.id=game_servers.user_id" +
-			"	WHERE game_servers.id = ?")
-	if err != nil {
-		logrus.Fatalln("Error preparing stmtGetServerByID.", err.Error())
-	}
-
-	d.stmtGetServerByName, err = d.db.Prepare(
-		"SELECT game_servers.id, users.id, game_servers.servername, game_servers.secretKey, users.username" +
-			"	FROM game_servers" +
-			"	LEFT JOIN users" +
-			"		ON users.id=game_servers.user_id" +
-			"	WHERE game_servers.servername = ?")
-	if err != nil {
-		logrus.Fatalln("Error preparing stmtGetServerByName.", err.Error())
-	}
-
-	d.stmtClearGameServerStats, err = d.db.Prepare(
-		"DELETE FROM game_server_stats")
-	if err != nil {
-		logrus.Fatalln("Error preparing stmtClearGameServerStats.", err.Error())
-	}
-}
-
-func (d *Database) closeStatements() {
-	d.stmtGetUserByGameToken.Close()
-	d.stmtGetServerBySecret.Close()
-	d.stmtGetServerByID.Close()
-	d.stmtGetServerByName.Close()
-	d.stmtGetHeroesByUserID.Close()
-	d.stmtGetHeroeByName.Close()
-	d.stmtClearGameServerStats.Close()
-
-	// Close the dynamic lenght getStats statements
-	for index := range d.mapGetStatsVariableAmount {
-		d.mapGetStatsVariableAmount[index].Close()
-	}
-
-	// Close the dynamic lenght setStats statements
-	for index := range d.mapSetStatsVariableAmount {
-		d.mapSetStatsVariableAmount[index].Close()
-	}
-}
 
 // MysqlRealEscapeString - you know
 func MysqlRealEscapeString(value string) string {
@@ -226,3 +56,189 @@ func MysqlRealEscapeString(value string) string {
 
 	return value
 }
+
+
+func (d *Database) getServerStatsQuery(statsAmount int) *sql.Stmt {
+	var err error
+
+	// Check if Statement is prepared
+	if statement, ok := d.MapGetServerStatsQuery[statsAmount]; ok {
+		return statement
+	}
+
+	var query string
+
+	for i := 1; i < statsAmount; i++ {
+		query += "?, "
+	}
+
+	sql := "SELECT gid, statsKey, statsValue" +
+		"	FROM game_server_stats" +
+		"	WHERE gid=?" +
+		"		AND statsKey IN (" + query + "?)"
+
+	d.MapGetServerStatsQuery[statsAmount], err = d.db.Prepare(sql)
+	if err != nil {
+		logrus.Fatalln("Error preparing MapGetServerStatsQuery with "+sql+" query.", err.Error())
+	}
+
+	return d.MapGetServerStatsQuery[statsAmount]
+}
+
+
+func (d *Database) getStatsStatement(statsAmount int) *sql.Stmt {
+	var err error
+
+	// Check if we have a statement prepared for the stats
+	if statement, ok := d.MapGetStatsQuery[statsAmount]; ok {
+		return statement
+	}
+
+	var query string
+
+	for i := 1; i < statsAmount; i++ {
+		query += "?, "
+	}
+
+	sql := "SELECT user_id, heroID, statsKey, statsValue" +
+		"	FROM game_stats" +
+		"	WHERE heroID=?" +
+		"		AND user_id=?" +
+		"		AND statsKey IN (" + query + "?)"
+
+	d.MapGetStatsQuery[statsAmount], err = d.db.Prepare(sql)
+	if err != nil {
+		logrus.Fatalln("Error preparing stmtGetStatsVariableAmount with "+sql+" query.", err.Error())
+	}
+
+	return d.MapGetStatsQuery[statsAmount]
+}
+
+
+func (d *Database) setStatsStatement(statsAmount int) *sql.Stmt {
+	var err error
+
+	// Check if we have a statement prepared for the stats
+	if statement, ok := d.MapSetStatsQuery[statsAmount]; ok {
+		return statement
+	}
+
+	var query string
+
+	for i := 1; i < statsAmount; i++ {
+		query += "(?, ?, ?, ?), "
+	}
+
+	sql := "INSERT INTO game_stats" +
+		"	(user_id, heroID, statsKey, statsValue)" +
+		"	VALUES " + query + "(?, ?, ?, ?)" +
+		"	ON DUPLICATE KEY UPDATE" +
+		"	statsValue=VALUES(statsValue)"
+
+	d.MapSetStatsQuery[statsAmount], err = d.db.Prepare(sql)
+	if err != nil {
+		logrus.Fatalln("Error preparing stmtSetStatsVariableAmount with "+sql+" query.", err.Error())
+	}
+
+	return d.MapSetStatsQuery[statsAmount]
+}
+
+
+func (d *Database) prepareStatements() {
+	var err error
+
+	//Client Login/sessionID
+	d.stmtGetHeroByToken, err = d.db.Prepare(
+		"SELECT id, username, email, birthday, language, country, game_token" +
+			"	FROM users" +
+			"	WHERE game_token = ?")
+	if err != nil {
+		logrus.Fatalln("Error preparing stmtGetHeroByToken.", err.Error())
+	}
+
+	//Client Login
+	d.stmtGetHeroesByUserID, err = d.db.Prepare(
+		"SELECT id, user_id, heroName, online" +
+			"	FROM game_heroes" +
+			"	WHERE user_id = ?")
+	if err != nil {
+		logrus.Fatalln("Error preparing stmtGetHeroesByUserID.", err.Error())
+	}
+
+	//Client Login
+	d.stmtGetHeroByName, err = d.db.Prepare(
+		"SELECT id, user_id, heroName, online" +
+			"	FROM game_heroes" +
+			"	WHERE heroName = ?")
+	if err != nil {
+		logrus.Fatalln("Error preparing stmtGetHeroesByUserID.", err.Error())
+	}
+	//Client Login
+	d.stmtGetHeroByID, err = d.db.Prepare(
+		"SELECT id, user_id, heroName, online" +
+			"	FROM game_heroes" +
+			"	WHERE id = ?")
+	if err != nil {
+		logrus.Fatalln("Error preparing stmtGetHeroByID.", err.Error())
+	}
+
+	//Server Login
+	d.stmtGetServerBySecret, err = d.db.Prepare(
+		"SELECT game_servers.id, users.id, game_servers.servername, game_servers.secretKey, users.username" +
+			"	FROM game_servers" +
+			"	LEFT JOIN users" +
+			"		ON users.id=game_servers.user_id" +
+			"	WHERE secretKey = ?")
+	if err != nil {
+		logrus.Fatalln("Error preparing stmtGetServerBySecret.", err.Error())
+	}
+
+	//Server Login
+	d.stmtGetServerByID, err = d.db.Prepare(
+		"SELECT game_servers.id, users.id, game_servers.servername, game_servers.secretKey, users.username" +
+			"	FROM game_servers" +
+			"	LEFT JOIN users" +
+			"		ON users.id=game_servers.user_id" +
+			"	WHERE game_servers.id = ?")
+	if err != nil {
+		logrus.Fatalln("Error preparing stmtGetServerByID.", err.Error())
+	}
+
+	//Server Login
+	d.stmtGetServerByName, err = d.db.Prepare(
+		"SELECT game_servers.id, users.id, game_servers.servername, game_servers.secretKey, users.username" +
+			"	FROM game_servers" +
+			"	LEFT JOIN users" +
+			"		ON users.id=game_servers.user_id" +
+			"	WHERE game_servers.servername = ?")
+	if err != nil {
+		logrus.Fatalln("Error preparing stmtGetServerByName.", err.Error())
+	}
+
+	d.stmtClearServerStats, err = d.db.Prepare(
+		"DELETE FROM game_server_stats")
+	if err != nil {
+		logrus.Fatalln("Error preparing stmtClearServerStats.", err.Error())
+	}
+}
+
+func (d *Database) closeStatements() {
+	d.stmtGetHeroByToken.Close()
+	d.stmtGetServerBySecret.Close()
+	d.stmtGetServerByID.Close()
+	d.stmtGetServerByName.Close()
+	d.stmtGetHeroesByUserID.Close()
+	d.stmtGetHeroByName.Close()
+	d.stmtClearServerStats.Close()
+
+	// Close the dynamic lenght getStats statements
+	for index := range d.MapGetStatsQuery {
+		d.MapGetStatsQuery[index].Close()
+	}
+
+	// Close the dynamic lenght setStats statements
+	for index := range d.MapSetStatsQuery {
+		d.MapSetStatsQuery[index].Close()
+	}
+}
+

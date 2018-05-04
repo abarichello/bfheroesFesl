@@ -12,7 +12,7 @@ func (tM *Theater) UPLA(event network.EvProcess) {
 	if !event.Client.IsActive {
 		return
 	}
-
+	logrus.Println("==========UPLA===============")
 	var args []interface{}
 
 	keys := 0
@@ -45,7 +45,7 @@ func (tM *Theater) UPLA(event network.EvProcess) {
 	var err error
 	_, err = tM.db.setServerPlayerStatsStatement(keys).Exec(args...)
 	if err != nil {
-		logrus.Errorln("Failed to update stats for player "+pid, err.Error())
+		logrus.Println("Failed to update stats for player "+pid, err.Error())
 	}
 
 	gdata := tM.level.NewObject("gdata", event.Process.Msg["GID"])

@@ -18,6 +18,11 @@ func (fm *Fesl) NuLookupUserInfo(event network.EvProcess) {
 		return
 	}
 
+	if event.Client.HashState.Get("clientType") == "server" && event.Process.Msg["userInfo.0.userName"] == "MargeSimpson" {
+		fm.NuLookupUserInfoServer(event)
+		return
+	}
+
 	answer := ansNuLookupUserInfo{
 		TXN:     "NuLookupUserInfo",
 		UserInfo: []userInfo{}}
@@ -28,7 +33,7 @@ func (fm *Fesl) NuLookupUserInfo(event network.EvProcess) {
 		heroNamePkt := event.Process.Msg[fmt.Sprintf("userInfo.%d.userName", i)]
 
 		var id, userID, heroName, online string
-		err := fm.db.stmtGetHeroeByName.QueryRow(heroNamePkt).Scan(&id, &userID, //br
+		err := fm.db.stmtGetHeroByName.QueryRow(heroNamePkt).Scan(&id, &userID, //br
 			&heroName, &online) //auth
 
 		if err != nil {

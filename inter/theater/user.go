@@ -26,7 +26,7 @@ func (tm *Theater) USER(event network.EvProcess) {
 		logrus.Println("Cli Left")
 		return
 	}
-
+	logrus.Println("===============USER==============")
 	lkeyRedis := tm.level.NewObject("lkeys", event.Process.Msg["LKEY"])
 
 	redisState := tm.NewState(fmt.Sprintf(

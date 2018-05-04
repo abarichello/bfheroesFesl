@@ -7,9 +7,10 @@ import (
 )
 
 const (
-	acct                 = "acct"
-	acctNuGetAccount     = "NuGetAccount"
-	acctNuGetPersonas    = "NuGetPersonas"
+	acct                 				= "acct"
+	acctNuGetAccount     				= "NuGetAccount"
+	//acctNuGetAccountByNuid    = "NuGetAccountByNuid"
+	acctNuGetPersonas    				= "NuGetPersonas"
 )
 
 type ansNuGetAccount struct {

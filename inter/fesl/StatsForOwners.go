@@ -58,7 +58,7 @@ func (fm *Fesl) GetStatsForOwners(event network.EvProcess) {
 		if event.Client.HashState.Get("clientType") == "server" {
 
 			var id, userIDhero, heroName, online string
-			err := fm.db.stmtGetHeroeByID.QueryRow(ownerID).Scan(&id, &userIDhero, &heroName, &online)
+			err := fm.db.stmtGetHeroByID.QueryRow(ownerID).Scan(&id, &userIDhero, &heroName, &online)
 			if err != nil {
 				logrus.Println("Weird getStats/Spoof")
 				return

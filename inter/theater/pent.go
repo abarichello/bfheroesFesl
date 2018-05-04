@@ -14,9 +14,6 @@ type ansPENT struct {
 
 // PENT - PlayerEntered
 func (tM *Theater) PENT(event network.EvProcess) {
-	if !event.Client.IsActive {
-		return
-	}
 
 	pid := event.Process.Msg["PID"]
 

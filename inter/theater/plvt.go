@@ -8,13 +8,14 @@ import (
 )
 
 type ansKICK struct {
-	PlayerID string `fesl:"PID"`
-	LobbyID  string `fesl:"LID"`
+	jID string `fesl:"jID"`
+	//LobbyID  string `fesl:"LID"`
+	//GID 	 string `fesl:"GID"`
 }
 
 type ansPLVT struct {
-	TID      string `fesl:"TID"`
-	PlayerID string `fesl:"PID"`
+	jID      string `fesl:"jID"`
+	//PlayerID string `fesl:"PID"`
 
 }
 
@@ -22,7 +23,6 @@ type ansPLVT struct {
 func (tM *Theater) PLVT(event network.EvProcess) {	
 
 	pid := event.Process.Msg["PID"]
-
 	// Get 4 stats for PID
 	rows, err := tM.db.getStatsStatement(4).Query(pid, "c_kit", "c_team", "elo", "level")
 	// if err != nil {
@@ -35,7 +35,7 @@ func (tM *Theater) PLVT(event network.EvProcess) {
 		var userID, heroID, heroName, statsKey, statsValue string
 		err := rows.Scan(&userID, &heroID, &heroName, &statsKey, &statsValue)
 		if err != nil {
-			logrus.Errorln("Issue with database:", err.Error())
+			logrus.Println("Issue with database:", err.Error())
 		}
 		stats[statsKey] = statsValue
 	}
@@ -44,31 +44,32 @@ func (tM *Theater) PLVT(event network.EvProcess) {
 	case "1":
 		_, err = tM.db.stmtGameDecreaseTeam1.Exec(event.Process.Msg["GID"])
 		if err != nil {
-			logrus.Error("PLVT ", err)
+			logrus.Println("PLVT ", err)
 		}
 	case "2":
 		_, err = tM.db.stmtGameDecreaseTeam2.Exec(event.Process.Msg["GID"])
 		if err != nil {
-			logrus.Error("PLVT ", err)
+			logrus.Println("PLVT ", err)
 		}
 	default:
-		logrus.Errorln("Invalid team " + stats["c_team"] + " for " + pid)
+		logrus.Println("Invalid team " + stats["c_team"] + " for " + pid)
 	}
 
 	
 	event.Client.Answer(&codec.Packet{ // need to check this 
 		Message: thtrPLVT,
 		Content: ansPLVT{
-			event.Process.Msg["PID"],
-			event.Process.Msg["TID"],
+			event.Process.Msg["jID"],
+			//event.Process.Msg["TID"],
 		},
 	})
 
 	event.Client.Answer(&codec.Packet{ // need to check this 
 		Message: thtrKICK,
 		Content: ansKICK{
-			event.Process.Msg["PID"],
-			event.Process.Msg["LID"],
+			//event.Process.Msg["PID"],
+			//event.Process.Msg["LID"],
+			event.Process.Msg["jID"],
 		},
 	})
 

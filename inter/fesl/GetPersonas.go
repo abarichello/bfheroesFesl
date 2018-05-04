@@ -8,7 +8,6 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-
 type ansNuGetPersonas struct {
 	TXN      string   `fesl:"TXN"`
 	Personas []string `fesl:"personas"`
@@ -16,7 +15,9 @@ type ansNuGetPersonas struct {
 
 // NuGetPersonas . Display all Personas/Heroes
 func (fm *Fesl) NuGetPersonas(event network.EvProcess) {
-	if !event.Client.IsActive {
+	AFK := !event.Client.IsActive
+
+	if AFK {
 		logrus.Println("Client Left")
 		return
 	}
@@ -58,28 +59,34 @@ func (fm *Fesl) NuGetPersonas(event network.EvProcess) {
 }
 
 
-// NuGetPersonasServer - Soldier data lookup call for servers
+// NuGetPersonasServer - G_Server Login , retrieve Info Based on +soldierName 
 func (fm *Fesl) NuGetPersonasServer(event network.EvProcess) {
-	logrus.Println("======SERVER CONNECTING=====")
-
+	logrus.Println("======SERVER CONNECT Prompt=====")
+	//////Validates Login//////////////////////
+	AFK := !event.Client.IsActive
+	if AFK {
+		logrus.Println("Client Left")
+		return
+	}
+	if event.Client.HashState.Get("clientType") != "server" {
+		//Exploit Login
+		logrus.Println("====Wrong Server Login====")
+		return
+	}
+	
 	var id, userID, servername, secretKey, username string
 
 	err := fm.db.stmtGetServerByName.QueryRow(event.Process.Msg["name"]).Scan(&id, //continue
-		&userID, &servername, //continue
-		&secretKey, &username)
-
-	if event.Client.HashState.Get("clientType") != "server" {
-		// Server Exploit Login
-		logrus.Println("====Wrong Server Login====")
-
-		return
-	}
+		&userID, &servername, &secretKey, &username)	
 
 	// Server login
 	rows, err := fm.db.stmtGetServerByID.Query(event.Client.HashState.Get("uID"))
 	if err != nil {
 		return
 	}
+
+	//////Validates Login//////////////////////
+	
 
 	ans := ansNuGetPersonas{TXN: acctNuGetPersonas, Personas: []string{}}
 
@@ -95,9 +102,12 @@ func (fm *Fesl) NuGetPersonasServer(event network.EvProcess) {
 		event.Client.HashState.Set("ownerId."+strconv.Itoa(len(ans.Personas)), id)
 	}
 
+	logrus.Println("=====SERVER Logged In====")
+
+
 	event.Client.Answer(&codec.Packet{
 		Send:    event.Process.HEX,
-		Message: "acct",
+		Message: acct,
 		Content: ans,
 	})
 }

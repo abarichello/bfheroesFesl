@@ -56,7 +56,7 @@ func (fm *Fesl) UpdateStats(event network.EvProcess) {
 		if event.Client.HashState.Get("clientType") == "server" {
 
 			var id, userIDhero, heroName, online string
-			err := fm.db.stmtGetHeroeByID.QueryRow(owner).Scan(&id, &userIDhero, &heroName, &online)
+			err := fm.db.stmtGetHeroByID.QueryRow(owner).Scan(&id, &userIDhero, &heroName, &online)
 			if err != nil {
 				logrus.Println("Persona not worthy!")
 				return

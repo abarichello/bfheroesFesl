@@ -66,13 +66,12 @@ type ansEGEG struct {
 }
 
 // EGAM - EnterGameRequest
-func (tm *Theater) EGAM(event network.EvProcess) {
+func (tm *Theater) EGAM(event network.EvProcess) {	
 	gameID := event.Process.Msg["GID"]
 	externalIP := event.Client.IpAddr.(*net.TCPAddr).IP.String()
 	lobbyID := event.Process.Msg["LID"]
 	pid := event.Client.HashState.Get("id")  //playerID
-	logrus.Println("====EGAM==")
-
+	logrus.Println("======SENT EGAM=======")
 	event.Client.Answer(&codec.Packet{
 		Message: thtrEGAM,
 		Content: ansEGAM{
@@ -80,7 +79,7 @@ func (tm *Theater) EGAM(event network.EvProcess) {
 			lobbyID,
 			gameID,
 		},
-	})
+})
 
 	// Get 4 stats for PID
 	rows, err := tm.db.getStatsStatement(4).Query(pid, "c_kit", "c_team", "elo", "level")
@@ -94,7 +93,7 @@ func (tm *Theater) EGAM(event network.EvProcess) {
 		var userID, heroID, heroName, statsKey, statsValue string
 		err := rows.Scan(&userID, &heroID, &heroName, &statsKey, &statsValue)
 		if err != nil {
-			logrus.Errorln("Issue with database:", err.Error())
+			logrus.Println("Issue with database:", err.Error())
 		}
 
 		stats["heroName"] = heroName
@@ -106,6 +105,7 @@ func (tm *Theater) EGAM(event network.EvProcess) {
 		gsData := tm.level.NewObject("gdata", gameID)
 
 		// Server
+		logrus.Println("=====================EGRQ================")
 		gameServer.Answer(&codec.Packet{
 			Message: thtrEGRQ,
 			Content: ansEGRQ{
@@ -139,7 +139,6 @@ func (tm *Theater) EGAM(event network.EvProcess) {
 				GameID:       gameID,
 			},
 		})
-		logrus.Println("====EGRQ==")
 
 
 		// Client
@@ -147,22 +146,21 @@ func (tm *Theater) EGAM(event network.EvProcess) {
 			Message: thtrEGEG,
 			Content: ansEGEG{
 				TID:      event.Process.Msg["TID"],
-				Ticket:   "2018751182",
-				PlayerID: pid,
 				IP:       gsData.Get("IP"),
 				Port:     gsData.Get("PORT"),
 				Huid:     "1",
 				Ekey:     "O65zZ2D2A58mNrZw1hmuJw%3d%3d",
+				Secret:   "MargeSimpson",
+				Ticket:   "2018751182",
 				IntIP:    gsData.Get("INT-IP"),
 				IntPort:  gsData.Get("INT-PORT"),
-				Secret:   "MargeSimpson",
 				Platform: event.Process.Msg["PC"],
 				Ugid:     gsData.Get("UGID"),
 				LobbyID:  lobbyID,
+				PlayerID: pid,
 				GameID:   gameID,
 			},
 		})
-		logrus.Println("====EGEG==")
-
+		logrus.Println("====================EGEG=========================")
 	}
 }

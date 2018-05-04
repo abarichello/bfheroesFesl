@@ -10,29 +10,25 @@ import (
 type ansUBRA struct {
 	TID string `fesl:"TID"`
 	LID string `fesl:"LID"`
-	// START string `fesl:"START"`
-
-
+	START int `fesl:"START"`
 }
 
 // UBRA - "UpdateBracket" updates players connected
-func (tM *Theater) UBRA(event network.EvProcess) {
-	if !event.Client.IsActive {
-		logrus.Println("Cli Left")
-		return
-	}
-
-	gdata := tM.level.NewObject("gdata", event.Process.Msg["GID"])
-
-	if event.Process.Msg["Start"] == "1" {
-		gdata.Set("AP", "0")		
-	}
+func (tM *Theater) UBRA(event network.EvProcess) {	
+	logrus.Println("=========UBRA===========")
+	//gdata := tM.level.NewObject("gdata", event.Process.Msg["GID"])
 
 	event.Client.Answer(&codec.Packet{
 		Message: thtrUBRA,
 		Content: ansUBRA{
-			event.Process.Msg["TID"],
-			event.Process.Msg["LID"],
-		}})
+			TID: event.Process.Msg["TID"],
+			LID: event.Process.Msg["LID"],
+			START: 1,
+		}},
+	)
+
+	// if event.Process.Msg["START"] == "0" {
+	// 	gdata.Set("AP", "0")		
+	// }
 
 }

@@ -57,7 +57,9 @@ func (fm *Fesl) run() {
 			case "newClient":
 				fm.newClient(event.Data.(network.EventNewClient)) // TLS
 			case "client.command.Hello":
-				fm.hello(event.Data.(network.EvProcess))			
+				fm.hello(event.Data.(network.EvProcess))
+			case "client.command.Telemetry":
+				fm.Telemetry(event.Data.(network.EvProcess))				
 			case "client.command.NuLogin":
 				fm.NuLogin(event.Data.(network.EvProcess))
 			case "client.command.NuGetPersonas":
@@ -115,10 +117,7 @@ func (fm *Fesl) newClient(event network.EventNewClient) {
 				return
 			}
 			select {
-			case <-event.Client.State.HeartTicker.C:
-				if !event.Client.IsActive {
-					return
-				}
+			case <-event.Client.State.HeartTicker.C:				
 				fm.fsysMemCheck(&event)
 			}
 		}
