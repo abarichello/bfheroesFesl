@@ -3,10 +3,15 @@ package main
 import (
 	"database/sql"
 	"flag"
+	"fmt"
+
+	"strconv"
+	"strings"
 
 	"github.com/Synaxis/bfheroesFesl/config"
 	"github.com/Synaxis/bfheroesFesl/inter/fesl"
 	"github.com/Synaxis/bfheroesFesl/inter/theater"
+	//"github.com/Synaxis/nextFesl/inter/matchmaking"
 	"github.com/Synaxis/bfheroesFesl/storage/database"
 	"github.com/Synaxis/bfheroesFesl/storage/level"
 
@@ -62,6 +67,51 @@ func newLevelDB() (*level.Level, error) {
 	return lvl, err
 }
 
+// separate tags to be recognized as key-value
+func separateTags(singleTag string) (string, string) {
+	tuple := strings.SplitN(singleTag, ":", 2)
+	return tuple[0], tuple[1]
+}
+
+type FieldTag struct {
+	tags map[string]string
+}
+
+func (ft *FieldTag) StringVal(tag string) (string, error) {
+	value, ok := ft.tags[tag]
+	if !ok {
+		return "", fmt.Errorf("tag: %s not found", tag)
+	}
+
+	removedQuotes := strings.Trim(value, `"`)
+
+	return removedQuotes, nil
+}
+
+
+func (ft *FieldTag) StringArr(tag string) ([]string, error) {
+	s, err := ft.StringVal(tag)
+	if err != nil {
+		return nil, err
+	}
+
+	return strings.Split(s, ","), nil
+}
+
+func (ft *FieldTag) IntVal(tag string) (int, error) {
+	s, err := ft.StringVal(tag)
+	if err != nil {
+		return 0, err
+	}
+
+	i, err := strconv.Atoi(s)
+	if err != nil {
+		return 0, err
+	}
+
+	return i, nil
+}
+
 func startServer(mdb *sql.DB, ldb *level.Level) {
 	fesl.New("FM", config.FeslClientAddr(), false, mdb, ldb)
 	fesl.New("SFM", config.FeslServerAddr(), true, mdb, ldb)
@@ -69,3 +119,6 @@ func startServer(mdb *sql.DB, ldb *level.Level) {
 	theater.New("TM", config.ThtrClientAddr(), mdb, ldb)
 	theater.New("STM", config.ThtrServerAddr(), mdb, ldb)
 }
+
+
+

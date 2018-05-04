@@ -29,7 +29,7 @@ func (tm *Theater) CONN(event network.EvProcess) {
 		Content: ansCONN{
 			TID:         event.Process.Msg["TID"],
 			ConnectedAt: time.Now().UTC().Unix(),
-			ConnTTL:     999999, //useless,+gives random DC for servers/use RCON for AFK
+			ConnTTL:     999999, //useless/use RCON for AFK
 			Protocol:    event.Process.Msg["PROT"],
 		},
 	})

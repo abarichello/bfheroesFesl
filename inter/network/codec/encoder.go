@@ -7,11 +7,12 @@ import (
 	"reflect"
 	"runtime"
 	"strconv"
+	"strings"
 	"unicode"
 )
 
 const (
-	// charNull is a "null" character from ASCII table, it ends a Packet
+	// charNull is a "null" character from ASCII table, it ends a packet
 	charNull    byte = 0x00
 	charEqual   byte = '='
 	charNewLine byte = '\n'
@@ -78,18 +79,18 @@ func (e *Encoder) EncodePacket(Packet *Packet) (*bytes.Buffer, error) {
 		return nil, err
 	}
 
-	// Append Packet length
-	c := make([]byte, 4)
-	binary.BigEndian.PutUint32(c, uint32(e.wr.Len()+12))
-	if _, err := buf.Write(c); err != nil {
-		return nil, err
-	}
+// Append Packet length
+c := make([]byte, 4)
+binary.BigEndian.PutUint32(c, uint32(e.wr.Len()+12))
+if _, err := buf.Write(c); err != nil {
+	return nil, err
+}
 
-	// Append Content(payload)
-	if _, err := buf.Write(e.wr.Bytes()); err != nil {
-		return nil, err
-	}
-	return buf, nil
+//Append Content(payload)
+if _, err := buf.Write(e.wr.Bytes()); err != nil {
+	return nil, err
+}
+return buf, nil
 }
 
 func (e *Encoder) Encode(v interface{}) (err error) {
@@ -104,7 +105,7 @@ func (e *Encoder) Encode(v interface{}) (err error) {
 			err = r.(error)
 		}
 	}()
-	e.enc("", reflect.ValueOf(v))
+	e.enc("", reflect.ValueOf(v), nil)
 	e.wr.WriteByte(charNull)
 	return err
 }
@@ -120,30 +121,30 @@ func (e *Encoder) set(k, v string) {
 	e.wr.WriteByte(charNewLine)
 }
 
-func (e *Encoder) enc(key string, v reflect.Value) {
+func (e *Encoder) enc(key string, v reflect.Value, opt *EncOptions) {
 	switch v.Kind() {
 	case reflect.String:
-		e.encString(key, v)
+		e.encString(key, v, opt)
 	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
-		e.encInt(key, v)
+		e.encInt(key, v, nil)
 	case reflect.Bool:
-		e.encBool(key, v)
+		e.encBool(key, v, nil)
 	case reflect.Float32, reflect.Float64:
-		e.encFloat(key, v)
+		e.encFloat(key, v, nil)
 	case reflect.Array, reflect.Slice:
-		e.encArray(key, v)
+		e.encArray(key, v, nil)
 	case reflect.Map:
-		e.encMap(key, v)
+		e.encMap(key, v, nil)
 	case reflect.Struct:
-		e.encStruct(key, v)
+		e.encStruct(key, v, nil)
 	case reflect.Interface:
-		e.encInterface(key, v)
+		e.encInterface(key, v, nil)
 	default:
-		panic(fmt.Sprintf("codec: Not implemented type %s value", v.Kind()))
+		panic(fmt.Sprintf("codec: Not implemented type of %s value", v.Kind()))
 	}
 }
 
-func (e *Encoder) encMap(key string, v reflect.Value) {
+func (e *Encoder) encMap(key string, v reflect.Value, opt *EncOptions) {
 	keys := v.MapKeys()
 	e.set(key+".{}", strconv.Itoa(len(keys)))
 	for _, k := range keys {
@@ -153,31 +154,36 @@ func (e *Encoder) encMap(key string, v reflect.Value) {
 		e.enc(
 			fmt.Sprintf("%s.{%s}", key, k.String()),
 			v.MapIndex(k),
+			nil,
 		)
 	}
 }
 
-func (e *Encoder) encInterface(key string, v reflect.Value) {
+func (e *Encoder) encInterface(key string, v reflect.Value, opt *EncOptions) {
 	if v.IsNil() {
 		// Omit nil values
 		return
 	}
-	e.enc(key, v.Elem())
+	e.enc(key, v.Elem(), nil)
 }
 
-func (e *Encoder) encArray(key string, v reflect.Value) {
+func (e *Encoder) encArray(key string, v reflect.Value, opt *EncOptions) {
 	e.set(key+".[]", strconv.Itoa(v.Len()))
 	length := v.Len()
 	for i := 0; i < length; i++ {
-		e.enc(fmt.Sprintf("%s.%d", key, i), v.Index(i))
+		e.enc(fmt.Sprintf("%s.%d", key, i), v.Index(i), nil)
 	}
 }
 
-func (e *Encoder) encString(key string, v reflect.Value) {
-	e.set(key, v.String())
+func (e *Encoder) encString(key string, v reflect.Value, opt *EncOptions) {
+	val := v.String()
+	if val == "" && opt != nil && opt.OmitEmpty {
+		return
+	}
+	e.set(key, val)
 }
 
-func (e *Encoder) encBool(key string, v reflect.Value) {
+func (e *Encoder) encBool(key string, v reflect.Value, opt *EncOptions) {
 	if v.Bool() {
 		e.set(key, "1")
 	} else {
@@ -185,17 +191,23 @@ func (e *Encoder) encBool(key string, v reflect.Value) {
 	}
 }
 
-func (e *Encoder) encInt(key string, v reflect.Value) {
+func (e *Encoder) encInt(key string, v reflect.Value, opt *EncOptions) {
 	e.set(key, strconv.FormatInt(v.Int(), 10))
 }
 
-func (e *Encoder) encFloat(key string, v reflect.Value) {
+func (e *Encoder) encFloat(key string, v reflect.Value, opt *EncOptions) {
 	e.set(key, fmt.Sprintf("%g", v.Float()))
 }
 
-func (e *Encoder) encStruct(key string, v reflect.Value) {
+func (e *Encoder) encStruct(key string, v reflect.Value, opt *EncOptions) {
 	for i := 0; i < v.NumField(); i++ {
-		e.encStructField(key, v.Type().Field(i), v.Field(i))
+		value := v.Field(i)
+		switch value.Kind() {
+		case reflect.Struct:
+			e.encStruct(key, value, nil)
+		default:
+			e.encStructField(key, v.Type().Field(i), value)
+		}
 	}
 }
 
@@ -215,7 +227,22 @@ func (e *Encoder) encStructField(prefix string, f reflect.StructField, vs reflec
 	if prefix != "" {
 		key += "."
 	}
-	key += tag
 
-	e.enc(key, vs)
+	tagValue := strings.Split(tag, ",")
+	key += tagValue[0]
+
+	opt := EncOptions{}
+	count := len(tagValue)
+	for index := 1; index < count; index++ {
+		switch tagValue[index] {
+		case "omitempty":
+			opt.OmitEmpty = true
+		}
+	}
+
+	e.enc(key, vs, &opt)
+}
+
+type EncOptions struct {
+	OmitEmpty bool
 }

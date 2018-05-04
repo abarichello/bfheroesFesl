@@ -20,9 +20,9 @@ const (
 type ansGetTelemetryToken struct {
 	Taxon          string `fesl:"TXN"`
 	TelemetryToken string `fesl:"telemetryToken"`
-	Enabled        bool 	`fesl:"enabled"`
 	Filters        string `fesl:"filters"`
-	Disabled       bool   `fesl:"disabled"`
+	Enabled        int 		`fesl:"enabled"`
+	Disabled       int  	`fesl:"disabled"`
 }
 
 // GetTelemetryToken
@@ -33,8 +33,8 @@ func (fm *Fesl) Telemetry(event network.EvProcess) {
 		Content: ansGetTelemetryToken{
 			Taxon:          acctGetTelemetryToken,
 			TelemetryToken: `"teleToken"`,
-			Enabled:        false,
-			Disabled: 			true,
+			Enabled:        0,
+			Disabled: 			1,
 		},
 
 		Send: event.Process.HEX,
