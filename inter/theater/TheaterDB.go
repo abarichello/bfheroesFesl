@@ -10,21 +10,21 @@ type Database struct {
 	db *sql.DB
 
 	// Database Statements
-	stmtGetHeroByID                      *sql.Stmt
-	stmtDeleteServerStatsByGID            *sql.Stmt
-	stmtDeleteGameByGIDAnd                *sql.Stmt
-	stmtAddGame                           *sql.Stmt
-	stmtGameIncreaseJoining               *sql.Stmt
-	UpdateGid                             *sql.Stmt
-	stmtGameIncreaseTeam1                 *sql.Stmt
-	stmtGameIncreaseTeam2                 *sql.Stmt
-	stmtGameDecreaseTeam1                 *sql.Stmt
-	stmtGameDecreaseTeam2                 *sql.Stmt
-	stmtUpdateGame                        *sql.Stmt
-	stmtCreateServer                      *sql.Stmt
+	stmtGetHeroByID              *sql.Stmt
+	stmtDeleteServerStatsByGID   *sql.Stmt
+	stmtDeleteGameByGID       *sql.Stmt
+	stmtAddGame                  *sql.Stmt
+	stmtGameIncreaseJoining      *sql.Stmt
+	UpdateGid                    *sql.Stmt
+	stmtGameIncreaseTeam1        *sql.Stmt
+	stmtGameIncreaseTeam2        *sql.Stmt
+	stmtGameDecreaseTeam1        *sql.Stmt
+	stmtGameDecreaseTeam2        *sql.Stmt
+	stmtUpdateGame               *sql.Stmt
+	stmtCreateServer             *sql.Stmt
 	MapGetStatsQuery             map[int]*sql.Stmt
 	MapSetServerStatsQuery       map[int]*sql.Stmt
-	mapSetServerPlayerStatsVariableAmount map[int]*sql.Stmt
+	MapSetPlayerStatsQuery       map[int]*sql.Stmt
 }
 
 func NewDatabase(conn *sql.DB) (*Database, error) {
@@ -33,7 +33,7 @@ func NewDatabase(conn *sql.DB) (*Database, error) {
 	// Prepare DB statements
 	db.MapGetStatsQuery = make(map[int]*sql.Stmt)
 	db.MapSetServerStatsQuery = make(map[int]*sql.Stmt)
-	db.mapSetServerPlayerStatsVariableAmount = make(map[int]*sql.Stmt)
+	db.MapSetPlayerStatsQuery = make(map[int]*sql.Stmt)
 	db.prepareStatements()
 
 	return db, nil
@@ -56,7 +56,7 @@ func (d *Database) prepareStatements() {
 		logrus.Fatalln("Error preparing stmtClearServerStats.", err.Error())
 	}
 
-	d.stmtDeleteGameByGIDAnd, err = d.db.Prepare(
+	d.stmtDeleteGameByGID, err = d.db.Prepare(
 		"DELETE FROM games WHERE gid = ?")
 	if err != nil {
 		logrus.Fatalln("Error preparing stmtClearServerStats.", err.Error())
@@ -156,11 +156,10 @@ func (d *Database) prepareStatements() {
 		logrus.Fatalln("Error preparing stmtCreateServer.", err.Error())
 	}
 }
-
 func (d *Database) getStatsStatement(statsAmount int) *sql.Stmt {
 	var err error
 
-	// Check if we already have a statement prepared for that amount of stats
+	// Check Statement is OK for query
 	if statement, ok := d.MapGetStatsQuery[statsAmount]; ok {
 		return statement
 	}
@@ -189,7 +188,7 @@ func (d *Database) getStatsStatement(statsAmount int) *sql.Stmt {
 func (d *Database) setServerStatsStatement(statsAmount int) *sql.Stmt {
 	var err error
 
-	// Check if we already have a statement prepared for that amount of stats
+	// Check Statement is OK for query
 	if statement, ok := d.MapSetServerStatsQuery[statsAmount]; ok {
 		return statement
 	}
@@ -217,7 +216,7 @@ func (d *Database) setServerStatsStatement(statsAmount int) *sql.Stmt {
 func (d *Database) setServerGidStatement(statsAmount int) *sql.Stmt {
 	var err error
 
-	// Check if we already have a statement prepared for that amount of stats
+	// Check Statement is OK for query
 	if statement, ok := d.MapSetServerStatsQuery[statsAmount]; ok {
 		return statement
 	}
@@ -243,8 +242,8 @@ func (d *Database) setServerGidStatement(statsAmount int) *sql.Stmt {
 func (d *Database) setServerPlayerStatsStatement(statsAmount int) *sql.Stmt {
 	var err error
 
-	// Check if we already have a statement prepared for that amount of stats
-	if statement, ok := d.mapSetServerPlayerStatsVariableAmount[statsAmount]; ok {
+	// Check Statement is OK for query
+	if statement, ok := d.MapSetPlayerStatsQuery[statsAmount]; ok {
 		return statement
 	}
 
@@ -260,12 +259,12 @@ func (d *Database) setServerPlayerStatsStatement(statsAmount int) *sql.Stmt {
 		"	statsValue=VALUES(statsValue)," +
 		"   updated_at=NOW()"
 
-	d.mapSetServerPlayerStatsVariableAmount[statsAmount], err = d.db.Prepare(sql)
+	d.MapSetPlayerStatsQuery[statsAmount], err = d.db.Prepare(sql)
 	if err != nil {
-		logrus.Fatalln("Error preparing mapSetServerPlayerStatsVariableAmount with "+sql+" query.", err.Error())
+		logrus.Fatalln("Error preparing MapSetPlayerStatsQuery with "+sql+" query.", err.Error())
 	}
 
-	return d.mapSetServerPlayerStatsVariableAmount[statsAmount]
+	return d.MapSetPlayerStatsQuery[statsAmount]
 }
 
 func (d *Database) closeStatements() {

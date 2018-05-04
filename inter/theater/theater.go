@@ -144,7 +144,7 @@ func (tm *Theater) newClient(event network.EventNewClient) {
 		logrus.Println("Cli Left")
 		return
 	}
-	logrus.Println("Join Theather")
+	logrus.Println("Joined Theather")
 
 	// Start Heartbeat
 	event.Client.State.HeartTicker = time.NewTicker(time.Second * 5)
@@ -173,7 +173,7 @@ func (tm *Theater) close(event network.EventClientClose) {
 				logrus.Errorln("Failed deleting settings for  "+event.Client.HashState.Get("gdata:GID"), err.Error())
 			}
 
-			_, err = tm.db.stmtDeleteGameByGIDAnd.Exec(event.Client.HashState.Get("gdata:GID"))
+			_, err = tm.db.stmtDeleteGameByGID.Exec(event.Client.HashState.Get("gdata:GID"))
 			if err != nil {
 				logrus.Errorln("Failed deleting game for "+event.Client.HashState.Get("gdata:GID"), err.Error())
 			}

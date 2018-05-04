@@ -21,7 +21,7 @@ type ansCGAM struct {
 	JoinMode   string  `fesl:"JoindMode"`
 	J          string `fesl:"J"`
 	GameID     string `fesl:"GID"`
-	isRanked   bool   `fesl:"B-U-RANKED"`
+	isRanked   	int   `fesl:"B-U-RANKED"`
 }
 
 // CGAM - CreateGameParameters
@@ -106,7 +106,7 @@ func (tm *Theater) CGAM(event network.EvProcess) {
 			EKEY:       "O65zZ2D2A58mNrZw1hmuJw%3d%3d",
 			Secret:     "MargeSimpson",
 			JOIN:       answer["JOIN"],
-			isRanked:	false,
+			isRanked:		1,
 			J:          answer["JOIN"],
 			JoinMode: 	"1",
 			GameID:     gameID,

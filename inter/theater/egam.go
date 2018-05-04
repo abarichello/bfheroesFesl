@@ -127,7 +127,7 @@ func (tm *Theater) EGAM(event network.EvProcess) {
 				RUKit:        stats["c_kit"],
 				RULvl:        stats["level"],
 				RUDataCenter: "iad",
-				Platform:	  event.Process.Msg["PC"],
+				Platform:	  	event.Process.Msg["PC"],
 				RUExternalIP: externalIP,
 				RUInternalIP: event.Process.Msg["R-INT-IP"],
 				RUCategory:   event.Process.Msg["R-U-category"],
@@ -161,6 +161,6 @@ func (tm *Theater) EGAM(event network.EvProcess) {
 				GameID:   gameID,
 			},
 		})
-		logrus.Println("====================EGEG=========================")
+		logrus.Println("===========EGEG=========")
 	}
 }

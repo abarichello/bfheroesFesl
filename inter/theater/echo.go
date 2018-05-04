@@ -9,10 +9,10 @@ type ansECHO struct {
 	TID       	string `fesl:"TID"`
 	IP        	string `fesl:"IP"`
 	Port      	int    `fesl:"PORT"`
-	Error    	int    `fesl:"ERR"`
+	Error    		int    `fesl:"ERR"`
 	TYPE      	int    `fesl:"TYPE"`
 	UGID      	string `fesl:"UGID"`
-	TXN			string `fesl:"TXN"`
+	TXN					string `fesl:"TXN"`
 	UID       	string `fesl:"UID"`
 }
 

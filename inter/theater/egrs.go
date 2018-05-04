@@ -38,7 +38,7 @@ func (tm *Theater) EGRS(event network.EvProcess) {
 
 // Lobbies Data
 type ansGREM struct {
-	gameID   	string 	`fesl:"GID"`
+	gameID   		string 		`fesl:"GID"`
 	LID         string  `fesl:"LID"`
 }
 
