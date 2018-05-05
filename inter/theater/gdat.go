@@ -40,6 +40,7 @@ type GameServer struct {
 	armyDistribution   string
 	availSlotsNational bool
 	availSlotsRoyal    bool
+	Platform           string
 	avgAllyRank        float64
 	avgAxisRank        float64
 	serverState        string
@@ -63,6 +64,7 @@ type ansGDAT struct {
 	MapName             string `fesl:"B-U-map_name"`
 	PunkBusterEnabled   string `fesl:"B-U-punkb"`
 	ServerName          string `fesl:"NAME"`
+	Platform            string `fesl:"PC"`
 	ServerType          string `fesl:"B-U-servertype"`
 	StdDevLevel         string `fesl:"B-U-lvl_sdv"`
 	TID                 string `fesl:"TID"`
@@ -146,6 +148,7 @@ func (tm *Theater) GDAT(event network.EvProcess) {
 			IntIp:                gameServer.Get("INT-IP"),
 			IntPort:              gameServer.Get("INT-PORT"),
 			IP:                   gameServer.Get("IP"),
+			Platform:             gameServer.Get("PL"),			
 			MaxPlayers:           gameServer.Get("MAX-PLAYERS"),
 			Port:                 gameServer.Get("PORT"),
 			Qlen:                 gameServer.Get("QLEN"),

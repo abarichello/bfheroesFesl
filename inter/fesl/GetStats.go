@@ -10,6 +10,7 @@ import (
 const (
 	keysMult = "keys."
 	keysArr  = "keys.[]"
+	rank 		=  "rank"
 )
 
 type ansGetStats struct {
@@ -66,16 +67,24 @@ func (fm *Fesl) GetStats(event network.EvProcess) {
 		statsKeys[answer[keysMult+convert(i)+""]] = convert(i)
 	}
 
-	rows, err := fm.db.getStatsStatement(keys).Query(args...)
-	if err != nil {
-		logrus.Errorln("Failed gettings stats for hero "+owner, err.Error())
-	}
-
 	ans := ansGetStats{
 		TXN:       "GetStats",
 		OwnerID:   owner,
 		OwnerType: 1,
 	}
+
+	rows, err := fm.db.getStatsStatement(keys).Query(args...)
+	if err != nil {
+		logrus.Errorln("Failed gettings stats for hero "+owner, err.Error())
+
+		// Send stats not found with default value of ""
+		for key := range statsKeys {
+		ans.Stats = append(ans.Stats, statsPair{
+			Key: key,
+			Text: "",
+			Value: "0",
+		})}	
+	}	
 
 	for rows.Next() {
 		var userID, heroID, statsKey, statsValue string
@@ -88,17 +97,9 @@ func (fm *Fesl) GetStats(event network.EvProcess) {
 		delete(statsKeys, statsKey)
 	}
 
-	// Send stats not found with default value of ""
-	for key := range statsKeys {
-	ans.Stats = append(ans.Stats, statsPair{
-		Key: key,
-		Text: "",
-		Value: "0",
-	})}	
-
 	event.Client.Answer(&codec.Packet{
 		Content: ans,
 		Send:    event.Process.HEX,
-		Message: "rank",
+		Message: rank,
 	})
 }

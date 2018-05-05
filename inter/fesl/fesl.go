@@ -82,8 +82,8 @@ func (fm *Fesl) run() {
 				fm.UpdateStats(event.Data.(network.EvProcess))
 			case "client.command.Start":
 				fm.Start(event.Data.(network.EvProcess))
-			case "client.command.Cancel":
-				fm.Cancel(event.Data.(network.EvProcess))
+			// case "client.command.Cancel":
+			// 	fm.Cancel(event.Data.(network.EvProcess))
 			case "client.Goodbye":
 				fm.Goodbye(event.Data.(network.EvProcess))
 			case "client.close":

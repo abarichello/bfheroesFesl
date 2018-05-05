@@ -103,8 +103,6 @@ func readFesl(data []byte, fireEvent eventReadFesl) []byte {
 	return nil
 }
 
-// this is not important just do
-//		Send: 0xc000000d,
 
 type ProcessFESL struct {
 	Msg   map[string]string

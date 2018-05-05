@@ -226,7 +226,7 @@ func (socket *SocketUDP) run() {
 	for {
 		n, addr, err := socket.listen.ReadFromUDP(buf)
 		if err != nil {
-			logrus.Errorf("%s: Error reading from UDP.%v", socket.name, err)
+			logrus.Println("%s: Error reading from UDP.%v", socket.name, err)
 			socket.EventChan <- SocketUDPEvent{Name: "error", Addr: addr, Data: err}
 			continue
 		}
@@ -238,7 +238,7 @@ func (socket *SocketUDP) run() {
 
 		message := strings.TrimSpace(string(socket.XOr(buf[0:n])))
 
-		logrus.Debugln("UDP message:", message)
+		logrus.Println("UDP message:", message)
 
 		socket.EventChan <- SocketUDPEvent{Name: "data", Addr: addr, Data: message}
 

@@ -77,11 +77,7 @@ func (fm *Fesl) hello(event network.EvProcess) {
 	} else {
 		answer.Domain = domainPartition{"eagames", "bfwest-dedicated"}
 		answer.TheaterPort = config.General.ThtrClientPort
-	}
-	if !event.Client.IsActive {
-		logrus.Println("Client AFK")
-		return
-	}
+	}	
 
 	event.Client.Answer(&codec.Packet{
 		Content: answer,
@@ -96,17 +92,13 @@ type ansMemCheck struct {
 	memcheck string `fesl:"memcheck.[]"`
 }
 
-func (fm *Fesl) fsysMemCheck(event *network.EventNewClient) {
-	if !event.Client.IsActive {
-		logrus.Println("Client AFK")
-		return
-	}
+func (fm *Fesl) fsysMemCheck(event *network.EventNewClient) {	
 	event.Client.Answer(&codec.Packet{
 		Message: fsys,
 		Content: ansMemCheck{
 			TXN:      "MemCheck",
 			memcheck: "0",
-			Salt:     "5",
+			Salt:     "0",
 		},
 		Send: 0xC0000000,
 	})

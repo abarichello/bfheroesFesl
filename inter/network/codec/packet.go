@@ -50,6 +50,7 @@ type Packet struct {
 	Content interface{}
 }
 
+
 type RawPacket struct {
 	// Query first 4 bytes
 	// i.e. "fsys", "acct" "CONN", "UPLA"
