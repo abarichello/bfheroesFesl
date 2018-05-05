@@ -25,7 +25,6 @@ func (tm *Theater) ECHO(event network.SocketUDPEvent) {
 		Message: thtrECHO,
 		Content: ansECHO{
 			TID:       ECHO["TID"],
-			TXN:       ECHO["TXN"],
 			UGID:      ECHO["UGID"],
 			TYPE:      1,
 			UID:       ECHO["UID"],

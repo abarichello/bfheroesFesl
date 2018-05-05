@@ -147,14 +147,12 @@ func (tm *Theater) newClient(event network.EventNewClient) {
 	logrus.Println("Joined Theather")
 
 	// Start Heartbeat
-	event.Client.State.HeartTicker = time.NewTicker(time.Second * 5)
+	event.Client.State.HeartTicker = time.NewTicker(time.Second * 10)
 	go func() {
 		for event.Client.IsActive {
 			select {
 			case <-event.Client.State.HeartTicker.C:
-				if !event.Client.IsActive {
-					return
-				}
+			tm.PING(&event)
 			}
 		}
 	}()
@@ -187,7 +185,6 @@ func (tm *Theater) close(event network.EventClientClose) {
 
 		event.Client.HashState.Delete()
 	}
-
 	if !event.Client.State.HasLogin {
 		return
 	}

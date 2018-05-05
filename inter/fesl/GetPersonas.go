@@ -62,7 +62,7 @@ func (fm *Fesl) NuGetPersonas(event network.EvProcess) {
 // NuGetPersonasServer - G_Server Login , retrieve Info Based on +soldierName 
 func (fm *Fesl) NuGetPersonasServer(event network.EvProcess) {
 	logrus.Println("======SERVER CONNECT Prompt=====")
-	//////Validates Login//////////////////////
+	//////Validates Login///////////
 	AFK := !event.Client.IsActive
 	if AFK {
 		logrus.Println("Client Left")
@@ -102,7 +102,7 @@ func (fm *Fesl) NuGetPersonasServer(event network.EvProcess) {
 		event.Client.HashState.Set("ownerId."+strconv.Itoa(len(ans.Personas)), id)
 	}
 
-	logrus.Println("=====SERVER Logged In====")
+	logrus.Println("====SERVER Login===")
 
 
 	event.Client.Answer(&codec.Packet{

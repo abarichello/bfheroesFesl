@@ -11,11 +11,50 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+// EGAM is sent to Game-Client
+type reqEGAM struct {
+	// GID=1
+	GameID int `fesl:"GID"`
+	// LID=1
+	LobbyID int `fesl:"LID"`
+	// PORT=54671
+	Port int `fesl:"PORT"`
+	// PTYPE=P
+	PlatformType int `fesl:"PTYPE"`
+	// R-INT-IP=192.168.0.101
+	RemoteIP string `fesl:"R-INT-IP"`
+	// R-INT-PORT=54671
+	RemotePort int `fesl:"R-INT-PORT"`
+	// R-U-accid=2
+	AccountID int `fesl:"R-U-accid"` // TODO: Hero or PlayerID? PlayerID :(
+	// R-U-category=3
+	Category int `fesl:"R-U-category"` // TODO: What exactly it is?
+	// R-U-dataCenter=iad
+	Region string `fesl:"R-U-dataCenter"`
+	// R-U-elo=1000
+	StatsElo int `fesl:"R-U-elo"`
+	// R-U-externalIp=127.0.0.1
+	ExternalIP string `fesl:"R-U-externalIp"`
+	// R-U-kit=0
+	StatsKit int `fesl:"R-U-kit"`
+	// R-U-lvl=1
+	StatsLevel int `fesl:"R-U-lvl"`
+	// R-U-team=1
+	StatsTeam int `fesl:"R-U-team"`
+	// TID=4
+	TID int `fesl:"TID"`
+}
+
 type ansEGAM struct {
 	TID     string `fesl:"TID"`
 	LobbyID string `fesl:"LID"`
 	GameID  string `fesl:"GID"`
 }
+
+type reqEGRQ struct {
+	reqEGAM
+}
+
 
 type ansEGRQ struct {
 	TID          string `fesl:"TID"`
@@ -32,7 +71,7 @@ type ansEGRQ struct {
 	RUid         string `fesl:"R-UID"`
 	RUAccid      string `fesl:"R-U-accid"`
 	RUElo        string `fesl:"R-U-elo"`
-	Platform	 string `fesl:"PL"`
+	Platform	   string `fesl:"PL"`
 	RUTeam       string `fesl:"R-U-team"`
 	RUKit        string `fesl:"R-U-kit"`
 	RULvl        string `fesl:"R-U-lvl"`
@@ -46,6 +85,11 @@ type ansEGRQ struct {
 	RXuid        string `fesl:"R-XUID"`
 	LobbyID      string `fesl:"LID"`
 	GameID       string `fesl:"GID"`
+}
+
+
+type reqEGEG struct {
+	reqEGAM
 }
 
 type ansEGEG struct {
@@ -65,7 +109,7 @@ type ansEGEG struct {
 	GameID   string `fesl:"GID"`
 }
 
-// EGAM - EnterGameRequest
+// EGAM - EnterGame
 func (tm *Theater) EGAM(event network.EvProcess) {	
 	gameID := event.Process.Msg["GID"]
 	externalIP := event.Client.IpAddr.(*net.TCPAddr).IP.String()
@@ -104,7 +148,7 @@ func (tm *Theater) EGAM(event network.EvProcess) {
 	if gameServer, ok := mm.Games[gameID]; ok {
 		gsData := tm.level.NewObject("gdata", gameID)
 
-		// Server
+		//GAME SERVER Enter Game Request
 		logrus.Println("=====================EGRQ================")
 		gameServer.Answer(&codec.Packet{
 			Message: thtrEGRQ,
@@ -127,7 +171,7 @@ func (tm *Theater) EGAM(event network.EvProcess) {
 				RUKit:        stats["c_kit"],
 				RULvl:        stats["level"],
 				RUDataCenter: "iad",
-				Platform:	  	event.Process.Msg["PC"],
+				Platform:	  	"PC",
 				RUExternalIP: externalIP,
 				RUInternalIP: event.Process.Msg["R-INT-IP"],
 				RUCategory:   event.Process.Msg["R-U-category"],
@@ -141,7 +185,7 @@ func (tm *Theater) EGAM(event network.EvProcess) {
 		})
 
 
-		// Client
+		// Game Client Client
 		event.Client.Answer(&codec.Packet{
 			Message: thtrEGEG,
 			Content: ansEGEG{
@@ -154,7 +198,7 @@ func (tm *Theater) EGAM(event network.EvProcess) {
 				Ticket:   "2018751182",
 				IntIP:    gsData.Get("INT-IP"),
 				IntPort:  gsData.Get("INT-PORT"),
-				Platform: event.Process.Msg["PC"],
+				Platform: "PC",
 				Ugid:     gsData.Get("UGID"),
 				LobbyID:  lobbyID,
 				PlayerID: pid,

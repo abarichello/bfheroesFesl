@@ -7,6 +7,15 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+type reqECNL struct {
+	// TID=8
+	TID int `fesl:"TID"`
+	// GID=3
+	GameID int `fesl:"GID"`
+	// LID=1
+	LobbyID int `fesl:"LID"`
+}
+
 type ansECNL struct {
 	TID     string `fesl:"TID"`
 	GameID  string `fesl:"GID"`

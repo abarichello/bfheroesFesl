@@ -7,6 +7,18 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+type reqPLVT struct {
+	// TID=16
+	TID int `fesl:"TID"`
+
+	// LID=1
+	LobbyID int `fesl:"LID"`
+	// GID=12
+	GameID int `fesl:"GID"`
+	// PID=3
+	PlayerID int `fesl:"PID"`
+}
+
 type ansKICK struct {
 	TID string `fesl:"TID"`
 	LobbyID  string `fesl:"LID"`

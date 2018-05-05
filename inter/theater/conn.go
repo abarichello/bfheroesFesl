@@ -9,6 +9,24 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+type reqCONN struct {
+	// TID=1
+	TID int `fesl:"TID"`
+
+	// LOCALE=en_US
+	Locale string `fesl:"LOCALE"`
+	// PLAT=PC"
+	Platform string `fesl:"PLAT"`
+	// PROD=bfwest-pc
+	Prod string `fesl:"PROD"`
+	// PROT=2
+	Protocol int `fesl:"PROT"`
+	// SDKVERSION=5.0.0.0.0
+	SdkVersion string `fesl:"SDKVERSION"`
+	// VERS="1.42.217478.0 "
+	Version string `fesl:"VERS"`
+}
+
 type ansCONN struct {
 	TID         string `fesl:"TID"`
 	ConnectedAt int64  `fesl:"TIME"`

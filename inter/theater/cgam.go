@@ -9,6 +9,80 @@ import (
 	"github.com/Synaxis/bfheroesFesl/inter/network/codec"
 	"github.com/sirupsen/logrus"
 )
+
+// ->N CGAM 0x40000000
+type reqCGAM struct {
+	// TID=3
+	Tid int `fesl:"TID"`
+	// LID=-1
+	LobbyID int `fesl:"LID"`
+	// RESERVE-HOST=0
+	ReserveHost int `fesl:"RESERVE-HOST"`
+	// NAME="[iad]A Battlefield Heroes Server(172.28.128.1:18567)"
+	Name string `fesl:"NAME"`
+	// PORT=18567
+	Port int `fesl:"PORT"`
+	// HTTYPE=A
+	Httype string `fesl:"HTTYPE"`
+	// TYPE=G
+	Type string `fesl:"TYPE"`
+	// QLEN=16
+	Qlen int `fesl:"QLEN"`
+	// DISABLE-AUTO-DEQUEUE=1
+	DisableAutoDequeue int `fesl:"DISABLE-AUTO-DEQUEUE"`
+	// HXFR=0
+	Hxfr int `fesl:"HXFR"`
+	// INT-PORT=18567
+	IntPort int `fesl:"INT-PORT"`
+	// INT-IP=192.168.1.102
+	IntIP string `fesl:"INT-IP"`
+	// MAX-PLAYERS=16
+	MaxPlayers int `fesl:"MAX-PLAYERS"`
+	// B-maxObservers=0
+	BMaxObservers int `fesl:"B-maxObservers"`
+	// B-numObservers=0
+	BNumObservers int `fesl:"B-numObservers"`
+	// UGID=GUID-Server
+	Ugid string `fesl:"UGID"` /// Value passed in +guid
+	// SECRET=Test-Server
+	Secret string `fesl:"SECRET"` // Value passed in +secret
+	// B-U-alwaysQueue=1
+	BUAlwaysQueue int `fesl:"B-U-alwaysQueue"`
+	// B-U-army_balance=Balanced
+	BUArmyBalance string `fesl:"B-U-army_balance"`
+	// B-U-army_distribution="0,0,0, 0,0,0,0, 0,0,0,0"
+	BUArmyDistribution string `fesl:"B-U-army_distribution"`
+	// B-U-avail_slots_national=yes
+	BUAvailSlotsNational string `fesl:"B-U-avail_slots_national"`
+	// B-U-avail_slots_royal=yes
+	BUAvailSlotsRoyal string `fesl:"B-U-avail_slots_royal"`
+	// B-U-avg_ally_rank=1000.0000
+	BUAvgAllyRank string `fesl:"B-U-avg_ally_rank"`
+	// B-U-avg_axis_rank=1000.0000
+	BUAvgAxisRank string `fesl:"B-U-avg_axis_rank"`
+	// B-U-community_name="Heroes SV"
+	BUCommunityName string `fesl:"B-U-community_name"`
+	// B-U-data_center=iad
+	BUDataCenter string `fesl:"B-U-data_center"`
+	// B-U-elo_rank=1000.0000
+	BUEloRank string `fesl:"B-U-elo_rank"`
+	// B-U-map=no_vehicles
+	BUMap string `fesl:"B-U-map"`
+	// B-U-percent_full=0
+	BUPercentFull int `fesl:"B-U-percent_full"`
+	// B-U-server_ip=172.28.128.1
+	BUServerIP string `fesl:"B-U-server_ip"`
+	// B-U-server_port=18567
+	BUServerPort int `fesl:"B-U-server_port"`
+	// B-U-server_state=empty
+	BUServerState string `fesl:"B-U-server_state"`
+	// B-version=1.46.222034.0
+	BVersion string `fesl:"B-version"`
+	// JOIN=O
+	Join string `fesl:"JOIN"`
+	// RT=
+	Rt string `fesl:"RT"`
+}
 	type ansCGAM struct {
 		TID        string `fesl:"TID"`
 		LobbyID    string `fesl:"LID"`
@@ -106,7 +180,7 @@ import (
 				EKEY:       "O65zZ2D2A58mNrZw1hmuJw%3d%3d",
 				Secret:     "MargeSimpson",
 				JOIN:       answer["JOIN"],
-				isRanked:	false,
+				isRanked:	  false,
 				J:          answer["JOIN"],
 				JoinMode: 	"1",
 				GameID:     gameID,

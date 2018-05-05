@@ -6,6 +6,25 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+type reqEGRS struct {
+	// TID=6
+	TID int `fesl:"TID"`
+
+	// LID=1
+	LobbyID int `fesl:"LID"`
+	// GID=12
+	GameID int `fesl:"GID"`
+	// ALLOWED=1
+	// ALLOWED=0
+	Allow int `fesl:"ALLOWED"`
+	// PID=3
+	PlayerID int `fesl:"PID"`
+
+	// Reason is only sent when ALLOWED=0 and there is some kind of error
+	// REASON=-602
+	Reason string `fesl:"REASON,omitempty"`
+}
+
 type ansEGRS struct {
 	TID string `fesl:"TID"`
 	LID string `fesl:"LID"`

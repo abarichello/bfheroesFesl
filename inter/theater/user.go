@@ -10,6 +10,21 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+type reqUSER struct {
+	// TID=2
+	TID string `fesl:"TID"`
+	// LKEY=3c63a203-80d5-462a-9112-414345d40376
+	LobbyKey string `fesl:"LKEY"`
+	// CID=
+	ClientID string `fesl:"CID"`
+	// MAC=$0a0027000000
+	MACAddr string `fesl:"MAC"`
+	// SKU=125170
+	SKU string `fesl:"SKU"`
+	// NAME=
+	NAME string `fesl:"NAME"`
+}
+
 type answerUSER struct {
 	TID      string `fesl:"TID"`
 	Name     string `fesl:"NAME"` // ServerName

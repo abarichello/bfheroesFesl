@@ -13,10 +13,36 @@ import (
 //THIS IS THE HELLO PACKET
 const (
 	fsys             = "fsys"
-	fsysGetPingSites = "GetPingSites"
 	fsysHello        = "Hello"
+	fsysGetPingSites = "GetPingSites"
 	fsysPing         = "Ping"
 )
+
+// reqHello is definition of the fsys.Hello request call
+// Packet ID: [192 0 0 1]
+type reqHello struct {
+	// TXN stands for Taxon, sub-query name of the command.
+	// TXN=Hello
+	TXN string `fesl:"TXN"`
+	// clientString=bfwest-pc
+	ClientString string `fesl:"clientString"`
+	// sku=125170
+	Sku int `fesl:"sku"`
+	// locale=en_US
+	Locale string `fesl:"locale"`
+	// clientPlatform=PC
+	ClientPlatform string `fesl:"clientPlatform"`
+	// clientVersion="1.42.217478.0 "
+	ClientVersion string `fesl:"clientVersion"`
+	// SDKVersion=5.0.0.0.0
+	SdkVersion string `fesl:"SDKVersion"`
+	// protocolVersion=2.0
+	ProtocolVersion string `fesl:"protocolVersion"`
+	// fragmentSize=8096
+	FragmentSize int `fesl:"fragmentSize"`
+	// clientType=client-noreg
+	ClientType string `fesl:"clientType"`
+}
 
 type ansHello struct {
 	TXN           string          `fesl:"TXN"`
@@ -86,25 +112,6 @@ func (fm *Fesl) hello(event network.EvProcess) {
 	})
 }
 
-type ansMemCheck struct {
-	TXN      string `fesl:"TXN"`
-	Salt     string `fesl:"salt"`
-	memcheck string `fesl:"memcheck.[]"`
-}
-
-func (fm *Fesl) fsysMemCheck(event *network.EventNewClient) {	
-	event.Client.Answer(&codec.Packet{
-		Message: fsys,
-		Content: ansMemCheck{
-			TXN:      "MemCheck",
-			memcheck: "0",
-			Salt:     "0",
-		},
-		Send: 0xC0000000,
-	})
-}
-
-
 ///////////////////////////////////////////////
 type ansGoodbye struct {
 	TXN       string     `fesl:"TXN"`
@@ -151,9 +158,9 @@ func (fm *Fesl) GetPingSites(event network.EvProcess) {
 		Send:    event.Process.HEX,
 		Content: ansGetPingSites{
 			TXN:      fsysGetPingSites,
-			MinPings: 1,
+			MinPings: 0,
 			PingSites: []pingSite{
-				{"127.0.0.1", "iad", 1},
+				{"localhost", "iad", 1},
 			},
 		},
 	})

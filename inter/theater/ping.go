@@ -5,6 +5,10 @@ import (
 	"github.com/Synaxis/bfheroesFesl/inter/network/codec"
 )
 
+type reqPING struct {
+	TID string `fesl:"TID"`
+}
+
 type ansPING struct {
 	TID string `fesl:"TID"`
 }
