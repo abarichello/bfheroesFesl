@@ -78,6 +78,7 @@ func (fm *Fesl) NuLogin(event network.EvProcess) {
 	})
 }
 
+
 type ansNuLoginPersona struct {
 	TXN       string `fesl:"TXN"`
 	ProfileID string `fesl:"profileId"`

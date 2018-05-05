@@ -13,6 +13,11 @@ var (
 )
 
 type cfg struct {
+
+	// Telemetry
+	TelemetryIP    string `envconfig:"TELEMETRY_IP" default:"127.0.0.1"`
+	TelemetryPort  int    `envconfig:"TELEMETRY_PORT" default:"13505"`
+	TelemetryToken string `envconfig:"TELEMETRY_TOKEN"`
 	LogLevel string `envconfig:"LOG_LEVEL" default:"DEBUG"`
 
 	GameSpyIP string `envconfig:"GAMESPY_IP" default:"0.0.0.0"`

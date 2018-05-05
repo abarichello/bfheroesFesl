@@ -54,6 +54,7 @@ func (fm *Fesl) NuLoginServer(event network.EvProcess) {
 	})
 }
 
+
 //NuLoginPersonaServer Pre-Server Login (out of order ?)
 func (fm *Fesl) NuLoginPersonaServer(event network.EvProcess) {
 	if !event.Client.IsActive {
