@@ -18,10 +18,10 @@ const (
 )
 
 type ansGetTelemetryToken struct {
-	Taxon          string `fesl:"TXN"`
-	TelemetryToken string `fesl:"telemetryToken"`
-	Enabled        bool 	`fesl:"enabled"`
-	Disabled       bool   `fesl:"disabled"`
+	Taxon           string  `fesl:"TXN"`
+	TelemetryToken  string  `fesl:"telemetryToken"`
+	Enabled         bool    `fesl:"enabled"`
+	Disabled        bool    `fesl:"disabled"`
 }
 
 // GetTelemetryToken
