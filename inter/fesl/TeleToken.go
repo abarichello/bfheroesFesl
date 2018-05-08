@@ -21,7 +21,6 @@ type ansGetTelemetryToken struct {
 	Taxon          string `fesl:"TXN"`
 	TelemetryToken string `fesl:"telemetryToken"`
 	Enabled        bool 	`fesl:"enabled"`
-	Filters        string `fesl:"filters"`
 	Disabled       bool   `fesl:"disabled"`
 }
 
