@@ -34,7 +34,7 @@ func (fm *Fesl) Telemetry(event network.EvProcess) {
 			Taxon:          acctGetTelemetryToken,
 			TelemetryToken: `"teleToken"`,
 			Enabled:        false,
-			Disabled: 			true,
+			Disabled: 	true,
 		},
 
 		Send: event.Process.HEX,
