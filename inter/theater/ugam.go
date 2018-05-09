@@ -84,7 +84,7 @@ func (tM *Theater) UGAM(event network.EvProcess) {
 	}
 	_, err := tM.db.stmtUpdateGame.Exec(gameID)
 	if err != nil {
-		logrus.Println("UGAM ", err)
+		logrus.Println("======UGAM  Error==== ", err)
 	}
 
 	_, err = tM.db.setServerStatsStatement(keys).Exec(args...)

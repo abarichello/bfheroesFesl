@@ -52,9 +52,5 @@ func (tm *Theater) LLST(event network.EvProcess) {
 
 // GLST - CLIENT called to get a list of game servers? Irrelevant for heroes.
 func (tm *Theater) GLST(event network.EvProcess) {
-	if !event.Client.IsActive {
-		logrus.Println("Cli Left")
-		return
-	}
 	logrus.Println("GLST was called")
 }

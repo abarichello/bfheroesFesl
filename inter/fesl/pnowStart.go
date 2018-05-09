@@ -14,11 +14,24 @@ const (
 
 )
 
+type reqStart struct {
+	// TXN=Start
+	TXN string `fesl:"TXN"`
+	// partition.partition=
+	Partition string `fesl:"partition.partition"`
+	// debugLevel=off
+	debugLevel string `fesl:"debugLevel"`
+	// version=1
+	Version int `fesl:"version"`
+	// players.[]=1
+	//Players []reqStartPlayer
+}
+
 type Start struct {
-	ID    	string              			`fesl:"id.id"`
-	TXN  		string                   `fesl:"TXN"`
-	Props   string 								   `fesl:"props.{}.[]"`
-	idpart  string            			 `fesl:"id.partition"`
+	ID    				int              			   `fesl:"id.id"`
+	TXN  			    string                   `fesl:"TXN"`
+	Properties    string 								   `fesl:"props.{}.[]"`
+  Part  				string            			 `fesl:"id.partition"`
 
 }
 
@@ -28,13 +41,12 @@ func (fm *Fesl) Start(event network.EvProcess) {
 
 	event.Client.Answer(&codec.Packet{
 		Content: Start{
-			ID: "1",
 			TXN: "Start",
-			idpart: partition,
+			ID: 	1,
+			Part: event.Process.Msg[partition],
 		},
 		Send:    event.Process.HEX,
 		Message: pnow,
 	})
-	fm.Status(event)
 }
 

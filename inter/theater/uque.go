@@ -13,9 +13,6 @@ type ansUQUE struct {
 
 // UQUE - SERVER sent up, tell us if client is 'allowed' to join
 func (tm *Theater) UQUE(event network.EvProcess) {
-	if !event.Client.IsActive {
-		return
-	}
 	logrus.Println("=====UQUE=======")
 
 	event.Client.Answer(&codec.Packet{

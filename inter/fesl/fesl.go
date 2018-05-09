@@ -11,6 +11,7 @@ import (
 
 	"github.com/sirupsen/logrus"
 )
+
 // TXN stands for Taxon, sub-query name of the command
 // Fesl - handles incoming and outgoing FESL data
 type Fesl struct {
@@ -49,7 +50,7 @@ func New(name, bind string, server bool, conn *sql.DB, lvl *level.Level) *Fesl {
 func (fm *Fesl) run() {
 	// Close all database statements
 	defer fm.db.closeStatements()
-
+	
 	for {
 		select {
 		case event := <-fm.socket.EventChan:
@@ -82,6 +83,7 @@ func (fm *Fesl) run() {
 				fm.UpdateStats(event.Data.(network.EvProcess))
 			case "client.command.Start":
 				fm.Start(event.Data.(network.EvProcess))
+				fm.Status(event.Data.(network.EvProcess))			
 			// case "client.command.Cancel":
 			// 	fm.Cancel(event.Data.(network.EvProcess))
 			case "client.Goodbye":

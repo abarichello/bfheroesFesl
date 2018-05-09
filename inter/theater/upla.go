@@ -8,11 +8,9 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+// Update Player
 func (tM *Theater) UPLA(event network.EvProcess) {
-	if !event.Client.IsActive {
-		return
-	}
-	logrus.Println("==========UPLA===============")
+	logrus.Println("==========UPLA==========")
 	var args []interface{}
 
 	keys := 0

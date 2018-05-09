@@ -27,7 +27,7 @@ func (tm *Theater) HTSN(event network.EvProcess) {
 			Secret: 	"NOSECRET",
 			gameID: 	event.Process.Msg["GID"],
 			UGID: 		"NOGUID",
-			hostID:     event.Process.Msg["HPID"],
+			hostID:   event.Process.Msg["HPID"],
 		},
 	})
 }

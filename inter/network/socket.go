@@ -205,13 +205,13 @@ func NewSocketUDP(name, bind string, fesl bool) (*SocketUDP, error) {
 	var err error
 	serverAddr, err := net.ResolveUDPAddr("udp", socket.bind)
 	if err != nil {
-		logrus.Errorf("%s: Listening on %s threw an error.\n%v", socket.name, socket.bind, err)
+		logrus.Println("%s: Listening on %s threw an error.\n%v", socket.name, socket.bind, err)
 		return nil, err
 	}
 
 	socket.listen, err = net.ListenUDP("udp", serverAddr)
 	if err != nil {
-		logrus.Errorf("%s: Listening on %s threw an error.\n%v", socket.name, socket.bind, err)
+		logrus.Println("%s: Listening on %s threw an error.\n%v", socket.name, socket.bind, err)
 		return nil, err
 	}
 

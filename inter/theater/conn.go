@@ -36,15 +36,12 @@ type ansCONN struct {
 
 // CONN - Enters Theater
 func (tm *Theater) CONN(event network.EvProcess) {
-	if !event.Client.IsActive {
-		logrus.Println("Cli Left")
-		return
-	}
 
-	logrus.Println("======CONN===========")
+	logrus.Println("======CONN=========")
 	event.Client.Answer(&codec.Packet{
 		Message: thtrCONN,
 		Content: ansCONN{
+			//sendPacket->SetVar("ATIME", "NuLoginPersona");
 			TID:         event.Process.Msg["TID"],
 			ConnectedAt: time.Now().UTC().Unix(),
 			ConnTTL:     3600,

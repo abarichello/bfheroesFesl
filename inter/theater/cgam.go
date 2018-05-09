@@ -94,7 +94,7 @@ type reqCGAM struct {
 		JoinMode   string  `fesl:"JoindMode"`
 		J          string `fesl:"J"`
 		GameID     string `fesl:"GID"`
-		isRanked   bool   `fesl:"B-U-RANKED"`
+		isRanked   bool   `fesl:"B-U-UNRANKED"`
 	}
 	
 	// CGAM - CreateGameParameters
@@ -177,7 +177,7 @@ type reqCGAM struct {
 				LobbyID:    "1",  //should not be hardcoded
 				UGID:       answer["UGID"],
 				MaxPlayers: answer["MAX-PLAYERS"],
-				EKEY:       "O65zZ2D2A58mNrZw1hmuJw%3d%3d",
+				EKEY:       "TEST1234",
 				Secret:     "MargeSimpson",
 				JOIN:       answer["JOIN"],
 				isRanked:	  false,

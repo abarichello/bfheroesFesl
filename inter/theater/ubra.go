@@ -10,7 +10,6 @@ import (
 type reqUBRA struct {
 	// TID=5
 	TID int `fesl:"TID"`
-
 	// LID=1
 	LobbyID int `fesl:"LID"`
 	// GID=3
@@ -20,17 +19,15 @@ type reqUBRA struct {
 	START int `fesl:"START"`
 }
 
-
 type ansUBRA struct {
 	TID string `fesl:"TID"`
 	LID string `fesl:"LID"`
 	START int `fesl:"START"`
 }
 
-// UBRA - "UpdateBracket" updates players connected
+// UBRA - "UpdateBracket" updates players connected (AP)
 func (tM *Theater) UBRA(event network.EvProcess) {	
 	logrus.Println("=========UBRA===========")
-	//gdata := tM.level.NewObject("gdata", event.Process.Msg["GID"])
 
 	event.Client.Answer(&codec.Packet{
 		Message: thtrUBRA,
@@ -40,9 +37,10 @@ func (tM *Theater) UBRA(event network.EvProcess) {
 			START: 1,
 		}},
 	)
-
-	// if event.Process.Msg["START"] == "0" {
-	// 	gdata.Set("AP", "0")		
-	// }
+	gdata := tM.level.NewObject("gdata", event.Process.Msg["GID"])
+	 if event.Process.Msg["START"] == "1" {
+		 gdata.Set("AP", "0")		// AP = Active-Player FOR THAT Player
+		                        // If Player Entered -> Reset AP 
+	 }
 
 }

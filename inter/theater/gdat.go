@@ -2,6 +2,7 @@ package theater
 
 import (
 	"github.com/Synaxis/bfheroesFesl/inter/network"
+	"github.com/sirupsen/logrus"
 	"github.com/Synaxis/bfheroesFesl/inter/network/codec"
 )
 
@@ -102,15 +103,19 @@ type ansGDAT struct {
 
 // GDAT - CLIENT called to get data about the server
 func (tm *Theater) GDAT(event network.EvProcess) {
-
+	logrus.Println("=======GDAT======")
+////////////////////////////////////////////
 	gameID := event.Process.Msg["GID"]
 	gameServer := tm.level.NewObject("gdata", gameID)
+////////////////////////////////////////////
 
 	event.Client.Answer(&codec.Packet{
 		Message: thtrGDAT,
 		Content: ansGDAT{
 			TID:                  event.Process.Msg["TID"],
 			Ap:                   gameServer.Get("AP"),
+			GameID:               gameID,  //(GID)
+			LobbyID:              gameServer.Get("LID"),
 			ArmyDistribution:     gameServer.Get("B-U-army_distribution"),
 			AvailableVipsNation:  gameServer.Get("B-U-avail_vips_national"),
 			AvailableVipsRoyal:   gameServer.Get("B-U-avail_vips_royal"),
@@ -124,9 +129,7 @@ func (tm *Theater) GDAT(event network.EvProcess) {
 			PunkBusterEnabled:    gameServer.Get("B-U-punkb"),
 			IsRanked:             gameServer.Get("B-U-ranked"),
 			ServerType:           gameServer.Get("B-U-servertype"),
-			GameID:               gameServer.Get("GID"),
 			Join:                 gameServer.Get("JOIN"),
-			LobbyID:              gameServer.Get("LID"),
 			ServerName:           gameServer.Get("NAME"),
 			BMaxObservers:        gameServer.Get("B-maxObservers"),
 			BNumObservers:        gameServer.Get("B-numObservers"),

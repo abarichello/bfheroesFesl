@@ -11,11 +11,12 @@ type GetSessionId struct {
 
 func (fm *Fesl) gsumGetSessionID(event network.EvProcess) {
 
-	//Checks if we are a Server
+	////Checks if we are a Server
 	if fm.server {
 		return
 	}
 	if event.Client.HashState.Get("clientType") == "server" {
+		fm.NuLoginServer(event)
 		return
 	}
 

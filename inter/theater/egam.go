@@ -193,7 +193,7 @@ func (tm *Theater) EGAM(event network.EvProcess) {
 				IP:       gsData.Get("IP"),
 				Port:     gsData.Get("PORT"),
 				Huid:     "1",
-				Ekey:     "O65zZ2D2A58mNrZw1hmuJw%3d%3d",
+				Ekey:     "TEST1234",
 				Secret:   "MargeSimpson",
 				Ticket:   "2018751182",
 				IntIP:    gsData.Get("INT-IP"),

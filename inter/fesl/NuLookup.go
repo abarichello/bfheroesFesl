@@ -13,10 +13,17 @@ type ansNuLookupUserInfo struct {
 	UserInfo []userInfo `fesl:"userInfo"`
 }
 
+type userInfo struct {
+	Namespace    string `fesl:"namespace"`
+	XUID         int 		`fesl:"xuid"`
+	MasterUserID string `fesl:"masterUserId"`
+	UserID       string `fesl:"userId"`
+	UserName     string `fesl:"userName"`
+  ClientID     string `fesl:"cid"`
+
+}
+
 func (fm *Fesl) NuLookupUserInfo(event network.EvProcess) {
-	if !event.Client.IsActive {
-		return
-	}
 
 	if event.Client.HashState.Get("clientType") == "server" && event.Process.Msg["userInfo.0.userName"] == "MargeSimpson" {
 		fm.NuLookupUserInfoServer(event)
@@ -45,7 +52,8 @@ func (fm *Fesl) NuLookupUserInfo(event network.EvProcess) {
 			UserID:       id,
 			MasterUserID: id,
 			Namespace:    "MAIN",
-			XUID:         "24",
+			XUID:         24,
+			ClientID:     heroName,
 		})
 	}
 
@@ -76,7 +84,7 @@ func (fm *Fesl) NuLookupUserInfoServer(event network.EvProcess) {
 			UserInfo: []userInfo{
 				{
 					Namespace:    "MAIN",
-					XUID:         "24",
+					XUID:         24,
 					MasterUserID: "1",
 					UserID:       "1",
 					UserName:     servername,

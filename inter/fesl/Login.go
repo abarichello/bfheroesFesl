@@ -12,14 +12,6 @@ const (
 	acctNuLoginPersona   = "NuLoginPersona"
 )
 
-type userInfo struct {
-	Namespace    string `fesl:"namespace"`
-	XUID         string `fesl:"xuid"`
-	MasterUserID string `fesl:"masterUserId"`
-	UserID       string `fesl:"userId"`
-	UserName     string `fesl:"userName"`
-}
-
 type ansNuLogin struct {
 	TXN       string `fesl:"TXN"`
 	ProfileID string `fesl:"profileId"`

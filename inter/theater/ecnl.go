@@ -25,7 +25,7 @@ type ansECNL struct {
 // ECNL - EnterConnectionLost
 func (tm *Theater) ECNL(event network.EvProcess) {
 	logrus.Println("=============ECNL==============")
-	logrus.Println("=========SENT Leave Announcement for Player=======")
+	logrus.Println("========SENT Leave Announcement to Player======")
 	logrus.Println("HeroRQ")
 
 	event.Client.Answer(&codec.Packet{

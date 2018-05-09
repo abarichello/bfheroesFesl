@@ -37,11 +37,8 @@ func (tm *Theater) NewState(ident string) *level.State {
 
 // USER - Check User for Login - server not working atm
 func (tm *Theater) USER(event network.EvProcess) {
-	if !event.Client.IsActive {
-		logrus.Println("Cli Left")
-		return
-	}
-	logrus.Println("===============USER==============")
+
+	logrus.Println("=======USER========")
 	lkeyRedis := tm.level.NewObject("lkeys", event.Process.Msg["LKEY"])
 
 	redisState := tm.NewState(fmt.Sprintf(
