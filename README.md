@@ -7,7 +7,7 @@
 
    type glide init
 
-	glide install
+   glide install
 ```
 Remember to configure your GOPATH and type
 ==>```go build main.go && ./main.go```
