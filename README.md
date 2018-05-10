@@ -1,7 +1,14 @@
 [![HitCount](http://hits.dwyl.io/Synaxis/bfheroesFesl.svg)](http://hits.dwyl.io/Synaxis/bfheroesFesl)
 # Open Heroes Backend (FESL)
+```Run glide.exe
 ```UNFINISHED CODE```
 
+```Run glide.exe
+
+   type glide init
+
+	glide install
+```
 Remember to configure your GOPATH and type
 ==>```go build main.go && ./main.go```
 
