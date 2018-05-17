@@ -58,7 +58,7 @@ type reqEGRS struct {
 
 	// Reason is only sent when ALLOWED=0 and there is some kind of error
 	// REASON=-602
-	Reason string `fesl:"REASON,omitempty"`
+	Reason string `fesl:"REASON"`
 }
 
 type ansEGRS struct {
@@ -93,7 +93,7 @@ func (tm *Theater) EGRS(event network.EvProcess) {
 
 // Lobbies Data
 type ansGREM struct {
-	gameID   		string 	`fesl:"GID"`
+	gameID      string  `fesl:"GID"`
 	LID         string  `fesl:"LID"`
 }
 
