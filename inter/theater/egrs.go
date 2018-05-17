@@ -26,7 +26,7 @@ type ansEGRQ struct {
 	RUid         string `fesl:"R-UID"`
 	RUAccid      string `fesl:"R-U-accid"`
 	RUElo        string `fesl:"R-U-elo"`
-	Platform	   string `fesl:"PL"`
+	Platform     string `fesl:"PL"`
 	RUTeam       string `fesl:"R-U-team"`
 	RUKit        string `fesl:"R-U-kit"`
 	RULvl        string `fesl:"R-U-lvl"`
