@@ -28,29 +28,29 @@ func (client *Client) readFESLTLS(data []byte) []byte {
 	})
 }
 
-func (socket *SocketUDP) readFESL(data []byte, addr *net.UDPAddr) {
-	p := bytes.NewBuffer(data)
-	var HEX uint32
-	var length uint32
+// func (socket *SocketUDP) readFESL(data []byte, addr *net.UDPAddr) {
+// 	p := bytes.NewBuffer(data)
+// 	var HEX uint32
+// 	var length uint32
 
-	ContentType := string(data[:4])
-	p.Next(4)
+// 	ContentType := string(data[:4])
+// 	p.Next(4)
 
-	binary.Read(p, binary.BigEndian, &HEX)
-	binary.Read(p, binary.BigEndian, &length)
+// 	binary.Read(p, binary.BigEndian, &HEX)
+// 	binary.Read(p, binary.BigEndian, &length)
 
-	ContentRaw := data[12:]
-	Content := codec.DecodeFESL(ContentRaw)
+// 	ContentRaw := data[12:]
+// 	Content := codec.DecodeFESL(ContentRaw)
 
-	out := &ProcessFESL{
-		Query: ContentType,
-		HEX:   HEX,
-		Msg:   Content,
-	}
+// 	out := &ProcessFESL{
+// 		Query: ContentType,
+// 		HEX:   HEX,
+// 		Msg:   Content,
+// 	}
 
-	socket.EventChan <- SocketUDPEvent{Name: "command." + ContentType, Addr: addr, Data: out}
-	socket.EventChan <- SocketUDPEvent{Name: "command", Addr: addr, Data: out}
-}
+// 	socket.EventChan <- SocketUDPEvent{Name: "command." + ContentType, Addr: addr, Data: out}
+// 	socket.EventChan <- SocketUDPEvent{Name: "command", Addr: addr, Data: out}
+// }
 
 func (client *Client) readTLSPacket(data []byte) {
 	cmds, err := codec.ParseCommands(data)

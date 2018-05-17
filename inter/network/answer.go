@@ -1,7 +1,7 @@
 package network
 
 import (
-	//"bytes"
+	"bytes"
     //"errors"
 	//"io"
 	"net"
@@ -12,42 +12,13 @@ import (
 )
 
 
-
-//}
-
-// func (socket *SocketUDP) Answer(Packet *codec.Packet, addr *net.UDPAddr) error {
-// 	return Answer(Packet, func(buf *bytes.Buffer) error {
-// 		_, err := socket.listen.WriteToUDP(buf.Bytes(), addr)
-// 		return err
-// 	})
-// }
-
-
-func (socket *SocketUDP) Answer(packet *codec.Packet, addr *net.UDPAddr) error {
-	// Encode packet
-	buf, err := codec.
-		NewEncoder().
-		EncodePacket(packet)
-	if err != nil {
-		logrus.
-			WithError(err).
-			WithField("type", packet.Message).
-			Error("Cannot encode packet")
+func (socket *SocketUDP) Answer(Packet *codec.Packet, addr *net.UDPAddr) error {
+	return AnswerUDP(Packet, func(buf *bytes.Buffer) error {
+		_, err := socket.listen.WriteToUDP(buf.Bytes(), addr)
 		return err
-	}
-
-	// Send packet
-	_, err = socket.listen.WriteTo(buf.Bytes(), addr)
-	if err != nil {
-		logrus.
-			WithError(err).
-			WithField("type", packet.Message).
-			Warn("Cannot send encoded packet")
-		return err
-	}
-
-	return nil
+	})
 }
+
 
 // Close fires a close-event and closes the socket
 func (socket *SocketUDP) Close() {
@@ -60,23 +31,23 @@ func (socket *SocketUDP) Close() {
 
 
 
-// func Answer(Packet *codec.Packet, writer func(*bytes.Buffer) error) error {
-// 	logger := logrus.WithFields(logrus.Fields{"type": Packet.Message, "HEX": Packet.Send})
+func AnswerUDP(Packet *codec.Packet, writer func(*bytes.Buffer) error) error {
+	logger := logrus.WithFields(logrus.Fields{"type": Packet.Message, "HEX": Packet.Send})
 
-// 	encoder := codec.NewEncoder()
-// 	buf, err := encoder.EncodePacket(Packet)
-// 	if err != nil {
-// 		logger.WithError(err).Error("Cannot encode Packet")
-// 		return nil
-// 	}
+	encoder := codec.NewEncoder()
+	buf, err := encoder.EncodePacket(Packet)
+	if err != nil {
+		logger.WithError(err).Error("Cannot encode Packet")
+		return nil
+	}
 
-// 	err = writer(buf)
-// 	if err != nil {
-// 		logger.WithError(err).Error("Cannot write Packet")
-// 		return nil
-// 	}
-// 	return nil
-// }
+	err = writer(buf)
+	if err != nil {
+		logger.WithError(err).Error("Cannot write Packet")
+		return nil
+	}
+	return nil
+}
 
 func (client *Client) SendPacket(pkt []byte) error {
 	_, err := client.conn.Write(pkt)	
@@ -98,7 +69,6 @@ func (client *Client) Answer(Packet *codec.Packet) error {
 	if !client.IsActive {
 		logrus.Println("Trying to write to inactive Client.\n%v", Packet.Message)
 	}
-
 	
 	encoder := codec.NewEncoder()
 	buf, err := encoder.EncodePacket(Packet)

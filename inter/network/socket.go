@@ -3,10 +3,14 @@ package network
 import (
 	"crypto/tls"
 	"github.com/Synaxis/bfheroesFesl/config"
+	"github.com/Synaxis/bfheroesFesl/inter/network/codec"
+
 	"github.com/sirupsen/logrus"
 	"net"
 	"strings"
 	"time"
+	"bytes"
+	"encoding/binary"
 )
 
 // Socket is a basic event-based TCP-Server
@@ -223,53 +227,67 @@ func NewSocketUDP(name, bind string, fesl bool) (*SocketUDP, error) {
 func (socket *SocketUDP) run() {
 	buf := make([]byte, 8096)
 
-	for {
+	for socket.EventChan != nil {
 		n, addr, err := socket.listen.ReadFromUDP(buf)
 		if err != nil {
-			logrus.Println("%s: Error reading from UDP.%v", socket.name, err)
+			logrus.WithError(err).Error("Error reading from UDP", err)
 			socket.EventChan <- SocketUDPEvent{Name: "error", Addr: addr, Data: err}
 			continue
 		}
 
-		if socket.fesl {
-			socket.readFESL(buf[:n], addr)
-			continue
-		}
-
-		message := strings.TrimSpace(string(socket.XOr(buf[0:n])))
-
-		logrus.Println("UDP message:", message)
-
-		socket.EventChan <- SocketUDPEvent{Name: "data", Addr: addr, Data: message}
-
-		socket.processCommand(message, addr)
+		socket.readFESL(buf[:n], addr)
 	}
 }
 
-// XOr applies the gamespy XOr
-func (socket *SocketUDP) XOr(a []byte) []byte {
-	b := []byte("backend/GameSpy")
-	var res []byte
+func (socket *SocketUDP) readFESL(data []byte, addr *net.UDPAddr) {
+	p := bytes.NewBuffer(data)
+	var payloadID uint32
+	var payloadLen uint32
 
-	var k = 0
-	var i = 0
-	for i < len(a) {
-		if k > (len(b) - 1) {
-			k = 0
-		}
-		res = append(res, a[i]^b[k])
-		k++
-		i++
+	payloadType := string(data[:4])
+	p.Next(4)
+
+	binary.Read(p, binary.BigEndian, &payloadID)
+	binary.Read(p, binary.BigEndian, &payloadLen)
+
+	payload := codec.DecodeFESL(data[12:])
+
+	socket.EventChan <- SocketUDPEvent{
+		Name: payloadType,
+		Addr: addr,
+		Data: &codec.Command{
+			Query:     payloadType,
+			PayloadID: payloadID,
+			Message:   payload,
+		},
 	}
-
-	return res
 }
 
-// // Close fires a close-event and closes the socket
-// func (socket *SocketUDP) Close() {
-// 	// Fire closing event
-// 	socket.EventChan <- SocketUDPEvent{Name: "close", Addr: nil, Data: nil}
+func (socket *SocketUDP) WriteEncode(Packet *codec.Packet, addr *net.UDPAddr) error {
+	// Encode packet
+	buf, err := codec.
+		NewEncoder().
+		EncodePacket(Packet)
+	if err != nil {
+		logrus.
+			WithError(err).
+			WithField("type", Packet.Message).
+			Error("Cannot encode packet")
+		return err
+	}
 
-// 	// Close socket
-// 	socket.listen.Close()
-// }
+	// Send packet
+	_, err = socket.listen.WriteTo(buf.Bytes(), addr)
+	if err != nil {
+		logrus.
+			WithError(err).
+			WithField("type", Packet.Message).
+			Warn("Cannot send encoded packet")
+		return err
+	}
+
+	return nil
+}
+
+
+
