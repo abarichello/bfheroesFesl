@@ -18,7 +18,7 @@ type cfg struct {
 	TelemetryIP    string `envconfig:"TELEMETRY_IP" default:"127.0.0.1"`
 	TelemetryPort  int    `envconfig:"TELEMETRY_PORT" default:"13505"`
 	TelemetryToken string `envconfig:"TELEMETRY_TOKEN"`
-	LogLevel string `envconfig:"LOG_LEVEL" default:"DEBUG"`
+	LogLevel       string `envconfig:"LOG_LEVEL" default:"DEBUG"`
 
 	GameSpyIP string `envconfig:"GAMESPY_IP" default:"0.0.0.0"`
 
@@ -29,7 +29,7 @@ type cfg struct {
 	ThtrServerPort int    `envconfig:"THEATER_SERVER_PORT" default:"18056"`
 	ThtrAddr       string `envconfig:"THEATER_ADDR" default:"127.0.0.1"`
 
-	MessengerAddr string `envconfig:"MESSENGER_ADDR" default:"127.0.0.1"`
+	MessengerAddr string `envconfig:"MESSENGER_ADDR" default:"1127.0.0.1"`
 	LevelDBPath   string `envconfig:"LEVEL_DB_PATH" default:"_data/lvl.db"`
 }
 

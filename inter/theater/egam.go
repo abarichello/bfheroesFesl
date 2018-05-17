@@ -51,41 +51,7 @@ type ansEGAM struct {
 	GameID  string `fesl:"GID"`
 }
 
-type reqEGRQ struct {
-	reqEGAM
-}
 
-
-type ansEGRQ struct {
-	TID          string `fesl:"TID"`
-	Name         string `fesl:"NAME"`
-	UserID       string `fesl:"UID"`
-	PlayerID     string `fesl:"PID"`
-	Ticket       string `fesl:"TICKET"`
-	IP           string `fesl:"IP"`
-	Port         string `fesl:"PORT"`
-	IntIP        string `fesl:"INT-IP"`
-	IntPort      string `fesl:"INT-PORT"`
-	Ptype        string `fesl:"PTYPE"`
-	RUser        string `fesl:"R-USER"`
-	RUid         string `fesl:"R-UID"`
-	RUAccid      string `fesl:"R-U-accid"`
-	RUElo        string `fesl:"R-U-elo"`
-	Platform	   string `fesl:"PL"`
-	RUTeam       string `fesl:"R-U-team"`
-	RUKit        string `fesl:"R-U-kit"`
-	RULvl        string `fesl:"R-U-lvl"`
-	RUDataCenter string `fesl:"R-U-dataCenter"`
-	RUExternalIP string `fesl:"R-U-externalIp"`
-	RUInternalIP string `fesl:"R-U-internalIp"`
-	RUCategory   string `fesl:"R-U-category"`
-	RIntIP       string `fesl:"R-INT-IP"`
-	RIntPort     string `fesl:"R-INT-PORT"`
-	Xuid         string `fesl:"XUID"`
-	RXuid        string `fesl:"R-XUID"`
-	LobbyID      string `fesl:"LID"`
-	GameID       string `fesl:"GID"`
-}
 
 
 type reqEGEG struct {
@@ -124,6 +90,44 @@ func (tm *Theater) EGAM(event network.EvProcess) {
 			gameID,
 		},
 })
+
+
+type reqEGRQ struct {
+	reqEGAM
+}
+
+
+type ansEGRQ struct {
+	TID          string `fesl:"TID"`
+	Name         string `fesl:"NAME"`
+	UserID       string `fesl:"UID"`
+	PlayerID     string `fesl:"PID"`
+	Ticket       string `fesl:"TICKET"`
+	IP           string `fesl:"IP"`
+	Port         string `fesl:"PORT"`
+	IntIP        string `fesl:"INT-IP"`
+	IntPort      string `fesl:"INT-PORT"`
+	Ptype        string `fesl:"PTYPE"`
+	RUser        string `fesl:"R-USER"`
+	RUid         string `fesl:"R-UID"`
+	RUAccid      string `fesl:"R-U-accid"`
+	RUElo        string `fesl:"R-U-elo"`
+	Platform	   string `fesl:"PL"`
+	RUTeam       string `fesl:"R-U-team"`
+	RUKit        string `fesl:"R-U-kit"`
+	RULvl        string `fesl:"R-U-lvl"`
+	RUDataCenter string `fesl:"R-U-dataCenter"`
+	RUExternalIP string `fesl:"R-U-externalIp"`
+	RUInternalIP string `fesl:"R-U-internalIp"`
+	RUCategory   string `fesl:"R-U-category"`
+	RIntIP       string `fesl:"R-INT-IP"`
+	RIntPort     string `fesl:"R-INT-PORT"`
+	Xuid         string `fesl:"XUID"`
+	RXuid        string `fesl:"R-XUID"`
+	LobbyID      string `fesl:"LID"`
+	GameID       string `fesl:"GID"`
+}
+
 
 	// Get 4 stats for PID
 	rows, err := tm.db.getStatsStatement(4).Query(pid, "c_kit", "c_team", "elo", "level")

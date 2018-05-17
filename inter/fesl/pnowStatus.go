@@ -12,12 +12,12 @@ const (
 )
 
 type Status struct {
-	TXN  				 string                 `fesl:"TXN"`
-	ID    			 int              		  `fesl:"id.id"`
-	State 			 string                 `fesl:"sessionState"`
-	Props   		 int 								   	`fesl:"props.{}.[]"`
-	result  		 string 								`fesl:"props.{resultType}"`
-	idpart  		 string            			`fesl:"id.partition"`
+	TXN  		     string     `fesl:"TXN"`
+	ID    			 int        `fesl:"id.id"`
+	State 			 string     `fesl:"sessionState"`
+	Props   		 int 		`fesl:"props.{}.[]"`
+	result  		 string 	`fesl:"props.{resultType}"`
+	idpart  		 string     `fesl:"id.partition"`
 	Properties   map[string]interface{} `fesl:"props"`
 }
 
@@ -33,9 +33,8 @@ func (fm *Fesl) Status(event network.EvProcess) {
 	logrus.Println("=Status=")
 	
 	// continuos search
-	for j := range mm.Games {
-	gameID := j	
-
+for r := range mm.Games {
+	gameID := r	
 	gamesArr := []stGame{
 		{
 			GID:     gameID,
@@ -43,7 +42,6 @@ func (fm *Fesl) Status(event network.EvProcess) {
 			LobbyID: 1,
 		},
 	}
-
 	event.Client.Answer(&codec.Packet{
 		Send:    0x80000000,
 		Message: event.Process.Query,
@@ -60,4 +58,4 @@ func (fm *Fesl) Status(event network.EvProcess) {
 			},
 		}},
 	)
-}} // end for loop
+}} //end for

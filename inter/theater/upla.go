@@ -8,6 +8,38 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+
+type reqUPLA struct {
+	// TID=12
+	TID int `fesl:"TID"`
+	// GID=3
+	GameID int `fesl:"GID"`
+	// LID=1
+	LobbyID string `fesl:"LID"`
+	// PID=6
+	PlayerID int `fesl:"PID"`
+	// HMO=6
+	HostOwnerID int `fesl:"HMO"`
+
+	reqUPLAKeys
+}
+
+type reqUPLAKeys struct {
+	PlayerElo   *string `fesl:"P-elo"`
+	PlayerKills *string `fesl:"P-kills"`
+	PlayerKit   *string `fesl:"P-kit"`
+	PlayerLevel *string `fesl:"P-level"`
+	// P-ping=24
+	PlayerPing  *int    `fesl:"P-ping"`
+	PlayerScore *string `fesl:"P-score"`
+	PlayerTeam  *string `fesl:"P-team"`
+	// P-time="1 min 10 sec "
+	PlayerPlayedTime *string `fesl:"P-time"`
+	PlayerClientID   *string `fesl:"P-cid"`
+	PlayerDataCenter *string `fesl:"P-dc"`
+	PlayerIP         *string `fesl:"P-ip"`
+}
+
 // Update Player
 func (tM *Theater) UPLA(event network.EvProcess) {
 	logrus.Println("==========UPLA==========")
@@ -17,6 +49,7 @@ func (tM *Theater) UPLA(event network.EvProcess) {
 
 	pid := event.Process.Msg["PID"]
 	gid := event.Process.Msg["GID"]
+	//cid := event.Process.Msg["P-cid"]
 
 	// wtf
 	for index, value := range event.Process.Msg {

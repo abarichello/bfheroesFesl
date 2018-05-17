@@ -52,6 +52,31 @@ func (socket *SocketUDP) readFESL(data []byte, addr *net.UDPAddr) {
 	socket.EventChan <- SocketUDPEvent{Name: "command", Addr: addr, Data: out}
 }
 
+func (client *Client) readTLSPacket(data []byte) {
+	cmds, err := codec.ParseCommands(data)
+	if err != nil {
+		var extract string
+		if len(data) > 128 {
+			extract = string(data[:128])
+		} else {
+			extract = string(data)
+		}
+
+		logrus.
+			WithError(err).
+			WithField("extract", extract).
+			Error("Cannot parse commands (TLS)")
+		return
+	}
+	for _, cmd := range cmds {
+		client.receiver <- ClientEvent{
+			Name: "command." + cmd.Message["TXN"],
+			Data: cmd,
+		}
+	}
+}
+
+
 func readFesl(data []byte, fireEvent eventReadFesl) []byte {
 	p := bytes.NewBuffer(data)
 	i := 0

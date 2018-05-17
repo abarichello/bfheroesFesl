@@ -19,6 +19,7 @@ type Fesl struct {
 	db     *Database
 	level  *level.Level
 	socket *network.Socket
+
 	server bool
 }
 
@@ -104,10 +105,6 @@ func (fm *Fesl) run() {
 
 // TLS
 func (fm *Fesl) newClient(event network.EventNewClient) {
-	if !event.Client.IsActive {
-		logrus.Println("Client Left")
-		return
-	}
 	fm.fsysMemCheck(&event)
 
 	logrus.Println("Client Connecting")

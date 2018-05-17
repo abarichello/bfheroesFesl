@@ -9,7 +9,6 @@ import (
 const (
 	acct                 				= "acct"
 	acctNuGetAccount     				= "NuGetAccount"
-	//acctNuGetAccountByNuid    = "NuGetAccountByNuid"
 	acctNuGetPersonas    				= "NuGetPersonas"
 )
 

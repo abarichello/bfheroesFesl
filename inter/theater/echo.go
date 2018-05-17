@@ -27,10 +27,10 @@ func (tm *Theater) ECHO(event network.SocketUDPEvent) {
 			TID:       ECHO["TID"],
 			UGID:      ECHO["UGID"],
 			TYPE:      1,
+			Error: 		 0,
 			UID:       ECHO["UID"],
 			IP:        event.Addr.IP.String(),
 			Port:      event.Addr.Port,
-			Error: 0,						
 		},
 	}, event.Addr)
 }

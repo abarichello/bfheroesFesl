@@ -17,7 +17,7 @@ type ansNuLogin struct {
 	ProfileID string `fesl:"profileId"`
 	UserID    string `fesl:"userId"`
 	NucleusID string `fesl:"nuid"`
-	Encrypt   int   `fesl:"returnEncryptedInfo"`
+	Encrypt   int    `fesl:"returnEncryptedInfo"`
 	Lkey      string `fesl:"lkey"`
 }
 

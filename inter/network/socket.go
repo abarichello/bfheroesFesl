@@ -265,11 +265,11 @@ func (socket *SocketUDP) XOr(a []byte) []byte {
 	return res
 }
 
-// Close fires a close-event and closes the socket
-func (socket *SocketUDP) Close() {
-	// Fire closing event
-	socket.EventChan <- SocketUDPEvent{Name: "close", Addr: nil, Data: nil}
+// // Close fires a close-event and closes the socket
+// func (socket *SocketUDP) Close() {
+// 	// Fire closing event
+// 	socket.EventChan <- SocketUDPEvent{Name: "close", Addr: nil, Data: nil}
 
-	// Close socket
-	socket.listen.Close()
-}
+// 	// Close socket
+// 	socket.listen.Close()
+// }

@@ -1,9 +1,9 @@
 package network
 
 import (
-	"bytes"
-	"errors"
-	"io"
+	//"bytes"
+    //"errors"
+	//"io"
 	"net"
 
 	"github.com/Synaxis/bfheroesFesl/inter/network/codec"
@@ -11,39 +11,109 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-func (client *Client) Answer(Packet *codec.Packet) error {
-	if !client.IsActive {
-		logrus.Printf("%s: Trying to write to inactive Client.\n%v", client.name, Packet.Message)
-		return errors.New("Client NOT active.Can't send message")
+
+
+//}
+
+// func (socket *SocketUDP) Answer(Packet *codec.Packet, addr *net.UDPAddr) error {
+// 	return Answer(Packet, func(buf *bytes.Buffer) error {
+// 		_, err := socket.listen.WriteToUDP(buf.Bytes(), addr)
+// 		return err
+// 	})
+// }
+
+
+func (socket *SocketUDP) Answer(packet *codec.Packet, addr *net.UDPAddr) error {
+	// Encode packet
+	buf, err := codec.
+		NewEncoder().
+		EncodePacket(packet)
+	if err != nil {
+		logrus.
+			WithError(err).
+			WithField("type", packet.Message).
+			Error("Cannot encode packet")
+		return err
 	}
 
-	return Answer(Packet, func(buf *bytes.Buffer) error {
-		_, err := io.Copy(client.conn, buf)
+	// Send packet
+	_, err = socket.listen.WriteTo(buf.Bytes(), addr)
+	if err != nil {
+		logrus.
+			WithError(err).
+			WithField("type", packet.Message).
+			Warn("Cannot send encoded packet")
 		return err
-	})
+	}
+
+	return nil
 }
 
-func (socket *SocketUDP) Answer(Packet *codec.Packet, addr *net.UDPAddr) error {
-	return Answer(Packet, func(buf *bytes.Buffer) error {
-		_, err := socket.listen.WriteToUDP(buf.Bytes(), addr)
-		return err
-	})
+// Close fires a close-event and closes the socket
+func (socket *SocketUDP) Close() {
+	// Fire closing event
+	socket.EventChan <- SocketUDPEvent{Name: "close", Addr: nil, Data: nil}
+
+	// Close socket
+	socket.listen.Close()
 }
 
-func Answer(Packet *codec.Packet, writer func(*bytes.Buffer) error) error {
-	logger := logrus.WithFields(logrus.Fields{"type": Packet.Message, "HEX": Packet.Send})
 
+
+// func Answer(Packet *codec.Packet, writer func(*bytes.Buffer) error) error {
+// 	logger := logrus.WithFields(logrus.Fields{"type": Packet.Message, "HEX": Packet.Send})
+
+// 	encoder := codec.NewEncoder()
+// 	buf, err := encoder.EncodePacket(Packet)
+// 	if err != nil {
+// 		logger.WithError(err).Error("Cannot encode Packet")
+// 		return nil
+// 	}
+
+// 	err = writer(buf)
+// 	if err != nil {
+// 		logger.WithError(err).Error("Cannot write Packet")
+// 		return nil
+// 	}
+// 	return nil
+// }
+
+func (client *Client) SendPacket(pkt []byte) error {
+	_, err := client.conn.Write(pkt)	
+	if err != nil {
+		logrus.
+			WithError(err).
+			Warn("Cannot send encoded packet")
+		return err
+	}
+
+	logrus.
+		WithField("packet", string(pkt)).
+		Print("client.SendPacket")
+
+	return nil
+}
+
+func (client *Client) Answer(Packet *codec.Packet) error {
+	if !client.IsActive {
+		logrus.Println("Trying to write to inactive Client.\n%v", Packet.Message)
+	}
+
+	
 	encoder := codec.NewEncoder()
 	buf, err := encoder.EncodePacket(Packet)
 	if err != nil {
-		logger.WithError(err).Error("Cannot encode Packet")
-		return nil
+		logrus.
+			WithError(err).
+			WithField("Message", Packet.Message).
+			Error("Cannot encode packet")
+		return err
 	}
 
-	err = writer(buf)
-	if err != nil {
-		logger.WithError(err).Error("Cannot write Packet")
-		return nil
-	}
-	return nil
+	return client.SendPacket(buf.Bytes())
 }
+
+
+
+
+

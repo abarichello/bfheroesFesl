@@ -10,6 +10,7 @@ import (
 	"strings"
 	"sync"
 	"time"
+	"github.com/Synaxis/bfheroesFesl/inter/network/codec"
 
 	"github.com/Synaxis/bfheroesFesl/storage/level"
 
@@ -53,6 +54,8 @@ type Client struct {
 	conn       net.Conn
 	recvBuffer []byte
 	eventChan  chan ClientEvent
+	receiver   chan ClientEvent
+	sender      chan codec.Packet
 	IsActive   bool
 	reader     *bufio.Reader
 	HashState  *level.State
