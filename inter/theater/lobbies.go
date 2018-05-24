@@ -50,7 +50,7 @@ func (tm *Theater) LLST(event network.EvProcess) {
 	})
 }
 
-// GLST - CLIENT called to get a list of game servers? Irrelevant for heroes.
+// GLST - @todo remove
 func (tm *Theater) GLST(event network.EvProcess) {
 	logrus.Println("GLST was called")
 }
