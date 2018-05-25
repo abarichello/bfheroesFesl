@@ -76,7 +76,9 @@ type ansEGEG struct {
 }
 
 // EGAM - EnterGame
-func (tm *Theater) EGAM(event network.EvProcess) {	
+func (tm *Theater) EGAM(event network.EvProcess) {
+	
+	
 	gameID := event.Process.Msg["GID"]
 	externalIP := event.Client.IpAddr.(*net.TCPAddr).IP.String()
 	lobbyID := event.Process.Msg["LID"]
@@ -84,12 +86,10 @@ func (tm *Theater) EGAM(event network.EvProcess) {
 	logrus.Println("======SENT EGAM=======")
 	event.Client.Answer(&codec.Packet{
 		Message: thtrEGAM,
-		Content: ansEGAM{
-			event.Process.Msg["TID"],
-			lobbyID,
-			gameID,
-		},
-})
+		Content: ansEGAM{event.Process.Msg["TID"],lobbyID,gameID},
+	})
+
+
 
 
 type reqEGRQ struct {

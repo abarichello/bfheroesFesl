@@ -105,25 +105,17 @@ func (tm *Theater) Listen() {
 			case "client.command.CGAM":
 				go tm.CGAM(event.Data.(network.EvProcess))
 			case "client.command.UBRA":
-				go tm.UBRA(event.Data.(network.EvProcess))
-			case "client.command.RGAM":
-				go tm.UGAM(event.Data.(network.EvProcess))
+				go tm.UBRA(event.Data.(network.EvProcess))			
 			case "client.command.UGAM":
 				go tm.UGAM(event.Data.(network.EvProcess))
 			case "client.command.EGRS":
-				go tm.EGRS(event.Data.(network.EvProcess))
-			case "client.command.UQUE":
-				go tm.UQUE(event.Data.(network.EvProcess))
+				go tm.EGRS(event.Data.(network.EvProcess))			
 			case "client.command.PENT":
 				go tm.PENT(event.Data.(network.EvProcess))
 			case "client.command.PLVT":
 				go tm.PLVT(event.Data.(network.EvProcess))
 			case "client.command.UPLA":
-				go tm.UPLA(event.Data.(network.EvProcess))
-			case "client.command.HTSN":
-				go tm.UPLA(event.Data.(network.EvProcess))
-			 case "client.command.GREM":
-			 	go tm.GREM(event.Data.(network.EvProcess))
+				go tm.UPLA(event.Data.(network.EvProcess))		
 			case "client.close":
 				tm.close(event.Data.(network.EventClientClose))
 			case "client.command":

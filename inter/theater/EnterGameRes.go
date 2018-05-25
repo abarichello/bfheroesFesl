@@ -26,7 +26,7 @@ type ansEGRQ struct {
 	RUid         string `fesl:"R-UID"`
 	RUAccid      string `fesl:"R-U-accid"`
 	RUElo        string `fesl:"R-U-elo"`
-	Platform     string `fesl:"PL"`
+	Platform	   string `fesl:"PL"`
 	RUTeam       string `fesl:"R-U-team"`
 	RUKit        string `fesl:"R-U-kit"`
 	RULvl        string `fesl:"R-U-lvl"`
@@ -58,7 +58,7 @@ type reqEGRS struct {
 
 	// Reason is only sent when ALLOWED=0 and there is some kind of error
 	// REASON=-602
-	Reason string `fesl:"REASON"`
+	Reason string `fesl:"REASON,omitempty"`
 }
 
 type ansEGRS struct {
@@ -93,7 +93,7 @@ func (tm *Theater) EGRS(event network.EvProcess) {
 
 // Lobbies Data
 type ansGREM struct {
-	gameID      string  `fesl:"GID"`
+	gameID   		string 	`fesl:"GID"`
 	LID         string  `fesl:"LID"`
 }
 
