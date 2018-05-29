@@ -2,12 +2,20 @@
 # Open Heroes Backend (FESL)
 ```Run glide.exe
 ```UNFINISHED CODE```
+   
+   1 download the repository with git
+   git clone https://github.com/Synaxis/bfheroesFesl
+   
+   
+   2 copy the ENTIRE folder to your GOPATH
+   
+   3 Run glide.exe
 
-   Run glide.exe
+   4 type glide init
 
-   type glide init
-
-   glide install
+   5 glide install   
+   
+   6 finnaly go build main.go
 ```
 Remember to configure your GOPATH and type
 ==>```go build main.go && ./main.go```
