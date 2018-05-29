@@ -7,42 +7,27 @@ import (
 	"github.com/Synaxis/bfheroesFesl/inter/mm"
 	"github.com/Synaxis/bfheroesFesl/inter/network"
 	"github.com/Synaxis/bfheroesFesl/inter/network/codec"
-
 	"github.com/sirupsen/logrus"
 )
 
 // EGAM is sent to Game-Client
 type reqEGAM struct {
-	// GID=1
-	GameID int `fesl:"GID"`
-	// LID=1
-	LobbyID int `fesl:"LID"`
-	// PORT=54671
-	Port int `fesl:"PORT"`
-	// PTYPE=P
-	PlatformType int `fesl:"PTYPE"`
-	// R-INT-IP=192.168.0.101
-	RemoteIP string `fesl:"R-INT-IP"`
-	// R-INT-PORT=54671
-	RemotePort int `fesl:"R-INT-PORT"`
-	// R-U-accid=2
-	AccountID int `fesl:"R-U-accid"` // TODO: Hero or PlayerID? PlayerID :(
-	// R-U-category=3
-	Category int `fesl:"R-U-category"` // TODO: What exactly it is?
-	// R-U-dataCenter=iad
-	Region string `fesl:"R-U-dataCenter"`
-	// R-U-elo=1000
-	StatsElo int `fesl:"R-U-elo"`
-	// R-U-externalIp=127.0.0.1
-	ExternalIP string `fesl:"R-U-externalIp"`
-	// R-U-kit=0
-	StatsKit int `fesl:"R-U-kit"`
-	// R-U-lvl=1
-	StatsLevel int `fesl:"R-U-lvl"`
-	// R-U-team=1
-	StatsTeam int `fesl:"R-U-team"`
-	// TID=4
-	TID int `fesl:"TID"`
+    // GID=1
+    GameID int `fesl:"GID"`
+    LobbyID int `fesl:"LID"`
+    Port int `fesl:"PORT"`
+    PlatformType int `fesl:"PTYPE"`
+    RemoteIP string `fesl:"R-INT-IP"`
+    RemotePort int `fesl:"R-INT-PORT"`
+    AccountID int `fesl:"R-U-accid"` // TODO: Hero or PlayerID? PlayerID :(
+    Category int `fesl:"R-U-category"` // TODO: What exactly it is?
+    Region string `fesl:"R-U-dataCenter"`
+    StatsElo int `fesl:"R-U-elo"`
+    ExternalIP string `fesl:"R-U-externalIp"`
+    StatsKit int `fesl:"R-U-kit"`
+    StatsLevel int `fesl:"R-U-lvl"`
+    StatsTeam int `fesl:"R-U-team"`
+    TID int `fesl:"TID"
 }
 
 type ansEGAM struct {
@@ -50,9 +35,6 @@ type ansEGAM struct {
 	LobbyID string `fesl:"LID"`
 	GameID  string `fesl:"GID"`
 }
-
-
-
 
 type reqEGEG struct {
 	reqEGAM
@@ -76,8 +58,7 @@ type ansEGEG struct {
 }
 
 // EGAM - EnterGame
-func (tm *Theater) EGAM(event network.EvProcess) {
-	
+func (tm *Theater) EGAM(event network.EvProcess) {	
 	
 	gameID := event.Process.Msg["GID"]
 	externalIP := event.Client.IpAddr.(*net.TCPAddr).IP.String()
@@ -88,8 +69,6 @@ func (tm *Theater) EGAM(event network.EvProcess) {
 		Message: thtrEGAM,
 		Content: ansEGAM{event.Process.Msg["TID"],lobbyID,gameID},
 	})
-
-
 
 
 type reqEGRQ struct {
@@ -112,7 +91,7 @@ type ansEGRQ struct {
 	RUid         string `fesl:"R-UID"`
 	RUAccid      string `fesl:"R-U-accid"`
 	RUElo        string `fesl:"R-U-elo"`
-	Platform	   string `fesl:"PL"`
+	Platform     string `fesl:"PL"`
 	RUTeam       string `fesl:"R-U-team"`
 	RUKit        string `fesl:"R-U-kit"`
 	RULvl        string `fesl:"R-U-lvl"`
