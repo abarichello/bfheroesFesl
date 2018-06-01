@@ -268,7 +268,7 @@ CREATE TABLE IF NOT EXISTS `game_server_client` (
 --
 
 INSERT INTO `game_server_client` (`id`, `name`, `community_name`, `ip_address`, `client_version`, `port`) VALUES
-(1, '\"[iad]EA Battlefield Heroes Server(192.168.56.1:18569)\"', 'DICE', '192.168.0.10', '1.58.429030.0', 18569),
+(1, '\"[iad]EA Battlefield Heroes Server(192.168.56.1:18569)\"', 'DICE', '192.168.0.10', '1.58.429030.0', 18569);
 -- --------------------------------------------------------
 
 --
