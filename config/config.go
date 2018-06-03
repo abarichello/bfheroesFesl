@@ -29,7 +29,7 @@ type cfg struct {
 	ThtrServerPort int    `envconfig:"THEATER_SERVER_PORT" default:"18056"`
 	ThtrAddr       string `envconfig:"THEATER_ADDR" default:"127.0.0.1"`
 
-	MessengerAddr string `envconfig:"MESSENGER_ADDR" default:"1127.0.0.1"`
+	MessengerAddr string `envconfig:"MESSENGER_ADDR" default:"127.0.0.1"`
 	LevelDBPath   string `envconfig:"LEVEL_DB_PATH" default:"_data/lvl.db"`
 }
 

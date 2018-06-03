@@ -1,8 +1,8 @@
-hash: 159ea3bb20356717c301a4e5dd81d6ecd4313245bdab0ec8192b0ba4d4696f45
-updated: 2018-05-11T06:17:38.3032596-03:00
+hash: 067aec138e92a52c2dbf72e9f8cc6a9d5f7c246e0f3a5afa7dcbfa4918d92f32
+updated: 2018-06-03T02:32:03.479133774-03:00
 imports:
 - name: github.com/go-redis/redis
-  version: 877867d2845fbaf86798befe410b6ceb6f5c29a3
+  version: 0f9028adf0837cf93c9705817493e5f6997cf026
   subpackages:
   - internal
   - internal/consistenthash
@@ -12,7 +12,7 @@ imports:
   - internal/singleflight
   - internal/util
 - name: github.com/golang/snappy
-  version: 553a641470496b2327abcac10b36396bd98e45c9
+  version: 2e65f85255dbc3072edf28d6b5b8efc472979f5a
 - name: github.com/kelseyhightower/envconfig
   version: f611eb38b3875cc3bd991ca91c51d06446afa14c
 - name: github.com/satori/go.uuid
@@ -21,12 +21,23 @@ imports:
   version: c155da19408a8799da419ed3eeb0cb5db0ad5dbc
 - name: github.com/subosito/gotenv
   version: 009e1f9581dc712aba5682a279dee155ca3eeded
+- name: github.com/Synaxis/bfheroesFesl
+  version: 4df9e0735aff771cc4a57a51b9406ae4086c7b80
+  subpackages:
+  - config
+  - inter/fesl
+  - inter/mm
+  - inter/network
+  - inter/network/codec
+  - inter/theater
+  - storage/database
+  - storage/level
 - name: github.com/Synaxis/logrus
   version: c155da19408a8799da419ed3eeb0cb5db0ad5dbc
 - name: github.com/Synaxis/mysql
   version: a0583e0143b1624142adab07e0e97fe106d99561
 - name: github.com/syndtr/goleveldb
-  version: ae970a0732be3a1f5311da86118d37b9f4bd2a5a
+  version: 5d6fca44a948d2be89a9702de7717f0168403d3d
   subpackages:
   - leveldb
   - leveldb/cache
@@ -41,11 +52,11 @@ imports:
   - leveldb/table
   - leveldb/util
 - name: golang.org/x/crypto
-  version: 2d027ae1dddd4694d54f7a8b6cbe78dca8720226
+  version: df8d4716b3472e4a531c33cedbe537dae921a1a9
   subpackages:
   - ssh/terminal
 - name: golang.org/x/sys
-  version: 7dfd1290c7917b7ba22824b9d24954ab3002fe24
+  version: c11f84a56e43e20a78cee75a7c034031ecf57d1f
   subpackages:
   - unix
   - windows

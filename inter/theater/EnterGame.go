@@ -27,7 +27,7 @@ type reqEGAM struct {
     StatsKit int `fesl:"R-U-kit"`
     StatsLevel int `fesl:"R-U-lvl"`
     StatsTeam int `fesl:"R-U-team"`
-    TID int `fesl:"TID"
+    TID int `fesl:"TID"`
 }
 
 type ansEGAM struct {
