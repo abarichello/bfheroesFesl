@@ -12,11 +12,11 @@ const (
 )
 
 type Status struct {
-	TXN  		     string     `fesl:"TXN"`
+	TXN  		     	 string     `fesl:"TXN"`
 	ID    			 int        `fesl:"id.id"`
 	State 			 string     `fesl:"sessionState"`
-	Props   		 int 		`fesl:"props.{}.[]"`
-	result  		 string 	`fesl:"props.{resultType}"`
+	Props   		 int 	    `fesl:"props.{}.[]"`
+	result  		 string     `fesl:"props.{resultType}"`
 	idpart  		 string     `fesl:"id.partition"`
 	Properties   map[string]interface{} `fesl:"props"`
 }
