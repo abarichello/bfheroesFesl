@@ -24,8 +24,7 @@
    go build main.go
    
 ```
-Remember to configure your GOPATH and type
-==>```go build main.go && ./main.go```
+Remember to configure your GOPATH
 
 ## Configuration
 
