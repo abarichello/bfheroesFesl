@@ -13,21 +13,21 @@ import (
 // EGAM is sent to Game-Client
 type reqEGAM struct {
     // GID=1
-    GameID int `fesl:"GID"`
-    LobbyID int `fesl:"LID"`
-    Port int `fesl:"PORT"`
-    PlatformType int `fesl:"PTYPE"`
-    RemoteIP string `fesl:"R-INT-IP"`
-    RemotePort int `fesl:"R-INT-PORT"`
-    AccountID int `fesl:"R-U-accid"` // TODO: Hero or PlayerID? PlayerID :(
-    Category int `fesl:"R-U-category"` // TODO: What exactly it is?
-    Region string `fesl:"R-U-dataCenter"`
-    StatsElo int `fesl:"R-U-elo"`
-    ExternalIP string `fesl:"R-U-externalIp"`
-    StatsKit int `fesl:"R-U-kit"`
-    StatsLevel int `fesl:"R-U-lvl"`
-    StatsTeam int `fesl:"R-U-team"`
-    TID int `fesl:"TID"`
+    GameID 		int `fesl:"GID"`
+    LobbyID 		int `fesl:"LID"`
+    Port 		int `fesl:"PORT"`
+    PlatformType 	int `fesl:"PTYPE"`
+    RemoteIP 		string `fesl:"R-INT-IP"`
+    RemotePort 		int `fesl:"R-INT-PORT"`
+    AccountID 		int `fesl:"R-U-accid"` // accountID - same as ID 
+    Category 		int `fesl:"R-U-category"` 
+    Region s		tring `fesl:"R-U-dataCenter"`
+    StatsElo 		int `fesl:"R-U-elo"`
+    ExternalIP 		string `fesl:"R-U-externalIp"`
+    StatsKit 		int `fesl:"R-U-kit"`
+    StatsLevel 		int `fesl:"R-U-lvl"`
+    StatsTeam 		int `fesl:"R-U-team"`
+    TID 		int `fesl:"TID"`
 }
 
 type ansEGAM struct {
