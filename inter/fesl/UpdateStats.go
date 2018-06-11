@@ -192,9 +192,8 @@ func (fm *Fesl) UpdateStats(event network.EvProcess) {
 				}
 			}
 
-			// We need to select 3 values for each insert/update,
-			// owner, key and value
-			logrus.Println("Updating stats:", userId, owner, key, value)
+			//select the values for each insert/update,
+			logrus.Println("===========Updating STATS========LN 195===:", userId, owner, key, value)
 			args = append(args, userId)
 			args = append(args, owner)
 			args = append(args, key)
