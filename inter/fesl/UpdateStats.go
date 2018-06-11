@@ -10,6 +10,7 @@ import (
 
 const (
 	rankUpdateStats = "UpdateStats"
+	rank 		= "rank"
 )
 
 type ansUpdateStats struct {
@@ -32,22 +33,25 @@ type updateStat struct {
 }
 
 // UpdateStats - updates stats about a soldier
-func (fm *Fesl) UpdateStats(event network.EvProcess) {
-	if !event.Client.IsActive {
-		logrus.Println("Cli Left")
-		return
-	}
+func (fm *Fesl) UpdateStats(event network.EvProcess) {	
+	//go pointers
 	answer := event.Process.Msg
 	convert := strconv.Itoa
+	
+	//answer payload
 	ans := ansUpdateStats{TXN: rankUpdateStats, Users: []userStats{}}
-
+	//data types
 	userId := event.Client.HashState.Get("uID")
-
 	users, _ := strconv.Atoi(answer["u.[]"])
-	// ct0, _:= strconv.Atoi(answer["m_ct"])
+	
+	//Checks for afk/security
+	AFK := !event.Client.IsActive
+	if AFK {
+		logrus.Println("=AFK=")
+		return
+	}		
 
 	if users == 0 {
-		logrus.Warning("No u.[], defaulting to 1")
 		users = 1
 	}
 
@@ -62,17 +66,14 @@ func (fm *Fesl) UpdateStats(event network.EvProcess) {
 				return
 			}
 			if !ok { //check
+				logrus.Println("something's wrong")
 				return
 			}
 
 			userId = userIDhero
 			logrus.Println("Server updating stats")
 		}
-
-		if !ok { //check
-			return
-		}
-
+		
 		// Get current stats from DB
 		// Make args list for the statement->heroID userID, key1, key2, key3,..
 		stats := make(map[string]*stat)
@@ -93,6 +94,11 @@ func (fm *Fesl) UpdateStats(event network.EvProcess) {
 		rows, err := fm.db.getStatsStatement(keys).Query(argsGet...)
 		if err != nil {
 			logrus.Errorln("Failed gettings stats for hero "+owner, err.Error())
+		}
+		
+		if AFK {
+		   logrus.Println("client afk")
+		   return
 		}
 
 		// Get all stats to be sent
@@ -117,8 +123,8 @@ func (fm *Fesl) UpdateStats(event network.EvProcess) {
 			count++
 		}
 
-		if !event.Client.IsActive {
-			logrus.Println("Cli Left")
+		if AFK {
+			logrus.Println("Client AFK")
 			return
 		}
 
@@ -133,7 +139,7 @@ func (fm *Fesl) UpdateStats(event network.EvProcess) {
 		}
 		// End getStats routine
 
-		// Generate our argument list for the statement -> userId, owner, key1, value1, userId, owner, key2, value2, userId, owner, ...
+		// Generate our argument list for the statement -> userId, owner, key1, value1, userId, owner, key2, value2, userId, owner
 		var args []interface{}
 		keys, _ = strconv.Atoi(answer["u."+convert(i)+".s.[]"])
 		for j := 0; j < keys; j++ {
@@ -145,7 +151,7 @@ func (fm *Fesl) UpdateStats(event network.EvProcess) {
 			key := answer["u."+convert(i)+".s."+convert(j)+".k"]
 			value := answer["u."+convert(i)+".s."+convert(j)+".t"]
 			
-
+			//????
 			if value == "" {
 				logrus.Println("Updating stat", key+":", answer["u."+convert(i)+".s."+convert(j)+".v"], "+", stats[key].value)
 				// We are dealing with a number
@@ -159,7 +165,7 @@ func (fm *Fesl) UpdateStats(event network.EvProcess) {
 						logrus.Errorln("Skipping stat "+key, err)
 						event.Client.Answer(&codec.Packet{
 							Send:    event.Process.HEX,
-							Message: "rank",
+							Message: rank,
 							Content: ansUpdateStats{TXN: rankUpdateStats},
 						})
 						return
@@ -173,7 +179,7 @@ func (fm *Fesl) UpdateStats(event network.EvProcess) {
 							logrus.Errorln("Negative STATS", key)
 							event.Client.Answer(&codec.Packet{
 								Send:    event.Process.HEX,
-								Message: "rank",
+								Message: rank,
 								Content: ansUpdateStats{TXN: rankUpdateStats},
 							})
 							return
@@ -184,7 +190,7 @@ func (fm *Fesl) UpdateStats(event network.EvProcess) {
 						logrus.Errorln("Not allowed to process stat", key)
 						event.Client.Answer(&codec.Packet{
 							Send:    event.Process.HEX,
-							Message: "rank",
+							Message: rank,
 							Content: ansUpdateStats{TXN: rankUpdateStats},
 						})
 						return
@@ -193,7 +199,7 @@ func (fm *Fesl) UpdateStats(event network.EvProcess) {
 			}
 
 			//select the values for each insert/update,
-			logrus.Println("===========Updating STATS========LN 195===:", userId, owner, key, value)
+			logrus.Println("========Updating STATS======SUCCESS===:", userId, owner, key, value)
 			args = append(args, userId)
 			args = append(args, owner)
 			args = append(args, key)
@@ -208,7 +214,7 @@ func (fm *Fesl) UpdateStats(event network.EvProcess) {
 
 	event.Client.Answer(&codec.Packet{
 		Send:    event.Process.HEX,
-		Message: "rank",
+		Message: rank,
 		Content: ans,
 	})
 }
