@@ -1,8 +1,7 @@
 [![HitCount](http://hits.dwyl.io/Synaxis/bfheroesFesl.svg)](http://hits.dwyl.io/Synaxis/bfheroesFesl)
-# Open Heroes Backend (FESL)
-```Run glide.exe
-```UNFINISHED CODE```
-   
+# Open Heroes Backend Master Server
+   UNFINISHED CODE
+   ```How to
    1 download the repository with git
    git clone https://github.com/Synaxis/bfheroesFesl   
    
