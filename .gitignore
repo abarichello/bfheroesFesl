@@ -4,4 +4,5 @@ inter/network/1st.zip
 *.zip
 vendor
 *vendor
-
+glide.yaml
+glide.lock
