@@ -4,18 +4,20 @@
 ```UNFINISHED CODE```
    
    1 download the repository with git
-   git clone https://github.com/Synaxis/bfheroesFesl
-   
+   git clone https://github.com/Synaxis/bfheroesFesl   
    
    2 copy the ENTIRE folder to your GOPATH
-   
-   3 Run glide.exe
+   3- Open your favorite terminal/command
+   Windows CMD / git bash 
+   linux/Mac - terminal
+      
+   4 -> glide.exe
 
-   4 type glide init
+   5 -> glide init
 
-   5 glide install   
+   6 -> glide install   
    
-   6 finnaly go build main.go
+   7 -> go build main.go
 ```
 Remember to configure your GOPATH and type
 ==>```go build main.go && ./main.go```
@@ -50,7 +52,7 @@ DATABASE_NAME=tutorialDB
 DATABASE_HOST=127.0.0.1
 DATABASE_PASSWORD=dbPass
 LOG_LEVEL=DEBUG /INFO.
-=================================================================================================================================
+===========================================================================================================================
 # FESL PROTOCOL
 This provides the info about the Backend/FESL . Between the Master server , Fesl Server and Theather Server
 
@@ -78,17 +80,18 @@ A game client will first connect to the FESL server, then the HTTP server, then 
 ## FESL
 
 ### TLS
-On Start, both the game client and the game server will first connect to their respective, seperate FESL server. 
+On Start, both the game client and the game server will first connect to the FESL server(Which works like a Login). 
 The address of the FESL server is inside the game client/server exe HEX. 
-They are changed with an Hex editor.
 
-The default value is "bfwest-server.fesl.ea.com".
-
-Communication is encrypted with TLS. The game checks if the TLS certificate is Valid and disconnects if it doesn't match the EA certificate.
-We use the FESL Patch , from Aluigi , to patch this Check
+===changing it with an Hex editor==
+ search for "bfwest" , and put your IP / DNS there
+-> then search for ".com", and also replace with you IP / DNS
+==============================================================
+The game checks if the TLS certificate is Valid and disconnects if doesn't match the EA certificate.
+We use A Patch for this. From aluigi
 http://aluigi.altervista.org/patches/fesl.lpatch
 
-After the TLS handshake, FESL format these messages like this:
+After the TLS handshake, FESL format the Messages like this:
 
 |Offset (bytes) |Length (bytes)     |Data type                          |Field name    |
 |---------------|-------------------|-----------------------------------|--------------|
@@ -544,18 +547,9 @@ The following HTTPS paths are listed in the game executable:
         </product>
     </products>
     ``` 
-### Generating a BF2Random
-
-A BF2Random of length `n` consists of `n` characters chosen randomly from the following string:
-`0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ][`
-```
 Theater Protocol
 ## Theater
 The 3rd type of connection is the Theater connection and runs over TCP and UDP 
-The ports can be found inside the Readme.txt inside the original files
-A set of sockets is used by gameServer.exe and the gameClient.exe
+Ports used are listed at the Readme.txt inside the original files
 Packets received or sent from the UDP port are decoded/encoded using the "gamespy XOR"
-
-Copyright Disclaimer Under Section 107 of the Copyright Act 1976, allowance is made for "fair use" for purposes such as criticism, comment, news reporting, teaching, scholarship, and research. Fair use is a use permitted by copyright statute that might otherwise be infringing. Non-profit, educational or personal use tips the balance in favor of fair use.
-
-
+more info will be added soon.
