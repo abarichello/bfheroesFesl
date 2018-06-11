@@ -11,7 +11,6 @@ import (
 	"github.com/Synaxis/bfheroesFesl/config"
 	"github.com/Synaxis/bfheroesFesl/inter/fesl"
 	"github.com/Synaxis/bfheroesFesl/inter/theater"
-	//"github.com/Synaxis/bfheroesFesl/inter/matchmaking"
 	"github.com/Synaxis/bfheroesFesl/storage/database"
 	"github.com/Synaxis/bfheroesFesl/storage/level"
 
