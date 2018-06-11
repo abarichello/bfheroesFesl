@@ -3,20 +3,26 @@
    UNFINISHED CODE
    ```How to
    1 download the repository with git
+   
    git clone https://github.com/Synaxis/bfheroesFesl   
    
    2 copy the ENTIRE folder to your GOPATH
    3- Open your favorite terminal/command
    Windows CMD / git bash 
    linux/Mac - terminal
-      
-   4 -> glide.exe
-
-   5 -> glide init
-
-   6 -> glide install   
    
-   7 -> go build main.go
+   -Run Glide to download the vendor Packages
+   glide.exe
+
+   -Init your Settings 
+   glide init
+   
+   -Download it!
+   glide install   
+   
+   -Now build with Golang
+   go build main.go
+   
 ```
 Remember to configure your GOPATH and type
 ==>```go build main.go && ./main.go```
