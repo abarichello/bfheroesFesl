@@ -73,13 +73,12 @@ This specification provides details on the communication between the game client
 ##This document does not specify the protocol between game server and game client.##
 
 ## Master server overview
-The MASTER server has 3 components:
-1. Two FESL servers: a message based protocol server that handles authentication, quering account info, ...
-2. The Magma server: a HTTPS based server for more account info and addons(Store,Entitlements,friend list ,Bookmark)
-3. Two Theater servers: a message based protocol server that handles querying, joining, leaving, ... For Both game servers and clients
+The MASTER server has 3 components:(Note ,in this Code FESL and UDP are together , but you can make your own code and separate TCP from UDP. "Magma" API is already working standalone)
+1. The FESL Interface: a message based protocol server that handles authentication, quering account info,. It works like a Login..
 
-A game client will first connect to the FESL server, then the HTTP server, then the Theater server and finally the game server.
--> game server  = BFHeroes_w32ded.exe
+2. 1 UDP Server Interface: a message based protocol server that handles querying, joining, leaving, ... For Both game servers and clients
+
+3. "Magma server": an HTTPS API , it's essential for the login, because it parses the web_token(sessionId), and other game requests(Store,Entitlements,FriendSystem ,ServerBookmark), the reponse is parsed as XML
 
 ## FESL
 
