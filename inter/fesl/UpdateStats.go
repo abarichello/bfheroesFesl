@@ -85,6 +85,9 @@ func (fm *Fesl) UpdateStats(event network.EvProcess) {
 		for j := 0; j < keys; j++ {
 			argsGet = append(argsGet, answer["u."+convert(i)+".s."+convert(j)+".k"])
 			statsKeys[answer["u."+convert(i)+".s."+convert(j)+".k"]] = convert(j)
+			//if keys < 0 {
+				//keys = keys * -1
+			//}
 		}
 
 		rows, err := fm.db.getStatsStatement(keys).Query(argsGet...)
