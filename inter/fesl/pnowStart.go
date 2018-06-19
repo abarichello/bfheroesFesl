@@ -28,16 +28,17 @@ type reqStart struct {
 }
 
 type Start struct {
-	ID    				int              			   `fesl:"id.id"`
-	TXN  			    string                   `fesl:"TXN"`
-	Properties    string 								   `fesl:"props.{}.[]"`
-  Part  				string            			 `fesl:"id.partition"`
+	ID    				int                 `fesl:"id.id"`
+	TXN  			    string              `fesl:"TXN"`
+	Properties    		string 				`fesl:"props.{}.[]"`
+  	Part  				string              `fesl:"id.partition"`
 
 }
 
 // Start handles pnow.Start
 func (fm *Fesl) Start(event network.EvProcess) {
 	logrus.Println("==START==")
+	//var isSearching = true
 
 	event.Client.Answer(&codec.Packet{
 		Content: Start{

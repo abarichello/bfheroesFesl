@@ -21,7 +21,7 @@ type reqEGAM struct {
     RemotePort 		int `fesl:"R-INT-PORT"`
     AccountID 		int `fesl:"R-U-accid"` // accountID - same as ID 
     Category 		int `fesl:"R-U-category"` 
-    Region s		tring `fesl:"R-U-dataCenter"`
+    Region		string `fesl:"R-U-dataCenter"`
     StatsElo 		int `fesl:"R-U-elo"`
     ExternalIP 		string `fesl:"R-U-externalIp"`
     StatsKit 		int `fesl:"R-U-kit"`
@@ -128,6 +128,8 @@ type ansEGRQ struct {
 		stats[statsKey] = statsValue
 	}
 
+	//@todo something like this
+	//while(isSearching = true)
 	if gameServer, ok := mm.Games[gameID]; ok {
 		gsData := tm.level.NewObject("gdata", gameID)
 
@@ -154,7 +156,7 @@ type ansEGRQ struct {
 				RUKit:        stats["c_kit"],
 				RULvl:        stats["level"],
 				RUDataCenter: "iad",
-				Platform:	  	"PC",
+				Platform:	  "PC",
 				RUExternalIP: externalIP,
 				RUInternalIP: event.Process.Msg["R-INT-IP"],
 				RUCategory:   event.Process.Msg["R-U-category"],

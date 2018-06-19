@@ -10,7 +10,6 @@ import (
 
 const (
 	rankUpdateStats = "UpdateStats"
-	rank 		= "rank"
 )
 
 type ansUpdateStats struct {
