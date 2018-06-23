@@ -15,7 +15,7 @@ var (
 type cfg struct {
 
 	// Telemetry
-	TelemetryIP    string `envconfig:"TELEMETRY_IP" default:"127.0.0.1"`
+	TelemetryIP    string `envconfig:"TELEMETRY_IP" default:"bfhwest.ddns.net"`
 	TelemetryPort  int    `envconfig:"TELEMETRY_PORT" default:"13505"`
 	TelemetryToken string `envconfig:"TELEMETRY_TOKEN"`
 	LogLevel       string `envconfig:"LOG_LEVEL" default:"DEBUG"`
@@ -27,9 +27,9 @@ type cfg struct {
 
 	ThtrClientPort int    `envconfig:"THEATER_CLIENT_PORT" default:"18275"`
 	ThtrServerPort int    `envconfig:"THEATER_SERVER_PORT" default:"18056"`
-	ThtrAddr       string `envconfig:"THEATER_ADDR" default:"127.0.0.1"`
+	ThtrAddr       string `envconfig:"THEATER_ADDR" default:"bfhwest.ddns.net"`
 
-	MessengerAddr string `envconfig:"MESSENGER_ADDR" default:"127.0.0.1"`
+	MessengerAddr string `envconfig:"MESSENGER_ADDR" default:"bfhwest.ddns.net"`
 	LevelDBPath   string `envconfig:"LEVEL_DB_PATH" default:"_data/lvl.db"`
 }
 

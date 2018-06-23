@@ -1,18 +1,21 @@
 package fesl
 
 import (
+	"fmt"
+	"encoding/binary"
+	"net"
 	"github.com/Synaxis/bfheroesFesl/inter/mm"
 	"github.com/Synaxis/bfheroesFesl/inter/network"
 	"github.com/Synaxis/bfheroesFesl/inter/network/codec"
-	"github.com/sirupsen/logrus"
+	"github.com/sirupsen/logrus"	
 )
 
 const (
-	pnow 			= "pnow"
+	pnow = "pnow"
 )
 
 type Status struct {
-	TXN  		     	 string     `fesl:"TXN"`
+	TXN  		     string     `fesl:"TXN"`
 	ID    			 int        `fesl:"id.id"`
 	State 			 string     `fesl:"sessionState"`
 	Props   		 int 	    `fesl:"props.{}.[]"`
@@ -24,24 +27,27 @@ type Status struct {
 type stGame struct {
 	LobbyID int    `fesl:"lid"`
 	Fit     int    `fesl:"fit"`
-	GID     string `fesl:"gid"` //gameID to join
+	GID     string    `fesl:"gid"` //gameID to join
 }
 
 
 // Status comes after Start. tells info about desired server
 func (fm *Fesl) Status(event network.EvProcess) {
 	logrus.Println("=Status=")
-	
-	// continuos search
-for r := range mm.Games {
-	gameID := r	
-	gamesArr := []stGame{
-		{
-			GID:     gameID,
-			Fit:     1001,
-			LobbyID: 1,
-		},
-	}
+
+	IP := binary.BigEndian.Uint32(event.Client.IpAddr.(*net.TCPAddr).IP.To4())
+	gameID := mm.FindGIDs(event.Client.HashState.Get("heroID"), fmt.Sprint(IP))	
+
+	// // continuos search
+	// for GID := range gameID {
+	// 	gamesArr := []stGame{
+	// 	{
+	// 		GID:     gameID,
+	// 		Fit:     1001,
+	// 		LobbyID: 1,
+	// 	},
+	// }
+
 	event.Client.Answer(&codec.Packet{
 		Send:    0x80000000,
 		Message: event.Process.Query,
@@ -53,9 +59,10 @@ for r := range mm.Games {
 			Props: 2,
 			result: "JOIN",
 			Properties: map[string]interface{}{
-				"resultType": "JOIN",
-				"games":      gamesArr,
+				"gid": 	      gameID,
+				"fit": 		  999,
+				"lid":        1,
 			},
 		}},
 	)
-}} //end for
+} 
