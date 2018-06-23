@@ -32,7 +32,7 @@ func FindGIDs(heroID string, ip string) []string {
 	logrus.Println("====MATCHMAKING REQUEST==============")
 
 	client := &http.Client{Transport: tr}
-	url := "http://127.0.0.1/api/mm/findgame/" + heroID + "/" + ip
+	url := "http://bfhwest.ddns.net/api/mm/findgame/" + heroID + "/" + ip
 	logrus.Println(url)
 	logrus.Println("TESTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT")
 
