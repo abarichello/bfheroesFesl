@@ -28,7 +28,7 @@ type statsContainer struct {
 	OwnerType int         `fesl:"ownerType"`
 }
 
-// GetStatsForOwners - Gives a bunch of info for the Hero selection screen?
+// GetStatsForOwners - Data for all heroes in that account
 func (fm *Fesl) GetStatsForOwners(event network.EvProcess) {
 	if !event.Client.IsActive {
 		logrus.Println("Cli Left")
