@@ -1,6 +1,6 @@
 package mm
 
-//match making
+//gameFinder(gameID)
 
 import (
 	"crypto/tls"
