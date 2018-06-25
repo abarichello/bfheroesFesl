@@ -2,7 +2,6 @@ package fesl
 
 import (
 	"strconv"
-	
 	"github.com/Synaxis/bfheroesFesl/inter/network"
 	"github.com/Synaxis/bfheroesFesl/inter/network/codec"
 	"github.com/sirupsen/logrus"
@@ -32,27 +31,24 @@ type updateStat struct {
 }
 
 // UpdateStats - updates stats about a soldier
-func (fm *Fesl) UpdateStats(event network.EvProcess) {	
+func (fm *Fesl) UpdateStats(event network.EvProcess) {
 	//go pointers
 	answer := event.Process.Msg
 	convert := strconv.Itoa
-	
+
 	//answer payload
 	ans := ansUpdateStats{TXN: rankUpdateStats, Users: []userStats{}}
 	//data types
 	userId := event.Client.HashState.Get("uID")
 	users, _ := strconv.Atoi(answer["u.[]"])
-	
+
 	//Checks for afk/security
 	AFK := !event.Client.IsActive
 	if AFK {
 		logrus.Println("=AFK=")
 		return
-	}		
-
-	if users == 0 {
-		users = 1
 	}
+
 
 	for i := 0; i < users; i++ {
 		owner, ok := answer["u."+convert(i)+".o"]
@@ -72,7 +68,7 @@ func (fm *Fesl) UpdateStats(event network.EvProcess) {
 			userId = userIDhero
 			logrus.Println("Server updating stats")
 		}
-		
+
 		// Get current stats from DB
 		// Make args list for the statement->heroID userID, key1, key2, key3,..
 		stats := make(map[string]*stat)
@@ -85,16 +81,13 @@ func (fm *Fesl) UpdateStats(event network.EvProcess) {
 		for j := 0; j < keys; j++ {
 			argsGet = append(argsGet, answer["u."+convert(i)+".s."+convert(j)+".k"])
 			statsKeys[answer["u."+convert(i)+".s."+convert(j)+".k"]] = convert(j)
-			//if keys < 0 {
-				//keys = keys * -1
-			//}
 		}
 
 		rows, err := fm.db.getStatsStatement(keys).Query(argsGet...)
 		if err != nil {
 			logrus.Errorln("Failed gettings stats for hero "+owner, err.Error())
 		}
-		
+
 		if AFK {
 		   logrus.Println("client afk")
 		   return
@@ -149,7 +142,7 @@ func (fm *Fesl) UpdateStats(event network.EvProcess) {
 
 			key := answer["u."+convert(i)+".s."+convert(j)+".k"]
 			value := answer["u."+convert(i)+".s."+convert(j)+".t"]
-			
+
 			//????
 			if value == "" {
 				logrus.Println("Updating stat", key+":", answer["u."+convert(i)+".s."+convert(j)+".v"], "+", stats[key].value)
@@ -169,7 +162,7 @@ func (fm *Fesl) UpdateStats(event network.EvProcess) {
 						})
 						return
 					}
-					
+
 					if intValue <= 0 || event.Client.HashState.Get("clientType") == "server"  || key == "m_ct0" || key == "ks" || key == "ds"|| key == "c_ltp" || key == "c_sln" || key == "c_ltm" || key == "c_slm" || key == "c_wmid0" || key == "c_wmid1" || key == "c_tut" || key == "c_wmid2" {
 						// limit keys for server only(TODO CHANGE THIS)
 						newValue := stats[key].value + intValue

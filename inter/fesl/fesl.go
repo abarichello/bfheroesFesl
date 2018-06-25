@@ -2,10 +2,9 @@ package fesl
 
 import (
 	"database/sql"
-	"fmt"
 	"strings"
 	"time"
-
+	"fmt"
 	"github.com/Synaxis/bfheroesFesl/inter/network"
 	"github.com/Synaxis/bfheroesFesl/storage/level"
 
@@ -51,7 +50,7 @@ func New(name, bind string, server bool, conn *sql.DB, lvl *level.Level) *Fesl {
 func (fm *Fesl) run() {
 	// Close all database statements
 	defer fm.db.closeStatements()
-	
+
 	for {
 		select {
 		case event := <-fm.socket.EventChan:
@@ -61,7 +60,7 @@ func (fm *Fesl) run() {
 			case "client.command.Hello":
 				fm.hello(event.Data.(network.EvProcess))
 			case "client.command.Telemetry":
-				fm.Telemetry(event.Data.(network.EvProcess))				
+				fm.Telemetry(event.Data.(network.EvProcess))
 			case "client.command.NuLogin":
 				fm.NuLogin(event.Data.(network.EvProcess))
 			case "client.command.NuGetPersonas":
@@ -75,7 +74,7 @@ func (fm *Fesl) run() {
 			case "client.command.NuLookupUserInfo":
 				fm.NuLookupUserInfo(event.Data.(network.EvProcess))
 			case "client.command.NuLoginPersona":
-				fm.NuLoginPersona(event.Data.(network.EvProcess))		
+				fm.NuLoginPersona(event.Data.(network.EvProcess))
 			case "client.command.GetStatsForOwners":
 				fm.GetStatsForOwners(event.Data.(network.EvProcess))
 			case "client.command.GetPingSites":
@@ -84,19 +83,16 @@ func (fm *Fesl) run() {
 				fm.UpdateStats(event.Data.(network.EvProcess))
 			case "client.command.Start":
 				fm.Start(event.Data.(network.EvProcess))
-				fm.Status(event.Data.(network.EvProcess))			
-			// case "client.command.Cancel":
-			// 	fm.Cancel(event.Data.(network.EvProcess))
+				fm.Status(event.Data.(network.EvProcess))
 			case "client.Goodbye":
 				fm.Goodbye(event.Data.(network.EvProcess))
 			case "client.close":
 				fm.close(event.Data.(network.EventClientClose)) // TLS
 			case "client.command":
-				TXN := event.Data.(network.EvProcess).Process.Msg["TXN"]
+				txn := event.Data.(network.EvProcess).Process.Msg["TXN"]
 				logrus.WithFields(logrus.Fields{
-					"func": fm.name,
-					"message": fmt.Sprintf("%s/TXN:%s",
-						event.Name, TXN),
+				"func": fm.name,
+				"cmd": fmt.Sprintf("%s/TXN:%s", event.Name, txn),
 				})
 			}
 		}
@@ -116,11 +112,11 @@ func (fm *Fesl) newClient(event network.EventNewClient) {
 				return
 			}
 			select {
-			case <-event.Client.State.HeartTicker.C:				
+			case <-event.Client.State.HeartTicker.C:
 				fm.fsysMemCheck(&event)
 			}
 		}
-	}()
+	}() //-> go routine
 
 }
 

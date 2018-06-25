@@ -20,19 +20,19 @@ type Database struct {
 	stmtGetHeroByName           *sql.Stmt
 	stmtGetHeroByID             *sql.Stmt
 	stmtClearServerStats        *sql.Stmt
-	MapGetStatsQuery       		map[int]*sql.Stmt
-	MapGetServerStatsQuery 		map[int]*sql.Stmt
-	MapSetStatsQuery       		map[int]*sql.Stmt
-	MapSetServerStatsQuery 		map[int]*sql.Stmt
+	MapGetStatsQuery       			map[int]*sql.Stmt
+	MapGetServerStatsQuery 			map[int]*sql.Stmt
+	MapSetStatsQuery       			map[int]*sql.Stmt
+	MapSetServerStatsQuery 			map[int]*sql.Stmt
 }
 
 
 func NewDatabase(conn *sql.DB) (*Database, error) {
 	db := &Database{db: conn}
 
-	db.MapGetStatsQuery 		= make(map[int]*sql.Stmt)
-	db.MapGetServerStatsQuery 	= make(map[int]*sql.Stmt)
-	db.MapSetStatsQuery 		= make(map[int]*sql.Stmt)
+	db.MapGetStatsQuery = make(map[int]*sql.Stmt)
+	db.MapGetServerStatsQuery = make(map[int]*sql.Stmt)
+	db.MapSetStatsQuery = make(map[int]*sql.Stmt)
 
 	// Prepare database statements
 	db.prepareStatements()

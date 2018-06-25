@@ -28,7 +28,7 @@ type statsContainer struct {
 	OwnerType int         `fesl:"ownerType"`
 }
 
-// GetStatsForOwners - Data for all heroes in that account
+// GetStatsForOwners - Gives a bunch of info for the Hero selection screen?
 func (fm *Fesl) GetStatsForOwners(event network.EvProcess) {
 	if !event.Client.IsActive {
 		logrus.Println("Cli Left")
@@ -40,7 +40,7 @@ func (fm *Fesl) GetStatsForOwners(event network.EvProcess) {
 	convert := strconv.Itoa
 
 	ans := ansGetStatsForOwners{
-		TXN:   "GetStats", 
+		TXN:   "GetStats",
 		Stats: []statsContainer{},
 	}
 
