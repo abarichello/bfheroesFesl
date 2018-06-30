@@ -78,7 +78,8 @@ func (e *Encoder) EncodePacket(Packet *Packet) (*bytes.Buffer, error) {
 	if err := e.Encode(Packet.Content); err != nil {
 		return nil, err
 	}
-
+	
+//github.com/wxiaoguang/kcp-conn/blob/master/go/kcp/buffer.go
 // Append Packet length
 c := make([]byte, 4)
 binary.BigEndian.PutUint32(c, uint32(e.wr.Len()+12))
