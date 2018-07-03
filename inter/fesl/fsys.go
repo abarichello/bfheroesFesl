@@ -18,29 +18,20 @@ const (
 	fsysPing         = "Ping"
 )
 
+var firstLogin = true
+
+
 // reqHello is definition of the fsys.Hello request call
-// Packet ID: [192 0 0 1]
 type reqHello struct {
-	// TXN stands for Taxon, sub-query name of the command.
-	// TXN=Hello
 	TXN string `fesl:"TXN"`
-	// clientString=bfwest-pc
 	ClientString string `fesl:"clientString"`
-	// sku=125170
 	Sku int `fesl:"sku"`
-	// locale=en_US
 	Locale string `fesl:"locale"`
-	// clientPlatform=PC
 	ClientPlatform string `fesl:"clientPlatform"`
-	// clientVersion="1.42.217478.0 "
 	ClientVersion string `fesl:"clientVersion"`
-	// SDKVersion=5.0.0.0.0
 	SdkVersion string `fesl:"SDKVersion"`
-	// protocolVersion=2.0
 	ProtocolVersion string `fesl:"protocolVersion"`
-	// fragmentSize=8096
 	FragmentSize int `fesl:"fragmentSize"`
-	// clientType=client-noreg
 	ClientType string `fesl:"clientType"`
 }
 
@@ -61,9 +52,16 @@ type domainPartition struct {
 }
 
 func (fm *Fesl) hello(event network.EvProcess) {
-	if !event.Client.IsActive {
+	AFK := event.Client.IsActive
+	if !AFK {
 		logrus.Println("Cli Left")
 		return
+	}
+
+	
+	// var firstLogin = true
+	if !firstLogin {
+		fm.NuLogin(event)
 	}
 
 	redisState := fm.createState(fmt.Sprintf(
@@ -110,6 +108,10 @@ func (fm *Fesl) hello(event network.EvProcess) {
 		Message: fsys,
 		Send:    0xC0000001,
 	})
+	firstLogin = true
+	if !AFK {
+		return
+	}
 }
 
 ///////////////////////////////////////////////
@@ -134,7 +136,7 @@ func (fm *Fesl) Goodbye(event network.EvProcess) {
 	)
 }
 
-///////////////////////////////////////////////
+/////////////////////////////////////
 type ansGetPingSites struct {
 	TXN       string     `fesl:"TXN"`
 	MinPings  int        `fesl:"minPingSitesToPing"`
@@ -147,11 +149,8 @@ type pingSite struct {
 	Message int    `fesl:"type"`
 }
 
-// GetPingSites - Was used for Load-Balancer / Not working Now (but it's requested)
-func (fm *Fesl) GetPingSites(event network.EvProcess) {
-	if !event.Client.IsActive {
-		return
-	}
+// GetPingSites - used as LoadBalancer/Not working Now(but is requested)
+func (fm *Fesl) GetPingSites(event network.EvProcess) {	
 
 	event.Client.Answer(&codec.Packet{
 		Message: event.Process.Query,

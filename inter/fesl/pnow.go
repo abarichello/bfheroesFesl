@@ -8,81 +8,69 @@ import (
 )
 
 const (
-	partition = "partition.partition"
-	pnow 			= "pnow"
+	partition =		 "partition.partition"
 )
-
-type reqStart struct {
-	TXN 			string `fesl:"TXN"`
-	Partition string `fesl:"partition.partition"`
-	debugLevel string `fesl:"debugLevel"`
-
+type stPartition struct {
+	ID        int    `fesl:"id"`
+	Partition string `fesl:"partition"`
 }
 
 type Start struct {
-	ID    				int       `fesl:"id.id"`
-	TXN  			    string    `fesl:"TXN"`
-	Properties   	string 		`fesl:"props.{}.[]"`
-  Part  				string   	`fesl:"id.partition"`
+	ID  stPartition `fesl:"id"`
+	TXN string      `fesl:"TXN"`
 }
 
 // Start handles pnow.Start
 func (fm *Fesl) Start(event network.EvProcess) {
-	logrus.Println("==START==")
+	logrus.Println("--START--")
 
-	//var isSearching = true
 	event.Client.Answer(&codec.Packet{
-		Content: Start{
-			TXN: "Start",
-			ID: 	1,
-			Part: event.Process.Msg[partition],
+		Content: Start{TXN: "Start",
+			ID: stPartition{1, "eagames/bfwest-dedicated"},
 		},
 		Send:    event.Process.HEX,
-		Message: pnow,
+		Message: "pnow",
 	})
 }
-
-
 type Status struct {
-	TXN  				string    `fesl:"TXN"`
-	ID					int       `fesl:"id.id"`
-	State				string    `fesl:"sessionState"`
-	idpart  		string    `fesl:"id.partition"`
-	Props				int  		 	`fesl:"props.{}.[]"`
-	Properties  map[string]interface{} `fesl:"props"`
-	result  		string    `fesl:"props.{resultType}"`
+	TXN  				string    	`fesl:"TXN"`
+	ID					int      	`fesl:"id.id"`
+	State				string    	`fesl:"sessionState"`
+	idpart  			string   	`fesl:"id.partition"`
+	Props				int  		`fesl:"props.{}.[]"`
+	Properties  		map[string]interface{} `fesl:"props"`
+	result  			string    	`fesl:"props.{resultType}"`
 }
 
 type stGame struct {
-	LobbyID int    `fesl:"lid"`
-	Fit     int    `fesl:"fit"`
-	GID     string `fesl:"gid"` //gameID to join
+	LobbyID 	int    	`fesl:"lid"`
+	Fit     	int    	`fesl:"fit"`
+	GID     	string 	`fesl:"gid"` //gameID to join
 }
 
-func (fm *Fesl)ExampleDB_QueryRow() {
-
-}
 
 // Status comes after Start. tells info about desired server
 func (fm *Fesl) Status(event network.EvProcess) {
-	logrus.Println("=Status=")	
-	// gid := fm.db.stmtGetBookmark.QueryRow	
+	logrus.Println("--Status--")	
+
+	var err error
 
 	var gid string
-	userID := event.Client.HashState.Get("uID")
-	err := fm.db.stmtGetBookmark.QueryRow("SELECT gid FROM game_player_server_preferences WHERE userid=?", userID).Scan(&gid)
+	err = fm.db.stmtGetBookmark.QueryRow(event.Client.HashState.Get("uID")).Scan(&gid)
 	if err != nil {
 		return
 	}
 
-	gameID := gid
-	gamesArr := []stGame{
+	gamesArray := []stGame{
 		{
-			GID:     gameID,
+			GID:     gid,
 			Fit:     1001,
 			LobbyID: 1,
 		},
 	}
+
+	// if event.Process.Msg["props.{games}.0.gid=0"] {
+	// }
 
 	event.Client.Answer(&codec.Packet{
 		Send:    0x80000000,
@@ -96,7 +84,8 @@ func (fm *Fesl) Status(event network.EvProcess) {
 			result: "JOIN",
 			Properties: map[string]interface{}{
 				"resultType": "JOIN",
-				"games":      gamesArr,
+				"games":      gamesArray,				
 			}}},
+
 	)
 }//} //end for Loop

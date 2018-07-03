@@ -25,7 +25,7 @@ type Database struct {
 	MapGetServerStatsQuery 		map[int]*sql.Stmt
 	MapSetStatsQuery       		map[int]*sql.Stmt
 	MapSetServerStatsQuery 		map[int]*sql.Stmt
-	MapGetBookmark				map[int]*sql.Stmt	
+	// MapGetBookmark				map[int]*sql.Stmt	
 }
 
 
@@ -59,32 +59,32 @@ func MysqlRealEscapeString(value string) string {
 	return value
 }
 
-func (d *Database) getBookmark(statsAmount int) *sql.Stmt {
-	var err error
+// func (d *Database) getBookmark(statsAmount int) *sql.Stmt {
+// 	var err error
 
-	// Check if Statement is prepared
-	if statement, ok := d.MapGetServerStatsQuery[statsAmount]; ok {
-		return statement
-	}
+// 	// Check if Statement is prepared
+// 	if statement, ok := d.MapGetServerStatsQuery[statsAmount]; ok {
+// 		return statement
+// 	}
 
-	var query string
+// 	var query string
 
-	for i := 1; i < statsAmount; i++ {
-		query += "?, "
-	}
+// 	for i := 1; i < statsAmount; i++ {
+// 		query += "?, "
+// 	}
 
-	sql := "SELECT gid" +
-		"	FROM game_server_player_preferences" +
-		"	WHERE userid=?" +
-		"		AND statsKey IN (" + query + "?)"
+// 	sql := "SELECT gid" +
+// 		"	FROM game_server_player_preferences" +
+// 		"	WHERE userid=?" +
+// 		"		AND statsKey IN (" + query + "?)"
 
-	d.MapGetServerStatsQuery[statsAmount], err = d.db.Prepare(sql)
-	if err != nil {
-		logrus.Println("Error preparing MapGetServerStatsQuery with "+sql+" query.", err.Error())
-	}
+// 	d.MapGetServerStatsQuery[statsAmount], err = d.db.Prepare(sql)
+// 	if err != nil {
+// 		logrus.Println("Error preparing MapGetServerStatsQuery with "+sql+" query.", err.Error())
+// 	}
 
-	return d.MapGetBookmark[statsAmount]
-}
+// 	return d.MapGetBookmark[statsAmount]
+// }
 
 
 func (d *Database) getServerStatsQuery(statsAmount int) *sql.Stmt {
@@ -210,6 +210,14 @@ func (d *Database) prepareStatements() {
 	if err != nil {
 		logrus.Fatalln("Error preparing stmtGetHeroByID.", err.Error())
 	}
+
+	d.stmtGetBookmark, err = d.db.Prepare(
+		"SELECT gid" +
+		"	FROM game_player_server_preferences" +
+		"	WHERE userid = ?")
+		if err != nil {
+			logrus.Println("Error Bookmark", err.Error())
+		}
 
 	//Server Login
 	d.stmtGetServerBySecret, err = d.db.Prepare(

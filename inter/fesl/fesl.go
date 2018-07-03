@@ -105,7 +105,7 @@ func (fm *Fesl) newClient(event network.EventNewClient) {
 
 	logrus.Println("Client Connecting")
 	// Start Heartbeat
-	event.Client.State.HeartTicker = time.NewTicker(time.Second * 5)
+	event.Client.State.HeartTicker = time.NewTicker(time.Second * 999)
 	go func() {
 		for {
 			if !event.Client.IsActive {

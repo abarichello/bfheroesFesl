@@ -6,17 +6,6 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-const (
-	acctGetTelemetryToken = "GetTelemetryToken"
-	// acctNuCreateEncryptedToken = "NuCreateEncryptedToken"
-	// acctNuEntitleGame          = "NuEntitleGame"
-	// acctNuEntitleUser          = "NuEntitleUser"
-	// acctNuGetEntitlementCount  = "NuGetEntitlementCount"
-	// acctNuGetEntitlements      = "NuGetEntitlements"
-	// acctNuUpdateAccount        = "NuUpdateAccount"
-	// acctTransactionException   = "TransactionException"
-)
-
 type ansGetTelemetryToken struct {
 	Taxon           string  `fesl:"TXN"`
 	TelemetryToken  string  `fesl:"telemetryToken"`
@@ -30,10 +19,10 @@ func (fm *Fesl) Telemetry(event network.EvProcess) {
 
 	event.Client.Answer(&codec.Packet{		
 		Content: ansGetTelemetryToken{
-			Taxon:          acctGetTelemetryToken,
+			Taxon:          "GetTelemetryToken",
 			TelemetryToken: `"teleToken"`,
 			Enabled:        false,
-			Disabled: 	true,
+			Disabled: 		true,
 		},
 
 		Send: event.Process.HEX,

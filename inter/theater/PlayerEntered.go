@@ -8,13 +8,9 @@ import (
 )
 
 type reqPENT struct {
-	// TID=7
 	TID int `fesl:"TID"`
-	// LID=1
 	LobbyID int `fesl:"LID"`
-	// GID=72
 	GameID int `fesl:"GID"`
-	// PID=733
 	PlayerID int `fesl:"PID"`
 }
 

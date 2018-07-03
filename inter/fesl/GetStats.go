@@ -32,16 +32,11 @@ func (fm *Fesl) GetStats(event network.EvProcess) {
 		return
 	}
 
-	if event.Process.Msg["owner"] == "Current" {
-		// In tutorial "Current" is the name for the hero
-		//no stats retrieved
-		return
-	}
-
 	answer := event.Process.Msg
 	convert := strconv.Itoa
 	owner := event.Process.Msg["owner"]
 	userId := event.Client.HashState.Get("uID") //ultra typo
+
 
 	if event.Client.HashState.Get("clientType") == "server" {
 

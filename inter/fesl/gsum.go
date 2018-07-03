@@ -19,7 +19,9 @@ func (fm *Fesl) gsumGetSessionID(event network.EvProcess) {
 
 	event.Client.Answer(&codec.Packet{
 		Content: GetSessionId{
-			TXN: "GetSessionId"}, //yep , case sensitive
-			Message: "gsum",
+			TXN: "GetSessionId", //yep , case sensitive
+		},
+		Message: "gsum",
+
 	})
 }

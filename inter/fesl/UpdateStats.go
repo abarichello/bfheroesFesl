@@ -32,6 +32,7 @@ type updateStat struct {
 
 // UpdateStats - updates stats about a soldier
 func (fm *Fesl) UpdateStats(event network.EvProcess) {
+
 	//go pointers
 	answer := event.Process.Msg
 	convert := strconv.Itoa
@@ -43,6 +44,10 @@ func (fm *Fesl) UpdateStats(event network.EvProcess) {
 	users, _ := strconv.Atoi(answer["u.[]"])
 
 	//Checks for afk/security
+	if firstLogin{
+		logrus.Println("Test")
+		return
+	}
 	AFK := !event.Client.IsActive
 	if AFK {
 		logrus.Println("=AFK=")
