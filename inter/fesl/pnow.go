@@ -3,7 +3,7 @@ package fesl
 import (
 	"github.com/Synaxis/bfheroesFesl/inter/network"
 	"github.com/Synaxis/bfheroesFesl/inter/network/codec"
-	"github.com/Synaxis/bfheroesFesl/inter/mm"
+	//"github.com/Synaxis/bfheroesFesl/inter/mm"
 	"github.com/sirupsen/logrus"
 )
 
@@ -59,14 +59,23 @@ type stGame struct {
 	GID     string `fesl:"gid"` //gameID to join
 }
 
+func (fm *Fesl)ExampleDB_QueryRow() {
+
+}
 
 // Status comes after Start. tells info about desired server
 func (fm *Fesl) Status(event network.EvProcess) {
-	logrus.Println("=Status=")
+	logrus.Println("=Status=")	
+	// gid := fm.db.stmtGetBookmark.QueryRow	
 
-	// continuos search
-for r := range mm.Games {
-	gameID := r
+	var gid string
+	userID := event.Client.HashState.Get("uID")
+	err := fm.db.stmtGetBookmark.QueryRow("SELECT gid FROM game_player_server_preferences WHERE userid=?", userID).Scan(&gid)
+	if err != nil {
+		return
+	}
+
+	gameID := gid
 	gamesArr := []stGame{
 		{
 			GID:     gameID,
@@ -90,4 +99,4 @@ for r := range mm.Games {
 				"games":      gamesArr,
 			}}},
 	)
-}} //end for Loop
+}//} //end for Loop

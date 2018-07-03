@@ -15,11 +15,11 @@ type ansNuLookupUserInfo struct {
 
 type userInfo struct {
 	Namespace    string `fesl:"namespace"`
-	XUID         int 		`fesl:"xuid"`
+	XUID         int 	`fesl:"xuid"`
 	MasterUserID string `fesl:"masterUserId"`
 	UserID       string `fesl:"userId"`
 	UserName     string `fesl:"userName"`
-  ClientID     string `fesl:"cid"`
+ 	ClientID     string `fesl:"cid"`
 
 }
 
@@ -42,10 +42,9 @@ func (fm *Fesl) NuLookupUserInfo(event network.EvProcess) {
 		var id, userID, heroName, online string
 		err := fm.db.stmtGetHeroByName.QueryRow(heroNamePkt).Scan(&id, &userID, //br
 			&heroName, &online) //auth
-
-		if err != nil {
-			return
-		}
+			if err != nil {
+				return
+			}
 
 		answer.UserInfo = append(answer.UserInfo, userInfo{
 			UserName:     heroName,

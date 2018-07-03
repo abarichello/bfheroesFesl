@@ -12,6 +12,7 @@ type Database struct {
 	name string
 
 	// Database Statements
+	stmtGetBookmark				*sql.Stmt
 	stmtGetHeroByToken          *sql.Stmt
 	stmtGetServerBySecret       *sql.Stmt
 	stmtGetServerByID           *sql.Stmt
@@ -20,10 +21,11 @@ type Database struct {
 	stmtGetHeroByName           *sql.Stmt
 	stmtGetHeroByID             *sql.Stmt
 	stmtClearServerStats        *sql.Stmt
-	MapGetStatsQuery       			map[int]*sql.Stmt
-	MapGetServerStatsQuery 			map[int]*sql.Stmt
-	MapSetStatsQuery       			map[int]*sql.Stmt
-	MapSetServerStatsQuery 			map[int]*sql.Stmt
+	MapGetStatsQuery       		map[int]*sql.Stmt
+	MapGetServerStatsQuery 		map[int]*sql.Stmt
+	MapSetStatsQuery       		map[int]*sql.Stmt
+	MapSetServerStatsQuery 		map[int]*sql.Stmt
+	MapGetBookmark				map[int]*sql.Stmt	
 }
 
 
@@ -55,6 +57,33 @@ func MysqlRealEscapeString(value string) string {
 	}
 
 	return value
+}
+
+func (d *Database) getBookmark(statsAmount int) *sql.Stmt {
+	var err error
+
+	// Check if Statement is prepared
+	if statement, ok := d.MapGetServerStatsQuery[statsAmount]; ok {
+		return statement
+	}
+
+	var query string
+
+	for i := 1; i < statsAmount; i++ {
+		query += "?, "
+	}
+
+	sql := "SELECT gid" +
+		"	FROM game_server_player_preferences" +
+		"	WHERE userid=?" +
+		"		AND statsKey IN (" + query + "?)"
+
+	d.MapGetServerStatsQuery[statsAmount], err = d.db.Prepare(sql)
+	if err != nil {
+		logrus.Println("Error preparing MapGetServerStatsQuery with "+sql+" query.", err.Error())
+	}
+
+	return d.MapGetBookmark[statsAmount]
 }
 
 

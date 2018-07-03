@@ -1,8 +1,10 @@
 
 storage/kvstore/hash.go
-inter/network/1st.zip
+
 *.zip
 vendor
 *vendor
+_data
+bfheroesFesl.exe
 glide.yaml
 glide.lock
