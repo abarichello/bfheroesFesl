@@ -43,11 +43,11 @@ func (fm *Fesl) UpdateStats(event network.EvProcess) {
 	userId := event.Client.HashState.Get("uID")
 	users, _ := strconv.Atoi(answer["u.[]"])
 
-	//Checks for afk/security
-	if firstLogin{
-		logrus.Println("Test")
-		return
-	}
+	// //Checks for afk/security
+	// if firstLogin{
+	// 	logrus.Println("Test")
+	// 	return
+	// }
 	AFK := !event.Client.IsActive
 	if AFK {
 		logrus.Println("=AFK=")
