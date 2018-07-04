@@ -3,30 +3,38 @@ package fesl
 import (
 	"github.com/Synaxis/bfheroesFesl/inter/network"
 	"github.com/Synaxis/bfheroesFesl/inter/network/codec"
-	//"github.com/Synaxis/bfheroesFesl/inter/mm"
 	"github.com/sirupsen/logrus"
 )
 
 const (
-	partition =		 "partition.partition"
+	partition = "partition.partition"
 )
-type stPartition struct {
-	ID        int    `fesl:"id"`
-	Partition string `fesl:"partition"`
+
+type reqStart struct {
+	TXN string `fesl:"TXN"`
+	Partition string `fesl:"partition.partition"`
+	debugLevel string `fesl:"debugLevel"`
+	Version int `fesl:"version"`
 }
 
 type Start struct {
-	ID  stPartition `fesl:"id"`
-	TXN string      `fesl:"TXN"`
+	ID    				int                 `fesl:"id.id"`
+	TXN  			    string              `fesl:"TXN"`
+	Properties    		string 				`fesl:"props.{}.[]"`
+  	Part  				string              `fesl:"id.partition"`
+
 }
 
 // Start handles pnow.Start
 func (fm *Fesl) Start(event network.EvProcess) {
-	logrus.Println("--START--")
+	logrus.Println("==START==")
+	//var isSearching = true
 
 	event.Client.Answer(&codec.Packet{
-		Content: Start{TXN: "Start",
-			ID: stPartition{1, "eagames/bfwest-dedicated"},
+		Content: Start{
+			TXN: "Start",
+			ID: 	1,
+			Part: event.Process.Msg[partition],
 		},
 		Send:    event.Process.HEX,
 		Message: "pnow",
