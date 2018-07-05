@@ -6,10 +6,6 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-const (
-	partition = "partition.partition"
-)
-
 type reqStart struct {
 	TXN string `fesl:"TXN"`
 	Partition string `fesl:"partition.partition"`
@@ -34,7 +30,7 @@ func (fm *Fesl) Start(event network.EvProcess) {
 		Content: Start{
 			TXN: "Start",
 			ID: 	1,
-			Part: event.Process.Msg[partition],
+			Part: event.Process.Msg["partition.partition"],
 		},
 		Send:    event.Process.HEX,
 		Message: "pnow",
@@ -61,9 +57,8 @@ type stGame struct {
 func (fm *Fesl) Status(event network.EvProcess) {
 	logrus.Println("--Status--")	
 
-	var err error
-
-	var gid string
+	var gid  string
+	var err  error
 	err = fm.db.stmtGetBookmark.QueryRow(event.Client.HashState.Get("uID")).Scan(&gid)
 	if err != nil {
 		return
@@ -77,23 +72,22 @@ func (fm *Fesl) Status(event network.EvProcess) {
 		},
 	}
 
-	// if event.Process.Msg["props.{games}.0.gid=0"] {
-	// }
+	//if event.Process.Msg["props.{games}.0.gid=0"]
+	
 
-	event.Client.Answer(&codec.Packet{
-		Send:    0x80000000,
-		Message: event.Process.Query,
+	event.Client.Answer(&codec.Packet{		
 		Content: Status{
 			TXN:   "Status",
 			State: "COMPLETE",
 			ID:    1,
-			idpart: event.Process.Msg[partition],
+			idpart: event.Process.Msg["partition.partition"],
 			Props: 2,
 			result: "JOIN",
 			Properties: map[string]interface{}{
 				"resultType": "JOIN",
-				"games":      gamesArray,				
-			}}},
-
-	)
-}//} //end for Loop
+				"games":      gamesArray},
+		},
+		Send:    0x80000000,
+		Message: "pnow",
+	})
+}

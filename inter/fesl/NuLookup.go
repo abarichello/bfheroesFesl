@@ -47,12 +47,12 @@ func (fm *Fesl) NuLookupUserInfo(event network.EvProcess) {
 			}
 
 		answer.UserInfo = append(answer.UserInfo, userInfo{
+			ClientID:     heroName,
 			UserName:     heroName,
 			UserID:       id,
 			MasterUserID: id,
 			Namespace:    "MAIN",
 			XUID:         24,
-			ClientID:     heroName,
 		})
 	}
 
@@ -76,6 +76,7 @@ func (fm *Fesl) NuLookupUserInfoServer(event network.EvProcess) {
 		logrus.Errorln(err)
 		return
 	}
+
 	HEX := event.Process.HEX
 	event.Client.Answer(&codec.Packet{
 		Content: ansNuLookupUserInfo{
