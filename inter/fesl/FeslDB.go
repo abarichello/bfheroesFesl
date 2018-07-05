@@ -12,22 +12,21 @@ type Database struct {
 	name string
 
 	// Database Statements
-	stmtGetBookmark				*sql.Stmt
-	stmtGetHeroByToken          *sql.Stmt
-	stmtGetServerBySecret       *sql.Stmt
-	stmtGetServerByID           *sql.Stmt
-	stmtGetServerByName         *sql.Stmt
-	stmtGetHeroesByUserID       *sql.Stmt
-	stmtGetHeroByName           *sql.Stmt
-	stmtGetHeroByID             *sql.Stmt
-	stmtClearServerStats        *sql.Stmt
-	MapGetStatsQuery       		map[int]*sql.Stmt
-	MapGetServerStatsQuery 		map[int]*sql.Stmt
-	MapSetStatsQuery       		map[int]*sql.Stmt
-	MapSetServerStatsQuery 		map[int]*sql.Stmt
-	// MapGetBookmark				map[int]*sql.Stmt	
+	stmtGetBookmark        *sql.Stmt
+	stmtGetHeroByToken     *sql.Stmt
+	stmtGetServerBySecret  *sql.Stmt
+	stmtGetServerByID      *sql.Stmt
+	stmtGetServerByName    *sql.Stmt
+	stmtGetHeroesByUserID  *sql.Stmt
+	stmtGetHeroByName      *sql.Stmt
+	stmtGetHeroByID        *sql.Stmt
+	stmtClearServerStats   *sql.Stmt
+	MapGetStatsQuery       map[int]*sql.Stmt
+	MapGetServerStatsQuery map[int]*sql.Stmt
+	MapSetStatsQuery       map[int]*sql.Stmt
+	MapSetServerStatsQuery map[int]*sql.Stmt
+	// MapGetBookmark				map[int]*sql.Stmt
 }
-
 
 func NewDatabase(conn *sql.DB) (*Database, error) {
 	db := &Database{db: conn}
@@ -46,7 +45,6 @@ func NewDatabase(conn *sql.DB) (*Database, error) {
 
 	return db, nil
 }
-
 
 // MysqlRealEscapeString - you know
 func MysqlRealEscapeString(value string) string {
@@ -86,7 +84,6 @@ func MysqlRealEscapeString(value string) string {
 // 	return d.MapGetBookmark[statsAmount]
 // }
 
-
 func (d *Database) getServerStatsQuery(statsAmount int) *sql.Stmt {
 	var err error
 
@@ -113,7 +110,6 @@ func (d *Database) getServerStatsQuery(statsAmount int) *sql.Stmt {
 
 	return d.MapGetServerStatsQuery[statsAmount]
 }
-
 
 func (d *Database) getStatsStatement(statsAmount int) *sql.Stmt {
 	var err error
@@ -143,7 +139,6 @@ func (d *Database) getStatsStatement(statsAmount int) *sql.Stmt {
 	return d.MapGetStatsQuery[statsAmount]
 }
 
-
 func (d *Database) setStatsStatement(statsAmount int) *sql.Stmt {
 	var err error
 
@@ -171,7 +166,6 @@ func (d *Database) setStatsStatement(statsAmount int) *sql.Stmt {
 
 	return d.MapSetStatsQuery[statsAmount]
 }
-
 
 func (d *Database) prepareStatements() {
 	var err error
@@ -213,11 +207,11 @@ func (d *Database) prepareStatements() {
 
 	d.stmtGetBookmark, err = d.db.Prepare(
 		"SELECT gid" +
-		"	FROM game_player_server_preferences" +
-		"	WHERE userid = ?")
-		if err != nil {
-			logrus.Println("Error Bookmark", err.Error())
-		}
+			"	FROM game_player_server_preferences" +
+			"	WHERE userid = ?")
+	if err != nil {
+		logrus.Println("Error Bookmark", err.Error())
+	}
 
 	//Server Login
 	d.stmtGetServerBySecret, err = d.db.Prepare(
@@ -278,4 +272,3 @@ func (d *Database) closeStatements() {
 		d.MapSetStatsQuery[index].Close()
 	}
 }
-

@@ -43,13 +43,11 @@ const (
 	ThtrUser                 = "USER"
 )
 
-
 type Packet struct {
 	Message string
 	Send    uint32
 	Content interface{}
 }
-
 
 type RawPacket struct {
 	// Query first 4 bytes
@@ -102,4 +100,3 @@ func ExtractPacket(buf *bytes.Buffer) (*RawPacket, error) {
 	}
 	return pkt, nil
 }
-

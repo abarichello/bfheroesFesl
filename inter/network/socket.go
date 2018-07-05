@@ -5,12 +5,12 @@ import (
 	"github.com/Synaxis/bfheroesFesl/config"
 	"github.com/Synaxis/bfheroesFesl/inter/network/codec"
 
+	"bytes"
+	"encoding/binary"
 	"github.com/sirupsen/logrus"
 	"net"
 	"strings"
 	"time"
-	"bytes"
-	"encoding/binary"
 )
 
 // Socket is a basic event-based TCP-Server
@@ -288,6 +288,3 @@ func (socket *SocketUDP) WriteEncode(Packet *codec.Packet, addr *net.UDPAddr) er
 
 	return nil
 }
-
-
-

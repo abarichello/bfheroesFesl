@@ -1,15 +1,15 @@
 package fesl
 
 import (
-	"github.com/satori/go.uuid"	
 	"github.com/Synaxis/bfheroesFesl/inter/network"
 	"github.com/Synaxis/bfheroesFesl/inter/network/codec"
+	"github.com/satori/go.uuid"
 	"github.com/sirupsen/logrus"
-)	
-	
-const (	
-	acctNuLogin          = "NuLogin"
-	acctNuLoginPersona   = "NuLoginPersona"
+)
+
+const (
+	acctNuLogin        = "NuLogin"
+	acctNuLoginPersona = "NuLoginPersona"
 )
 
 type ansNuLogin struct {
@@ -36,8 +36,8 @@ func (fm *Fesl) NuLogin(event network.EvProcess) {
 		&email, &birthday, &language, &country, &gameToken) //todo add + checks 4 security
 
 	if err != nil {
-	logrus.Println("===nuLogin issue/wrong data!==")	
-	return
+		logrus.Println("===nuLogin issue/wrong data!==")
+		return
 	}
 
 	saveRedis := map[string]interface{}{
@@ -69,7 +69,6 @@ func (fm *Fesl) NuLogin(event network.EvProcess) {
 		Message: acct,
 	})
 }
-
 
 type ansNuLoginPersona struct {
 	TXN       string `fesl:"TXN"`

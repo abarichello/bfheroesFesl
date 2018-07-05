@@ -2,7 +2,7 @@ package fesl
 
 import (
 	"strconv"
-	
+
 	"github.com/Synaxis/bfheroesFesl/inter/network"
 	"github.com/Synaxis/bfheroesFesl/inter/network/codec"
 	"github.com/sirupsen/logrus"
@@ -33,9 +33,9 @@ func (fm *Fesl) NuGetPersonas(event network.EvProcess) {
 	}
 
 	ans := ansNuGetPersonas{
-		TXN: acctNuGetPersonas,
+		TXN:      acctNuGetPersonas,
 		Personas: []string{},
-		}
+	}
 
 	for rows.Next() {
 		var id, userID, heroName, online string
@@ -58,8 +58,7 @@ func (fm *Fesl) NuGetPersonas(event network.EvProcess) {
 	})
 }
 
-
-// NuGetPersonasServer - G_Server Login , retrieve Info Based on +soldierName 
+// GetPersonasServer G_Server Login retrieves Info Based on +soldierName(should be more secure)
 func (fm *Fesl) NuGetPersonasServer(event network.EvProcess) {
 	logrus.Println("======SERVER CONNECT Prompt=====")
 	//////Validates Login///////////
@@ -73,11 +72,11 @@ func (fm *Fesl) NuGetPersonasServer(event network.EvProcess) {
 		logrus.Println("====Wrong Server Login====")
 		return
 	}
-	
+
 	var id, userID, servername, secretKey, username string
 
 	err := fm.db.stmtGetServerByName.QueryRow(event.Process.Msg["name"]).Scan(&id, //continue
-		&userID, &servername, &secretKey, &username)	
+		&userID, &servername, &secretKey, &username)
 
 	// Server login
 	rows, err := fm.db.stmtGetServerByID.Query(event.Client.HashState.Get("uID"))
@@ -86,7 +85,6 @@ func (fm *Fesl) NuGetPersonasServer(event network.EvProcess) {
 	}
 
 	//////Validates Login//////////////////////
-	
 
 	ans := ansNuGetPersonas{TXN: acctNuGetPersonas, Personas: []string{}}
 
@@ -94,7 +92,7 @@ func (fm *Fesl) NuGetPersonasServer(event network.EvProcess) {
 		var id, userID, servername, secretKey, username string
 		err := rows.Scan(&id, &userID, &servername, &secretKey, &username)
 		if err != nil {
-		logrus.Println("====Wrong Server Login====")
+			logrus.Println("====Wrong Server Login====")
 			return
 		}
 
@@ -103,7 +101,6 @@ func (fm *Fesl) NuGetPersonasServer(event network.EvProcess) {
 	}
 
 	logrus.Println("====SERVER Login===")
-
 
 	event.Client.Answer(&codec.Packet{
 		Send:    event.Process.HEX,

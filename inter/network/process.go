@@ -76,7 +76,6 @@ func (client *Client) readTLSPacket(data []byte) {
 	}
 }
 
-
 func readFesl(data []byte, fireEvent eventReadFesl) []byte {
 	p := bytes.NewBuffer(data)
 	i := 0
@@ -127,7 +126,6 @@ func readFesl(data []byte, fireEvent eventReadFesl) []byte {
 
 	return nil
 }
-
 
 type ProcessFESL struct {
 	Msg   map[string]string

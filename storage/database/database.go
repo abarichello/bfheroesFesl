@@ -8,8 +8,8 @@ import (
 	"github.com/Synaxis/bfheroesFesl/config"
 
 	// Needed since we are using this as driver for MySQL database
-	_ "github.com/Synaxis/mysql"
 	"github.com/Synaxis/logrus"
+	_ "github.com/Synaxis/mysql"
 )
 
 // New tries to establish connection with database
@@ -37,8 +37,8 @@ func newMySQL(dsnAddr string) (*sql.DB, error) {
 func mysqlDSN(cfg config.MySQL) string {
 	connParams := url.Values{
 		"charset":   {"utf8"},
-		"parseTime": {"True"}, 
-		"loc":       {"UTC"}, 
+		"parseTime": {"True"},
+		"loc":       {"UTC"},
 	}
 
 	dsnAddr := fmt.Sprintf(

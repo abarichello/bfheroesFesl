@@ -10,7 +10,6 @@ type reqEGRQ struct {
 	reqEGAM
 }
 
-
 type ansEGRQ struct {
 	TID          string `fesl:"TID"`
 	Name         string `fesl:"NAME"`
@@ -26,7 +25,7 @@ type ansEGRQ struct {
 	RUid         string `fesl:"R-UID"`
 	RUAccid      string `fesl:"R-U-accid"`
 	RUElo        string `fesl:"R-U-elo"`
-	Platform	   string `fesl:"PL"`
+	Platform     string `fesl:"PL"`
 	RUTeam       string `fesl:"R-U-team"`
 	RUKit        string `fesl:"R-U-kit"`
 	RULvl        string `fesl:"R-U-lvl"`
@@ -62,16 +61,16 @@ type reqEGRS struct {
 }
 
 type ansEGRS struct {
-	TID string `fesl:"TID"`
-	LID string `fesl:"LID"`
-	PID string `fesl:"PID"`
-	Allow string  `fesl:"ALLOWED"`
+	TID   string `fesl:"TID"`
+	LID   string `fesl:"LID"`
+	PID   string `fesl:"PID"`
+	Allow string `fesl:"ALLOWED"`
 }
 
 // EGRS - Enter Game Host Response
-func (tm *Theater) EGRS(event network.EvProcess) {	
+func (tm *Theater) EGRS(event network.EvProcess) {
 
-	if event.Process.Msg["ALLOWED"] != "1" {		
+	if event.Process.Msg["ALLOWED"] != "1" {
 	}
 
 	if event.Process.Msg["ALLOWED"] == "1" {
@@ -83,9 +82,9 @@ func (tm *Theater) EGRS(event network.EvProcess) {
 	event.Client.Answer(&codec.Packet{
 		Message: thtrEGRS,
 		Content: ansEGRS{
-			TID: event.Process.Msg["TID"],
-			PID: event.Process.Msg["PID"],
-			LID: event.Process.Msg["LID"],
+			TID:   event.Process.Msg["TID"],
+			PID:   event.Process.Msg["PID"],
+			LID:   event.Process.Msg["LID"],
 			Allow: "1",
 		},
 	})
@@ -93,19 +92,19 @@ func (tm *Theater) EGRS(event network.EvProcess) {
 
 // Lobbies Data
 type ansGREM struct {
-	gameID   		string 	`fesl:"GID"`
-	LID         string  `fesl:"LID"`
+	gameID string `fesl:"GID"`
+	LID    string `fesl:"LID"`
 }
 
 // GREM - Enter Game Host Response
-func (tm *Theater) GREM(event network.EvProcess) {	
+func (tm *Theater) GREM(event network.EvProcess) {
 
 	logrus.Println("======GREM=====")
 	event.Client.Answer(&codec.Packet{
 		Message: thtrGREM,
 		Content: ansGREM{
-			event.Process.Msg["GID"],	
-			event.Process.Msg["LID"],		
+			event.Process.Msg["GID"],
+			event.Process.Msg["LID"],
 		},
 	})
 }

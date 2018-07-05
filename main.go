@@ -28,7 +28,7 @@ func main() {
 	startServer(mdb, ldb)
 
 	logrus.Println(" Fesl    Online")
-    	logrus.Println(" Theater Online")
+	logrus.Println(" Theater Online")
 
 	a := make(chan bool)
 	<-a
@@ -87,7 +87,6 @@ func (ft *FieldTag) StringVal(tag string) (string, error) {
 	return removedQuotes, nil
 }
 
-
 func (ft *FieldTag) StringArr(tag string) ([]string, error) {
 	s, err := ft.StringVal(tag)
 	if err != nil {
@@ -118,6 +117,3 @@ func startServer(mdb *sql.DB, ldb *level.Level) {
 	theater.New("TM", config.ThtrClientAddr(), mdb, ldb)
 	theater.New("STM", config.ThtrServerAddr(), mdb, ldb)
 }
-
-
-

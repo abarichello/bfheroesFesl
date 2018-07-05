@@ -2,7 +2,7 @@ package network
 
 import (
 	"bytes"
-    //"errors"
+	//"errors"
 	//"io"
 	"net"
 
@@ -11,14 +11,12 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-
 func (socket *SocketUDP) Answer(Packet *codec.Packet, addr *net.UDPAddr) error {
 	return AnswerUDP(Packet, func(buf *bytes.Buffer) error {
 		_, err := socket.listen.WriteToUDP(buf.Bytes(), addr)
 		return err
 	})
 }
-
 
 // Close fires a close-event and closes the socket
 func (socket *SocketUDP) Close() {
@@ -28,8 +26,6 @@ func (socket *SocketUDP) Close() {
 	// Close socket
 	socket.listen.Close()
 }
-
-
 
 func AnswerUDP(Packet *codec.Packet, writer func(*bytes.Buffer) error) error {
 	logger := logrus.WithFields(logrus.Fields{"type": Packet.Message, "HEX": Packet.Send})
@@ -50,7 +46,7 @@ func AnswerUDP(Packet *codec.Packet, writer func(*bytes.Buffer) error) error {
 }
 
 func (client *Client) SendPacket(pkt []byte) error {
-	_, err := client.conn.Write(pkt)	
+	_, err := client.conn.Write(pkt)
 	if err != nil {
 		logrus.
 			WithError(err).
@@ -69,7 +65,7 @@ func (client *Client) Answer(Packet *codec.Packet) error {
 	if !client.IsActive {
 		logrus.Println("Trying to write to inactive Client.\n%v", Packet.Message)
 	}
-	
+
 	encoder := codec.NewEncoder()
 	buf, err := encoder.EncodePacket(Packet)
 	if err != nil {
@@ -82,8 +78,3 @@ func (client *Client) Answer(Packet *codec.Packet) error {
 
 	return client.SendPacket(buf.Bytes())
 }
-
-
-
-
-

@@ -29,12 +29,12 @@ type memCheck struct {
 	Length int    `fesl:"len"`
 }
 
-func (fm *Fesl) fsysMemCheck(event *network.EventNewClient) {	
+func (fm *Fesl) fsysMemCheck(event *network.EventNewClient) {
 	event.Client.Answer(&codec.Packet{
 		Message: fsys,
 		Content: ansMemCheck{
-			TXN:      "MemCheck",
-			Salt:     "0",
+			TXN:  "MemCheck",
+			Salt: "0",
 		},
 		Send: 0xC0000000,
 	})

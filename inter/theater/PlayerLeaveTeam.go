@@ -20,19 +20,18 @@ type reqPLVT struct {
 }
 
 type ansKICK struct {
-	TID string `fesl:"TID"`
-	LobbyID  string `fesl:"LID"`
-	GID 	 string `fesl:"GID"`
+	TID     string `fesl:"TID"`
+	LobbyID string `fesl:"LID"`
+	GID     string `fesl:"GID"`
 }
 
 type ansPLVT struct {
 	TID      string `fesl:"TID"`
 	PlayerID string `fesl:"PID"`
-
 }
 
 // PLVT - PlayerLeaveTeam
-func (tM *Theater) PLVT(event network.EvProcess) {	
+func (tM *Theater) PLVT(event network.EvProcess) {
 
 	pid := event.Process.Msg["PID"]
 	// Get 4 stats for PID
@@ -67,8 +66,7 @@ func (tM *Theater) PLVT(event network.EvProcess) {
 		logrus.Println("Invalid team " + stats["c_team"] + " for " + pid)
 	}
 
-	
-	event.Client.Answer(&codec.Packet{ // need to check this 
+	event.Client.Answer(&codec.Packet{ // need to check this
 		Message: thtrPLVT,
 		Content: ansPLVT{
 			event.Process.Msg["PID"],
@@ -76,7 +74,7 @@ func (tM *Theater) PLVT(event network.EvProcess) {
 		},
 	})
 
-	event.Client.Answer(&codec.Packet{ // need to check this 
+	event.Client.Answer(&codec.Packet{ // need to check this
 		Message: thtrKICK,
 		Content: ansKICK{
 			event.Process.Msg["PID"],

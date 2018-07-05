@@ -8,7 +8,6 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-
 type reqUPLA struct {
 	// TID=12
 	TID int `fesl:"TID"`

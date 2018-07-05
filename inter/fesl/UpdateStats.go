@@ -1,10 +1,10 @@
 package fesl
 
 import (
-	"strconv"
 	"github.com/Synaxis/bfheroesFesl/inter/network"
 	"github.com/Synaxis/bfheroesFesl/inter/network/codec"
 	"github.com/sirupsen/logrus"
+	"strconv"
 )
 
 const (
@@ -54,7 +54,6 @@ func (fm *Fesl) UpdateStats(event network.EvProcess) {
 		return
 	}
 
-
 	for i := 0; i < users; i++ {
 		owner, ok := answer["u."+convert(i)+".o"]
 		if event.Client.HashState.Get("clientType") == "server" {
@@ -94,8 +93,8 @@ func (fm *Fesl) UpdateStats(event network.EvProcess) {
 		}
 
 		if AFK {
-		   logrus.Println("client afk")
-		   return
+			logrus.Println("client afk")
+			return
 		}
 
 		// Get all stats to be sent
@@ -168,7 +167,7 @@ func (fm *Fesl) UpdateStats(event network.EvProcess) {
 						return
 					}
 
-					if intValue <= 0 || event.Client.HashState.Get("clientType") == "server"  || key == "m_ct0" || key == "ks" || key == "ds"|| key == "c_ltp" || key == "c_sln" || key == "c_ltm" || key == "c_slm" || key == "c_wmid0" || key == "c_wmid1" || key == "c_tut" || key == "c_wmid2" {
+					if intValue <= 0 || event.Client.HashState.Get("clientType") == "server" || key == "m_ct0" || key == "ks" || key == "ds" || key == "c_ltp" || key == "c_sln" || key == "c_ltm" || key == "c_slm" || key == "c_wmid0" || key == "c_wmid1" || key == "c_tut" || key == "c_wmid2" {
 						// limit keys for server only(TODO CHANGE THIS)
 						newValue := stats[key].value + intValue
 

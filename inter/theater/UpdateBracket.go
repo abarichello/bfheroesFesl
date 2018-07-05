@@ -20,27 +20,27 @@ type reqUBRA struct {
 }
 
 type ansUBRA struct {
-	TID string `fesl:"TID"`
-	LID string `fesl:"LID"`
-	START int `fesl:"START"`
+	TID   string `fesl:"TID"`
+	LID   string `fesl:"LID"`
+	START int    `fesl:"START"`
 }
 
 // UBRA - "UpdateBracket" updates players connected (AP)
-func (tM *Theater) UBRA(event network.EvProcess) {	
+func (tM *Theater) UBRA(event network.EvProcess) {
 	logrus.Println("=========UBRA===========")
 
 	event.Client.Answer(&codec.Packet{
 		Message: thtrUBRA,
 		Content: ansUBRA{
-			TID: event.Process.Msg["TID"],
-			LID: event.Process.Msg["LID"],
+			TID:   event.Process.Msg["TID"],
+			LID:   event.Process.Msg["LID"],
 			START: 1,
 		}},
 	)
 	gdata := tM.level.NewObject("gdata", event.Process.Msg["GID"])
-	 if event.Process.Msg["START"] == "1" {
-		 gdata.Set("AP", "0")		// AP = Active-Player FOR THAT Player
-		                        // If Player Entered -> Reset AP 
-	 }
+	if event.Process.Msg["START"] == "1" {
+		gdata.Set("AP", "0") // AP = Active-Player FOR THAT Player
+		// If Player Entered -> Reset AP
+	}
 
 }

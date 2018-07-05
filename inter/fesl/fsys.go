@@ -20,19 +20,18 @@ const (
 
 var firstLogin = true
 
-
 // reqHello is definition of the fsys.Hello request call
 type reqHello struct {
-	TXN string `fesl:"TXN"`
-	ClientString string `fesl:"clientString"`
-	Sku int `fesl:"sku"`
-	Locale string `fesl:"locale"`
-	ClientPlatform string `fesl:"clientPlatform"`
-	ClientVersion string `fesl:"clientVersion"`
-	SdkVersion string `fesl:"SDKVersion"`
+	TXN             string `fesl:"TXN"`
+	ClientString    string `fesl:"clientString"`
+	Sku             int    `fesl:"sku"`
+	Locale          string `fesl:"locale"`
+	ClientPlatform  string `fesl:"clientPlatform"`
+	ClientVersion   string `fesl:"clientVersion"`
+	SdkVersion      string `fesl:"SDKVersion"`
 	ProtocolVersion string `fesl:"protocolVersion"`
-	FragmentSize int `fesl:"fragmentSize"`
-	ClientType string `fesl:"clientType"`
+	FragmentSize    int    `fesl:"fragmentSize"`
+	ClientType      string `fesl:"clientType"`
 }
 
 type ansHello struct {
@@ -58,7 +57,6 @@ func (fm *Fesl) hello(event network.EvProcess) {
 		return
 	}
 
-	
 	// var firstLogin = true
 	if !firstLogin {
 		fm.NuLogin(event)
@@ -101,7 +99,7 @@ func (fm *Fesl) hello(event network.EvProcess) {
 	} else {
 		answer.Domain = domainPartition{"eagames", "bfwest-dedicated"}
 		answer.TheaterPort = config.General.ThtrClientPort
-	}	
+	}
 
 	event.Client.Answer(&codec.Packet{
 		Content: answer,
@@ -116,23 +114,23 @@ func (fm *Fesl) hello(event network.EvProcess) {
 
 ///////////////////////////////////////////////
 type ansGoodbye struct {
-	TXN       string     `fesl:"TXN"`
-	Reason    string     `fesl:"reason"`
-	messageArr string    `fesl:"message"`
+	TXN        string `fesl:"TXN"`
+	Reason     string `fesl:"reason"`
+	messageArr string `fesl:"message"`
 }
 
 // Goodbye - Handle Client Close
-func (fm *Fesl) Goodbye(event network.EvProcess) {	
-	logrus.Println("Client Disconnected")	
+func (fm *Fesl) Goodbye(event network.EvProcess) {
+	logrus.Println("Client Disconnected")
 	event.Client.Answer(&codec.Packet{
 		Message: event.Process.Query,
 		Send:    event.Process.HEX,
 		Content: ansGoodbye{
-			TXN:      "Goodbye",
-			Reason:   "GOODBYE_CLIENT_NORMAL",
-			messageArr: "n/a",			
-			},
+			TXN:        "Goodbye",
+			Reason:     "GOODBYE_CLIENT_NORMAL",
+			messageArr: "n/a",
 		},
+	},
 	)
 }
 
@@ -150,7 +148,7 @@ type pingSite struct {
 }
 
 // GetPingSites - used as LoadBalancer/Not working Now(but is requested)
-func (fm *Fesl) GetPingSites(event network.EvProcess) {	
+func (fm *Fesl) GetPingSites(event network.EvProcess) {
 
 	event.Client.Answer(&codec.Packet{
 		Message: event.Process.Query,

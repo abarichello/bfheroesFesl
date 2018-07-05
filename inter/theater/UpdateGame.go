@@ -1,9 +1,9 @@
 package theater
 
 import (
-	"strings"
 	"github.com/Synaxis/bfheroesFesl/inter/network"
 	"github.com/sirupsen/logrus"
+	"strings"
 )
 
 type reqUGAM struct {

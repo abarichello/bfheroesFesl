@@ -12,22 +12,22 @@ import (
 
 // EGAM is sent to Game-Client
 type reqEGAM struct {
-    // GID=1
-    GameID 		int `fesl:"GID"`
-    LobbyID 		int `fesl:"LID"`
-    Port 		int `fesl:"PORT"`
-    PlatformType 	int `fesl:"PTYPE"`
-    RemoteIP 		string `fesl:"R-INT-IP"`
-    RemotePort 		int `fesl:"R-INT-PORT"`
-    AccountID 		int `fesl:"R-U-accid"` // accountID - same as ID 
-    Category 		int `fesl:"R-U-category"` 
-    Region		string `fesl:"R-U-dataCenter"`
-    StatsElo 		int `fesl:"R-U-elo"`
-    ExternalIP 		string `fesl:"R-U-externalIp"`
-    StatsKit 		int `fesl:"R-U-kit"`
-    StatsLevel 		int `fesl:"R-U-lvl"`
-    StatsTeam 		int `fesl:"R-U-team"`
-    TID 		int `fesl:"TID"`
+	// GID=1
+	GameID       int    `fesl:"GID"`
+	LobbyID      int    `fesl:"LID"`
+	Port         int    `fesl:"PORT"`
+	PlatformType int    `fesl:"PTYPE"`
+	RemoteIP     string `fesl:"R-INT-IP"`
+	RemotePort   int    `fesl:"R-INT-PORT"`
+	AccountID    int    `fesl:"R-U-accid"` // accountID - same as ID
+	Category     int    `fesl:"R-U-category"`
+	Region       string `fesl:"R-U-dataCenter"`
+	StatsElo     int    `fesl:"R-U-elo"`
+	ExternalIP   string `fesl:"R-U-externalIp"`
+	StatsKit     int    `fesl:"R-U-kit"`
+	StatsLevel   int    `fesl:"R-U-lvl"`
+	StatsTeam    int    `fesl:"R-U-team"`
+	TID          int    `fesl:"TID"`
 }
 
 type ansEGAM struct {
@@ -58,55 +58,52 @@ type ansEGEG struct {
 }
 
 // EGAM - EnterGame
-func (tm *Theater) EGAM(event network.EvProcess) {	
-	
+func (tm *Theater) EGAM(event network.EvProcess) {
+
 	gameID := event.Process.Msg["GID"]
 	externalIP := event.Client.IpAddr.(*net.TCPAddr).IP.String()
 	lobbyID := event.Process.Msg["LID"]
-	pid := event.Client.HashState.Get("id")  //playerID
+	pid := event.Client.HashState.Get("id") //playerID
 	logrus.Println("======SENT EGAM=======")
 	event.Client.Answer(&codec.Packet{
 		Message: thtrEGAM,
-		Content: ansEGAM{event.Process.Msg["TID"],lobbyID,gameID},
+		Content: ansEGAM{event.Process.Msg["TID"], lobbyID, gameID},
 	})
 
+	type reqEGRQ struct {
+		reqEGAM
+	}
 
-type reqEGRQ struct {
-	reqEGAM
-}
-
-
-type ansEGRQ struct {
-	TID          string `fesl:"TID"`
-	Name         string `fesl:"NAME"`
-	UserID       string `fesl:"UID"`
-	PlayerID     string `fesl:"PID"`
-	Ticket       string `fesl:"TICKET"`
-	IP           string `fesl:"IP"`
-	Port         string `fesl:"PORT"`
-	IntIP        string `fesl:"INT-IP"`
-	IntPort      string `fesl:"INT-PORT"`
-	Ptype        string `fesl:"PTYPE"`
-	RUser        string `fesl:"R-USER"`
-	RUid         string `fesl:"R-UID"`
-	RUAccid      string `fesl:"R-U-accid"`
-	RUElo        string `fesl:"R-U-elo"`
-	Platform     string `fesl:"PL"`
-	RUTeam       string `fesl:"R-U-team"`
-	RUKit        string `fesl:"R-U-kit"`
-	RULvl        string `fesl:"R-U-lvl"`
-	RUDataCenter string `fesl:"R-U-dataCenter"`
-	RUExternalIP string `fesl:"R-U-externalIp"`
-	RUInternalIP string `fesl:"R-U-internalIp"`
-	RUCategory   string `fesl:"R-U-category"`
-	RIntIP       string `fesl:"R-INT-IP"`
-	RIntPort     string `fesl:"R-INT-PORT"`
-	Xuid         string `fesl:"XUID"`
-	RXuid        string `fesl:"R-XUID"`
-	LobbyID      string `fesl:"LID"`
-	GameID       string `fesl:"GID"`
-}
-
+	type ansEGRQ struct {
+		TID          string `fesl:"TID"`
+		Name         string `fesl:"NAME"`
+		UserID       string `fesl:"UID"`
+		PlayerID     string `fesl:"PID"`
+		Ticket       string `fesl:"TICKET"`
+		IP           string `fesl:"IP"`
+		Port         string `fesl:"PORT"`
+		IntIP        string `fesl:"INT-IP"`
+		IntPort      string `fesl:"INT-PORT"`
+		Ptype        string `fesl:"PTYPE"`
+		RUser        string `fesl:"R-USER"`
+		RUid         string `fesl:"R-UID"`
+		RUAccid      string `fesl:"R-U-accid"`
+		RUElo        string `fesl:"R-U-elo"`
+		Platform     string `fesl:"PL"`
+		RUTeam       string `fesl:"R-U-team"`
+		RUKit        string `fesl:"R-U-kit"`
+		RULvl        string `fesl:"R-U-lvl"`
+		RUDataCenter string `fesl:"R-U-dataCenter"`
+		RUExternalIP string `fesl:"R-U-externalIp"`
+		RUInternalIP string `fesl:"R-U-internalIp"`
+		RUCategory   string `fesl:"R-U-category"`
+		RIntIP       string `fesl:"R-INT-IP"`
+		RIntPort     string `fesl:"R-INT-PORT"`
+		Xuid         string `fesl:"XUID"`
+		RXuid        string `fesl:"R-XUID"`
+		LobbyID      string `fesl:"LID"`
+		GameID       string `fesl:"GID"`
+	}
 
 	// Get 4 stats for PID
 	rows, err := tm.db.getStatsStatement(4).Query(pid, "c_kit", "c_team", "elo", "level")
@@ -156,7 +153,7 @@ type ansEGRQ struct {
 				RUKit:        stats["c_kit"],
 				RULvl:        stats["level"],
 				RUDataCenter: "iad",
-				Platform:	  "PC",
+				Platform:     "PC",
 				RUExternalIP: externalIP,
 				RUInternalIP: event.Process.Msg["R-INT-IP"],
 				RUCategory:   event.Process.Msg["R-U-category"],
@@ -168,7 +165,6 @@ type ansEGRQ struct {
 				GameID:       gameID,
 			},
 		})
-
 
 		// Game Client Client
 		event.Client.Answer(&codec.Packet{

@@ -7,10 +7,11 @@ import (
 	"github.com/Synaxis/bfheroesFesl/inter/network/codec"
 	"github.com/sirupsen/logrus"
 )
+
 const (
 	keysMult = "keys."
 	keysArr  = "keys.[]"
-	rank 		=  "rank"
+	rank     = "rank"
 )
 
 type ansGetStats struct {
@@ -37,7 +38,6 @@ func (fm *Fesl) GetStats(event network.EvProcess) {
 	owner := event.Process.Msg["owner"]
 	userId := event.Client.HashState.Get("uID") //ultra typo
 
-
 	if event.Client.HashState.Get("clientType") == "server" {
 
 		var id, userID, heroName, online string
@@ -49,7 +49,7 @@ func (fm *Fesl) GetStats(event network.EvProcess) {
 
 		userId = userID //??????
 		logrus.Println("Server requesting stats")
-	}	
+	}
 
 	// Gen args list for statement -> heroID,userID,key1,key2,key3,..
 	var args []interface{}
@@ -74,12 +74,13 @@ func (fm *Fesl) GetStats(event network.EvProcess) {
 
 		// Send stats not found with default value of ""
 		for key := range statsKeys {
-		ans.Stats = append(ans.Stats, statsPair{
-			Key: key,
-			Text: "",
-			Value: "0",
-		})}	
-	}	
+			ans.Stats = append(ans.Stats, statsPair{
+				Key:   key,
+				Text:  "",
+				Value: "0",
+			})
+		}
+	}
 
 	for rows.Next() {
 		var userID, heroID, statsKey, statsValue string

@@ -2,11 +2,11 @@ package fesl
 
 import (
 	"database/sql"
-	"strings"
-	"time"
 	"fmt"
 	"github.com/Synaxis/bfheroesFesl/inter/network"
 	"github.com/Synaxis/bfheroesFesl/storage/level"
+	"strings"
+	"time"
 
 	"github.com/sirupsen/logrus"
 )
@@ -91,8 +91,8 @@ func (fm *Fesl) run() {
 			case "client.command":
 				txn := event.Data.(network.EvProcess).Process.Msg["TXN"]
 				logrus.WithFields(logrus.Fields{
-				"func": fm.name,
-				"cmd": fmt.Sprintf("%s/TXN:%s", event.Name, txn),
+					"func": fm.name,
+					"cmd":  fmt.Sprintf("%s/TXN:%s", event.Name, txn),
 				})
 			}
 		}
@@ -105,7 +105,7 @@ func (fm *Fesl) newClient(event network.EventNewClient) {
 
 	logrus.Println("Client Connecting")
 	// Start Heartbeat
-	event.Client.State.HeartTicker = time.NewTicker(time.Second * 999)
+	event.Client.State.HeartTicker = time.NewTicker(time.Second * 10)
 	go func() {
 		for {
 			if !event.Client.IsActive {

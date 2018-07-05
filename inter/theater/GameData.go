@@ -2,8 +2,8 @@ package theater
 
 import (
 	"github.com/Synaxis/bfheroesFesl/inter/network"
-	"github.com/sirupsen/logrus"
 	"github.com/Synaxis/bfheroesFesl/inter/network/codec"
+	"github.com/sirupsen/logrus"
 )
 
 // GameClient Represents a game client connected to theater
@@ -104,17 +104,17 @@ type ansGDAT struct {
 // GDAT - CLIENT called to get data about the server
 func (tm *Theater) GDAT(event network.EvProcess) {
 	logrus.Println("=======GDAT======")
-////////////////////////////////////////////
+	////////////////////////////////////////////
 	gameID := event.Process.Msg["GID"]
 	gameServer := tm.level.NewObject("gdata", gameID)
-////////////////////////////////////////////
+	////////////////////////////////////////////
 
 	event.Client.Answer(&codec.Packet{
 		Message: thtrGDAT,
 		Content: ansGDAT{
 			TID:                  event.Process.Msg["TID"],
 			Ap:                   gameServer.Get("AP"),
-			GameID:               gameID,  //(GID)
+			GameID:               gameID, //(GID)
 			LobbyID:              gameServer.Get("LID"),
 			ArmyDistribution:     gameServer.Get("B-U-army_distribution"),
 			AvailableVipsNation:  gameServer.Get("B-U-avail_vips_national"),
@@ -151,7 +151,7 @@ func (tm *Theater) GDAT(event network.EvProcess) {
 			IntIp:                gameServer.Get("INT-IP"),
 			IntPort:              gameServer.Get("INT-PORT"),
 			IP:                   gameServer.Get("IP"),
-			Platform:             gameServer.Get("PL"),			
+			Platform:             gameServer.Get("PL"),
 			MaxPlayers:           gameServer.Get("MAX-PLAYERS"),
 			Port:                 gameServer.Get("PORT"),
 			Qlen:                 gameServer.Get("QLEN"),

@@ -1,15 +1,15 @@
 package fesl
 
-import (	
+import (
 	"github.com/Synaxis/bfheroesFesl/inter/network"
 	"github.com/Synaxis/bfheroesFesl/inter/network/codec"
 	"github.com/sirupsen/logrus"
 )
 
 const (
-	acct                 				= "acct"
-	acctNuGetAccount     				= "NuGetAccount"
-	acctNuGetPersonas    				= "NuGetPersonas"
+	acct              = "acct"
+	acctNuGetAccount  = "NuGetAccount"
+	acctNuGetPersonas = "NuGetPersonas"
 )
 
 type ansNuGetAccount struct {
@@ -39,17 +39,17 @@ func (fm *Fesl) acctNuGetAccount(event *network.EvProcess) {
 	event.Client.Answer(&codec.Packet{
 		Message: acct,
 		Content: ansNuGetAccount{
-			TXN:           		acctNuGetAccount,
-			Country:        	"US",
-			Language:       	"en_US",
-			DobDay:         	1,
-			DobMonth:       	1,
-			DobYear:        	1992,
-			GlobalOptIn:    	false,
-			ThirdPartyOptIn:	false,
-			NucleusID:      	event.Client.HashState.Get("email"),
-			HeroName:       	event.Client.HashState.Get("username"),
-			UserID:         	event.Client.HashState.Get("uID"),
+			TXN:             acctNuGetAccount,
+			Country:         "US",
+			Language:        "en_US",
+			DobDay:          1,
+			DobMonth:        1,
+			DobYear:         1992,
+			GlobalOptIn:     false,
+			ThirdPartyOptIn: false,
+			NucleusID:       event.Client.HashState.Get("email"),
+			HeroName:        event.Client.HashState.Get("username"),
+			UserID:          event.Client.HashState.Get("uID"),
 		},
 		Send: event.Process.HEX,
 	})

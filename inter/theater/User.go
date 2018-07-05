@@ -56,8 +56,8 @@ func (tm *Theater) USER(event network.EvProcess) {
 		Message: thtrUSER,
 		Content: answerUSER{
 			ClientID: event.Process.Msg["CID"],
-			TID:  event.Process.Msg["TID"],
-			Name: lkeyRedis.Get("name"),
+			TID:      event.Process.Msg["TID"],
+			Name:     lkeyRedis.Get("name"),
 		},
 	})
 }

@@ -7,18 +7,17 @@ import (
 )
 
 type reqStart struct {
-	TXN string `fesl:"TXN"`
-	Partition string `fesl:"partition.partition"`
+	TXN        string `fesl:"TXN"`
+	Partition  string `fesl:"partition.partition"`
 	debugLevel string `fesl:"debugLevel"`
-	Version int `fesl:"version"`
+	Version    int    `fesl:"version"`
 }
 
 type Start struct {
-	ID    				int                 `fesl:"id.id"`
-	TXN  			    string              `fesl:"TXN"`
-	Properties    		string 				`fesl:"props.{}.[]"`
-  	Part  				string              `fesl:"id.partition"`
-
+	ID         int    `fesl:"id.id"`
+	TXN        string `fesl:"TXN"`
+	Properties string `fesl:"props.{}.[]"`
+	Part       string `fesl:"id.partition"`
 }
 
 // Start handles pnow.Start
@@ -28,37 +27,37 @@ func (fm *Fesl) Start(event network.EvProcess) {
 
 	event.Client.Answer(&codec.Packet{
 		Content: Start{
-			TXN: "Start",
-			ID: 	1,
+			TXN:  "Start",
+			ID:   1,
 			Part: event.Process.Msg["partition.partition"],
 		},
 		Send:    event.Process.HEX,
 		Message: "pnow",
 	})
 }
+
 type Status struct {
-	TXN  				string    	`fesl:"TXN"`
-	ID					int      	`fesl:"id.id"`
-	State				string    	`fesl:"sessionState"`
-	idpart  			string   	`fesl:"id.partition"`
-	Props				int  		`fesl:"props.{}.[]"`
-	Properties  		map[string]interface{} `fesl:"props"`
-	result  			string    	`fesl:"props.{resultType}"`
+	TXN        string                 `fesl:"TXN"`
+	ID         int                    `fesl:"id.id"`
+	State      string                 `fesl:"sessionState"`
+	idpart     string                 `fesl:"id.partition"`
+	Props      int                    `fesl:"props.{}.[]"`
+	Properties map[string]interface{} `fesl:"props"`
+	result     string                 `fesl:"props.{resultType}"`
 }
 
 type stGame struct {
-	LobbyID 	int    	`fesl:"lid"`
-	Fit     	int    	`fesl:"fit"`
-	GID     	string 	`fesl:"gid"` //gameID to join
+	LobbyID int    `fesl:"lid"`
+	Fit     int    `fesl:"fit"`
+	GID     string `fesl:"gid"` //gameID to join
 }
-
 
 // Status comes after Start. tells info about desired server
 func (fm *Fesl) Status(event network.EvProcess) {
-	logrus.Println("--Status--")	
+	logrus.Println("--Status--")
 
-	var gid  string
-	var err  error
+	var gid string
+	var err error
 	err = fm.db.stmtGetBookmark.QueryRow(event.Client.HashState.Get("uID")).Scan(&gid)
 	if err != nil {
 		return
@@ -73,15 +72,14 @@ func (fm *Fesl) Status(event network.EvProcess) {
 	}
 
 	//if event.Process.Msg["props.{games}.0.gid=0"]
-	
 
-	event.Client.Answer(&codec.Packet{		
+	event.Client.Answer(&codec.Packet{
 		Content: Status{
-			TXN:   "Status",
-			State: "COMPLETE",
-			ID:    1,
+			TXN:    "Status",
+			State:  "COMPLETE",
+			ID:     1,
 			idpart: event.Process.Msg["partition.partition"],
-			Props: 2,
+			Props:  2,
 			result: "JOIN",
 			Properties: map[string]interface{}{
 				"resultType": "JOIN",

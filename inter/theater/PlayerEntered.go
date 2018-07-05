@@ -8,9 +8,9 @@ import (
 )
 
 type reqPENT struct {
-	TID int `fesl:"TID"`
-	LobbyID int `fesl:"LID"`
-	GameID int `fesl:"GID"`
+	TID      int `fesl:"TID"`
+	LobbyID  int `fesl:"LID"`
+	GameID   int `fesl:"GID"`
 	PlayerID int `fesl:"PID"`
 }
 

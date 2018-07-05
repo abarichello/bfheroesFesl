@@ -10,21 +10,21 @@ type Database struct {
 	db *sql.DB
 
 	// Database Statements
-	stmtGetHeroByID              *sql.Stmt
-	stmtDeleteServerStatsByGID   *sql.Stmt
-	stmtDeleteGameByGID       *sql.Stmt
-	stmtAddGame                  *sql.Stmt
-	stmtGameIncreaseJoining      *sql.Stmt
-	UpdateGid                    *sql.Stmt
-	stmtGameIncreaseTeam1        *sql.Stmt
-	stmtGameIncreaseTeam2        *sql.Stmt
-	stmtGameDecreaseTeam1        *sql.Stmt
-	stmtGameDecreaseTeam2        *sql.Stmt
-	stmtUpdateGame               *sql.Stmt
-	stmtCreateServer             *sql.Stmt
-	MapGetStatsQuery             map[int]*sql.Stmt
-	MapSetServerStatsQuery       map[int]*sql.Stmt
-	MapSetPlayerStatsQuery       map[int]*sql.Stmt
+	stmtGetHeroByID            *sql.Stmt
+	stmtDeleteServerStatsByGID *sql.Stmt
+	stmtDeleteGameByGID        *sql.Stmt
+	stmtAddGame                *sql.Stmt
+	stmtGameIncreaseJoining    *sql.Stmt
+	UpdateGid                  *sql.Stmt
+	stmtGameIncreaseTeam1      *sql.Stmt
+	stmtGameIncreaseTeam2      *sql.Stmt
+	stmtGameDecreaseTeam1      *sql.Stmt
+	stmtGameDecreaseTeam2      *sql.Stmt
+	stmtUpdateGame             *sql.Stmt
+	stmtCreateServer           *sql.Stmt
+	MapGetStatsQuery           map[int]*sql.Stmt
+	MapSetServerStatsQuery     map[int]*sql.Stmt
+	MapSetPlayerStatsQuery     map[int]*sql.Stmt
 }
 
 func NewDatabase(conn *sql.DB) (*Database, error) {

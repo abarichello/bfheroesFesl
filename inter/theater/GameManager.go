@@ -24,7 +24,7 @@ const (
 	thtrGDAT = "GDAT"
 	thtrKICK = "KICK"
 	thtrLDAT = "LDAT"
-	thtrHTSN = "HTSN" //testing 
+	thtrHTSN = "HTSN" //testing
 	thtrLLST = "LLST"
 	thtrPENT = "PENT"
 	thtrPING = "PING"
@@ -105,17 +105,17 @@ func (tm *Theater) Listen() {
 			case "client.command.CGAM":
 				go tm.CGAM(event.Data.(network.EvProcess))
 			case "client.command.UBRA":
-				go tm.UBRA(event.Data.(network.EvProcess))			
+				go tm.UBRA(event.Data.(network.EvProcess))
 			case "client.command.UGAM":
 				go tm.UGAM(event.Data.(network.EvProcess))
 			case "client.command.EGRS":
-				go tm.EGRS(event.Data.(network.EvProcess))			
+				go tm.EGRS(event.Data.(network.EvProcess))
 			case "client.command.PENT":
 				go tm.PENT(event.Data.(network.EvProcess))
 			case "client.command.PLVT":
 				go tm.PLVT(event.Data.(network.EvProcess))
 			case "client.command.UPLA":
-				go tm.UPLA(event.Data.(network.EvProcess))		
+				go tm.UPLA(event.Data.(network.EvProcess))
 			case "client.close":
 				tm.close(event.Data.(network.EventClientClose))
 			case "client.command":
@@ -144,7 +144,7 @@ func (tm *Theater) newClient(event network.EventNewClient) {
 		for event.Client.IsActive {
 			select {
 			case <-event.Client.State.HeartTicker.C:
-			tm.PING(&event)
+				tm.PING(&event)
 			}
 		}
 	}()

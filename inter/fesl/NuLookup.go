@@ -2,10 +2,10 @@ package fesl
 
 import (
 	"fmt"
-	"strconv"
 	"github.com/Synaxis/bfheroesFesl/inter/network"
 	"github.com/Synaxis/bfheroesFesl/inter/network/codec"
 	"github.com/sirupsen/logrus"
+	"strconv"
 )
 
 type ansNuLookupUserInfo struct {
@@ -15,12 +15,11 @@ type ansNuLookupUserInfo struct {
 
 type userInfo struct {
 	Namespace    string `fesl:"namespace"`
-	XUID         int 	`fesl:"xuid"`
+	XUID         int    `fesl:"xuid"`
 	MasterUserID string `fesl:"masterUserId"`
 	UserID       string `fesl:"userId"`
 	UserName     string `fesl:"userName"`
- 	ClientID     string `fesl:"cid"`
-
+	ClientID     string `fesl:"cid"`
 }
 
 func (fm *Fesl) NuLookupUserInfo(event network.EvProcess) {
@@ -31,7 +30,7 @@ func (fm *Fesl) NuLookupUserInfo(event network.EvProcess) {
 	}
 
 	answer := ansNuLookupUserInfo{
-		TXN:     "NuLookupUserInfo",
+		TXN:      "NuLookupUserInfo",
 		UserInfo: []userInfo{}}
 
 	keys, _ := strconv.Atoi(event.Process.Msg["userInfo.[]"])
@@ -42,9 +41,9 @@ func (fm *Fesl) NuLookupUserInfo(event network.EvProcess) {
 		var id, userID, heroName, online string
 		err := fm.db.stmtGetHeroByName.QueryRow(heroNamePkt).Scan(&id, &userID, //br
 			&heroName, &online) //auth
-			if err != nil {
-				return
-			}
+		if err != nil {
+			return
+		}
 
 		answer.UserInfo = append(answer.UserInfo, userInfo{
 			ClientID:     heroName,

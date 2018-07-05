@@ -1,9 +1,9 @@
 package fesl
 
 import (
-	"github.com/satori/go.uuid"	
 	"github.com/Synaxis/bfheroesFesl/inter/network"
 	"github.com/Synaxis/bfheroesFesl/inter/network/codec"
+	"github.com/satori/go.uuid"
 	"github.com/sirupsen/logrus"
 )
 
@@ -20,8 +20,8 @@ func (fm *Fesl) NuLoginServer(event network.EvProcess) {
 		&userID, &servername, &secretKey, &username)
 
 	if err != nil {
-	logrus.Println("===NuLogin issue/wrong data!==")	
-	return
+		logrus.Println("===NuLogin issue/wrong data!==")
+		return
 	}
 
 	saveRedis := make(map[string]interface{})
@@ -31,7 +31,6 @@ func (fm *Fesl) NuLoginServer(event network.EvProcess) {
 	saveRedis["apikey"] = event.Process.Msg["encryptedInfo"]
 	saveRedis["keyHash"] = event.Process.Msg["password"]
 	event.Client.HashState.SetM(saveRedis)
-
 
 	// Setup a new key for new persona
 	lkey := uuid.NewV4().String()
@@ -53,7 +52,6 @@ func (fm *Fesl) NuLoginServer(event network.EvProcess) {
 		Message: acct,
 	})
 }
-
 
 //NuLoginPersonaServer Pre-Server Login (out of order ?)
 func (fm *Fesl) NuLoginPersonaServer(event network.EvProcess) {
@@ -107,5 +105,5 @@ func (fm *Fesl) NuLoginPersonaServer(event network.EvProcess) {
 		Message: acct,
 	})
 
-logrus.Println("====NuLoginPersonaServer====")
+	logrus.Println("====NuLoginPersonaServer====")
 }

@@ -3,13 +3,13 @@ package mm
 //Sync Theater with Fesl
 
 import (
-	 "github.com/Synaxis/bfheroesFesl/inter/network"
+	"github.com/Synaxis/bfheroesFesl/inter/network"
 )
 
 var Games = make(map[string]*network.Client)
 
 // func FindGIDs() string {
-// 	var gameID string	
+// 	var gameID string
 // 	for id := range Games {
 // 		gameID = id
 // 		jsonStr := []string{id}
