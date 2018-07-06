@@ -9,13 +9,22 @@ import (
 
 // NuLoginServer - NuLogin for gameServer.exe
 func (fm *Fesl) NuLoginServer(event network.EvProcess) {
-	if !event.Client.IsActive {
+	ready := event.Client.IsActive
+	if !ready {
 		logrus.Println("C Left")
 		return
 	}
 
-	var id, userID, servername, secretKey, username string
+	logrus.Println("===NuLoginServer===")
 
+	if event.Client.HashState.Get("clientType") != "server" {
+		logrus.Println("======Possible Exploit======")
+		//fm.Close()
+		return
+	}		
+	
+
+	var id, userID, servername, secretKey, username string
 	err := fm.db.stmtGetServerBySecret.QueryRow(event.Process.Msg["password"]).Scan(&id,
 		&userID, &servername, &secretKey, &username)
 
@@ -39,6 +48,11 @@ func (fm *Fesl) NuLoginServer(event network.EvProcess) {
 	lkeyRedis.Set("userID", userID)
 	lkeyRedis.Set("name", username)
 
+	if !ready {
+		logrus.Println("AFK")
+		return
+	}
+
 	event.Client.HashState.Set("lkeys", event.Client.HashState.Get("lkeys")+";"+lkey)
 	event.Client.Answer(&codec.Packet{
 		Content: ansNuLogin{
@@ -53,37 +67,39 @@ func (fm *Fesl) NuLoginServer(event network.EvProcess) {
 	})
 }
 
-//NuLoginPersonaServer Pre-Server Login (out of order ?)
+//NuLoginPersonaServer The Login is based on the Name
+//there is only 1 persona(hero) for the server , so it works like a password
 func (fm *Fesl) NuLoginPersonaServer(event network.EvProcess) {
-	if !event.Client.IsActive {
-		logrus.Println("C Left")
+	ready := event.Client.IsActive
+	if !ready {
+		logrus.Println("AFK")
 		return
 	}
+
+	logrus.Println("===LoginPersonaServer===")
+	logrus.Println("==Prompt==")
+	/////////////Checks////////////////////
 
 	if event.Client.HashState.Get("clientType") != "server" {
 		logrus.Println("====Possible Exploit====")
-		return
-	}
+		return	}
 
 	var id, userID, servername, secretKey, username string
-
 	err := fm.db.stmtGetServerByName.QueryRow(event.Process.Msg["name"]).Scan(&id, //continue
 		&userID, &servername, &secretKey, &username)
 
-	/////////////Checks///////////////////////
-	if event.Client.HashState.Get("clientType") != "server" {
+
+	if event.Client.HashState.Get("clientType") != "server" || err != nil {
 		logrus.Println("======Possible Exploit======")
+		//fm.Close()
 		return
 	}
-	if err != nil {
-		logrus.Println("Wrong Server Login")
+
+	if !ready {
+		logrus.Println("AFK")
 		return
 	}
-	if !event.Client.IsActive {
-		logrus.Println("C Left")
-		return
-	}
-	////////////Checks////////////////////////
+	////////////Checks////////////////
 
 	// Setup a key for Server
 	lkey := uuid.NewV4().String()
@@ -99,11 +115,11 @@ func (fm *Fesl) NuLoginPersonaServer(event network.EvProcess) {
 			ProfileID: id,
 			UserID:    id,
 			Lkey:      lkey,
-			//nuid:      servername, TODO
+			//nuid:    servername @TODO
 		},
 		Send:    event.Process.HEX,
 		Message: acct,
 	})
 
-	logrus.Println("====NuLoginPersonaServer====")
+	logrus.Println("==Success Login==")
 }
