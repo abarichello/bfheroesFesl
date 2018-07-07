@@ -17,6 +17,7 @@ type ansNuLogin struct {
 	ProfileID string `fesl:"profileId"`
 	UserID    string `fesl:"userId"`
 	NucleusID string `fesl:"nuid"`
+	Encrypt   int    `fesl:"returnEncryptedInfo"`
 	Lkey      string `fesl:"lkey"`
 }
 
@@ -111,7 +112,7 @@ func (fm *Fesl) NuLoginPersona(event network.EvProcess) {
 	event.Client.HashState.Set("lkeys", event.Client.HashState.Get("lkeys")+";"+lkey)
 
 	event.Client.Answer(&codec.Packet{
-		Content: ansNuLoginPersona{
+		Content: ansNuLogin{ // todo check why its not nuLoginPersona struct
 			TXN:       acctNuLoginPersona,
 			ProfileID: userID, // todo use PID
 			UserID:    userID,

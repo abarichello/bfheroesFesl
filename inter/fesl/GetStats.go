@@ -46,9 +46,9 @@ func (fm *Fesl) GetStats(event network.EvProcess) {
 				return
 			}
 
-			//userId = userID // should be userID = serverID (suID)
+			userId = userID // should be userID = serverID (suID)
 			//logrus.Println("Server requesting stats")
-			logrus.Println("test")
+			logrus.Println("TESTTTTTTTTTTTTTT")
 
 		}
 

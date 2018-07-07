@@ -18,8 +18,7 @@ func (fm *Fesl) NuLoginServer(event network.EvProcess) {
 	logrus.Println("===NuLoginServer===")
 
 	if event.Client.HashState.Get("clientType") != "server" {
-		logrus.Println("======Possible Exploit======")
-		//fm.Close()
+		logrus.Println("====Possible Exploit===")
 		return
 	}		
 	

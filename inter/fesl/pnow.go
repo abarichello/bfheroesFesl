@@ -29,7 +29,7 @@ func (fm *Fesl) Start(event network.EvProcess) {
 		Content: Start{
 			TXN:  "Start",
 			ID:   1,
-			Part: event.Process.Msg["partition.partition"],
+			Part: "bfwest/dedicated",
 		},
 		Send:    event.Process.HEX,
 		Message: "pnow",
