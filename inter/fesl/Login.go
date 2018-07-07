@@ -17,7 +17,6 @@ type ansNuLogin struct {
 	ProfileID string `fesl:"profileId"`
 	UserID    string `fesl:"userId"`
 	NucleusID string `fesl:"nuid"`
-	Encrypt   int    `fesl:"returnEncryptedInfo"`
 	Lkey      string `fesl:"lkey"`
 }
 
@@ -60,7 +59,6 @@ func (fm *Fesl) NuLogin(event network.EvProcess) {
 		Content: ansNuLogin{
 			TXN:       acctNuLogin,
 			ProfileID: id,
-			Encrypt:   1,
 			UserID:    id,
 			NucleusID: username,
 			Lkey:      lkey,
@@ -75,6 +73,8 @@ type ansNuLoginPersona struct {
 	ProfileID string `fesl:"profileId"`
 	UserID    string `fesl:"userId"`
 	Lkey      string `fesl:"lkey"`
+	Encrypt   int    `fesl:"returnEncryptedInfo"`
+
 }
 
 // User Login with selected Hero (persona)
@@ -111,10 +111,11 @@ func (fm *Fesl) NuLoginPersona(event network.EvProcess) {
 	event.Client.HashState.Set("lkeys", event.Client.HashState.Get("lkeys")+";"+lkey)
 
 	event.Client.Answer(&codec.Packet{
-		Content: ansNuLogin{
+		Content: ansNuLoginPersona{
 			TXN:       acctNuLoginPersona,
 			ProfileID: userID, // todo use PID
 			UserID:    userID,
+			Encrypt:   1,
 			Lkey:      lkey,
 		},
 		Send:    event.Process.HEX,

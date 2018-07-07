@@ -38,18 +38,19 @@ func (fm *Fesl) GetStats(event network.EvProcess) {
 	owner := event.Process.Msg["owner"]
 	userId := event.Client.HashState.Get("uID") //ultra typo
 
-	if event.Client.HashState.Get("clientType") == "server" {
+		if event.Client.HashState.Get("clientType") == "server" {
+			var id, userID, heroName, online string
+			err := fm.db.stmtGetHeroByID.QueryRow(owner).Scan(&id, &userID, &heroName, &online)
+			if err != nil {
+				logrus.Println("ServerLOGIN Error")
+				return
+			}
 
-		var id, userID, heroName, online string
-		err := fm.db.stmtGetHeroByID.QueryRow(owner).Scan(&id, &userID, &heroName, &online)
-		if err != nil {
-			logrus.Println("ServerLOGIN")
-			return
+			//userId = userID // should be userID = serverID (suID)
+			//logrus.Println("Server requesting stats")
+			logrus.Println("test")
+
 		}
-
-		userId = userID //??????
-		logrus.Println("Server requesting stats")
-	}
 
 	// Gen args list for statement -> heroID,userID,key1,key2,key3,..
 	var args []interface{}
