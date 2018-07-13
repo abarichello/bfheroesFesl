@@ -30,7 +30,7 @@ func (fm *Fesl) Start(event network.EvProcess) {
 			TXN:  "Start",
 			ID:	1,
 			Properties: 3,
-			Part: "bfwest/dedicated",
+			Part: event.Process.Msg["bfwest/dedicated"],
 		},
 		Send:    event.Process.HEX,
 		Message: "pnow",
@@ -86,6 +86,7 @@ func (fm *Fesl) Status(event network.EvProcess) {
 			Debug: 1,
 			Properties: map[string]interface{}{
 				"resultType": "JOIN",
+				"sessionType": "FindServer",
 				"games":      gamesArray},
 		},
 		Send:    0x80000000,
