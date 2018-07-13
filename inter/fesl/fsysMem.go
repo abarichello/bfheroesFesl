@@ -1,6 +1,7 @@
 package fesl
 
 import (
+	"github.com/sirupsen/logrus"
 	"github.com/Synaxis/bfheroesFesl/inter/network"
 	"github.com/Synaxis/bfheroesFesl/inter/network/codec"
 )
@@ -22,6 +23,7 @@ type ansMemCheck struct {
 	MemChecks []memCheck `fesl:"memcheck"`
 	Salt      string     `fesl:"salt"`
 	Type      int        `fesl:"type"`
+	Result 	  string 	 `fesl:"result"`
 }
 
 type memCheck struct {
@@ -30,11 +32,13 @@ type memCheck struct {
 }
 
 func (fm *Fesl) fsysMemCheck(event *network.EventNewClient) {
+	logrus.Println("Sending MemCheck")
 	event.Client.Answer(&codec.Packet{
 		Message: fsys,
 		Content: ansMemCheck{
 			TXN:  "MemCheck",
-			Salt: "0",
+			Salt: "5",
+			Result: "",
 		},
 		Send: 0xC0000000,
 	})

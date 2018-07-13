@@ -16,7 +16,7 @@ type reqStart struct {
 type Start struct {
 	ID         int    `fesl:"id.id"`
 	TXN        string `fesl:"TXN"`
-	Properties string `fesl:"props.{}.[]"`
+	Properties int `fesl:"props.{}.[]"`
 	Part       string `fesl:"id.partition"`
 }
 
@@ -28,7 +28,8 @@ func (fm *Fesl) Start(event network.EvProcess) {
 	event.Client.Answer(&codec.Packet{
 		Content: Start{
 			TXN:  "Start",
-			ID:   1,
+			ID:	1,
+			Properties: 3,
 			Part: "bfwest/dedicated",
 		},
 		Send:    event.Process.HEX,
@@ -41,6 +42,7 @@ type Status struct {
 	ID         int                    `fesl:"id.id"`
 	State      string                 `fesl:"sessionState"`
 	idpart     string                 `fesl:"id.partition"`
+	Debug	   int				  `fesl:"players.0.props.{debugHostAssignment}"`
 	Props      int                    `fesl:"props.{}.[]"`
 	Properties map[string]interface{} `fesl:"props"`
 	result     string                 `fesl:"props.{resultType}"`
@@ -79,8 +81,9 @@ func (fm *Fesl) Status(event network.EvProcess) {
 			State:  "COMPLETE",
 			ID:     1,
 			idpart: event.Process.Msg["partition.partition"],
-			Props:  2,
+			Props:  3,
 			result: "JOIN",
+			Debug: 1,
 			Properties: map[string]interface{}{
 				"resultType": "JOIN",
 				"games":      gamesArray},
