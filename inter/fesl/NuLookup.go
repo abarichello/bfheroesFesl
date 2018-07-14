@@ -46,7 +46,7 @@ func (fm *Fesl) NuLookupUserInfo(event network.EvProcess) {
 		}
 		logrus.Println("TEST TEST")
 		answer.UserInfo = append(answer.UserInfo, userInfo{
-			ClientID:     heroName,
+			ClientID:     id,
 			UserName:     heroName,
 			UserID:       id,
 			MasterUserID: id,

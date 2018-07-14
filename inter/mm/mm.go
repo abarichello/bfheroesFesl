@@ -8,15 +8,11 @@ import (
 
 var Games = make(map[string]*network.Client)
 
-// func FindGIDs() string {
-// 	var gameID string
-// 	for id := range Games {
-// 		gameID = id
-// 		jsonStr := []string{id}
-// 		logrus.WithFields(logrus.Fields{
-// 			" ": jsonStr,
-// 		}).Info("===Player Joined Game=== " + id) // TODO +uID joined Server
-// 	}
-// 	return gameID
+func FindGIDs() string {
+	var gid string
+	for ids := range Games {
+		gid = ids		
+	}
+	return gid
 
-// }
+}

@@ -2,6 +2,8 @@ package fesl
 
 import (
 	"github.com/Synaxis/bfheroesFesl/inter/network"
+	"github.com/Synaxis/bfheroesFesl/inter/mm"
+
 	"github.com/Synaxis/bfheroesFesl/inter/network/codec"
 	"github.com/sirupsen/logrus"
 )
@@ -16,7 +18,7 @@ type reqStart struct {
 type Start struct {
 	ID         int    `fesl:"id.id"`
 	TXN        string `fesl:"TXN"`
-	Properties int `fesl:"props.{}.[]"`
+	Properties int 	  `fesl:"props.{}.[]"`
 	Part       string `fesl:"id.partition"`
 }
 
@@ -42,7 +44,7 @@ type Status struct {
 	ID         int                    `fesl:"id.id"`
 	State      string                 `fesl:"sessionState"`
 	idpart     string                 `fesl:"id.partition"`
-	Debug	   int				  `fesl:"players.0.props.{debugHostAssignment}"`
+	Debug	   int				      `fesl:"players.0.props.{debugHostAssignment}"`
 	Props      int                    `fesl:"props.{}.[]"`
 	Properties map[string]interface{} `fesl:"props"`
 	result     string                 `fesl:"props.{resultType}"`
@@ -58,12 +60,16 @@ type stGame struct {
 func (fm *Fesl) Status(event network.EvProcess) {
 	logrus.Println("--Status--")
 
-	var gid string
+	search := mm.FindGIDs()
+	var gid string	
 	var err error
+
 	err = fm.db.stmtGetBookmark.QueryRow(event.Client.HashState.Get("uID")).Scan(&gid)
 	if err != nil {
-		return
-	}
+		gid = search
+ 		return
+	 }	
+
 
 	gamesArray := []stGame{
 		{

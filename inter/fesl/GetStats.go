@@ -30,15 +30,18 @@ type statsPair struct {
 // GetStats - Get basic stats about a soldier/owner (account holder)
 func (fm *Fesl) GetStats(event network.EvProcess) {
 	if !event.Client.IsActive {
-		return
+		return             
 	}
 
 	answer := event.Process.Msg
 	convert := strconv.Itoa
+
+
 	owner := event.Process.Msg["owner"]
 	userId := event.Client.HashState.Get("uID") //ultra typo
 
 		if event.Client.HashState.Get("clientType") == "server" {
+			logrus.Println("GetStats (server), replacing heroID with ownerID")
 			var id, userID, heroName, online string
 			err := fm.db.stmtGetHeroByID.QueryRow(owner).Scan(&id, &userID, &heroName, &online)
 			if err != nil {
@@ -48,7 +51,6 @@ func (fm *Fesl) GetStats(event network.EvProcess) {
 
 			userId = userID // should be userID = serverID (suID)
 			//logrus.Println("Server requesting stats")
-			logrus.Println("TESTTTTTTTTTTTTTT")
 
 		}
 
