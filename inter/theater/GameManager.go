@@ -99,9 +99,7 @@ func (tm *Theater) Listen() {
 			case "client.command.GDAT":
 				go tm.GDAT(event.Data.(network.EvProcess))
 			case "client.command.EGAM":
-				go tm.EGAM(event.Data.(network.EvProcess))
-			case "client.command.ECNL":
-				go tm.ECNL(event.Data.(network.EvProcess))
+				go tm.EGAM(event.Data.(network.EvProcess))			
 			case "client.command.CGAM":
 				go tm.CGAM(event.Data.(network.EvProcess))
 			case "client.command.UBRA":
@@ -116,6 +114,8 @@ func (tm *Theater) Listen() {
 				go tm.PLVT(event.Data.(network.EvProcess))
 			case "client.command.UPLA":
 				go tm.UPLA(event.Data.(network.EvProcess))
+			case "client.command.ECNL":
+				go tm.ECNL(event.Data.(network.EvProcess))
 			case "client.close":
 				tm.close(event.Data.(network.EventClientClose))
 			case "client.command":
@@ -139,7 +139,7 @@ func (tm *Theater) newClient(event network.EventNewClient) {
 	logrus.Println("Joined Theather")
 
 	// Start Heartbeat
-	event.Client.State.HeartTicker = time.NewTicker(time.Second * 10)
+	event.Client.State.HeartTicker = time.NewTicker(time.Second * 5)
 	go func() {
 		for event.Client.IsActive {
 			select {

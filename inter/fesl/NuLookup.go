@@ -86,6 +86,7 @@ func (fm *Fesl) NuLookupUserInfoServer(event network.EvProcess) {
 					XUID:         24,
 					MasterUserID: "1",
 					UserID:       "1",
+					ClientID:     "1",
 					UserName:     servername,
 				},
 			},

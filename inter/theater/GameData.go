@@ -6,6 +6,8 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+
+
 // GameClient Represents a game client connected to theater
 type GameClient struct {
 	ip   string
@@ -46,6 +48,16 @@ type GameServer struct {
 	avgAxisRank        float64
 	serverState        string
 	communityName      string
+}
+
+type reqGDAT struct {
+	// TID=3
+	TID int `fesl:"TID"`
+
+	// LID=0
+	LobbyID int `fesl:"LID"`
+	// GID=1
+	GameID int `fesl:"GID"`
 }
 
 type ansGDAT struct {

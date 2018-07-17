@@ -85,7 +85,7 @@ type reqCGAM struct {
 }
 type ansCGAM struct {
 	TID        string `fesl:"TID"`
-	LobbyID    string `fesl:"LID"`
+	LobbyID    int `fesl:"LID"`
 	MaxPlayers string `fesl:"MAX-PLAYERS"`
 	EKEY       string `fesl:"EKEY"`
 	UGID       string `fesl:"UGID"`
@@ -173,7 +173,7 @@ func (tm *Theater) CGAM(event network.EvProcess) {
 		Message: thtrCGAM,
 		Content: ansCGAM{
 			TID:        answer["TID"],
-			LobbyID:    "1", //should not be hardcoded
+			LobbyID:    1, //should not be hardcoded
 			UGID:       answer["UGID"],
 			MaxPlayers: answer["MAX-PLAYERS"],
 			EKEY:       "TEST1234",

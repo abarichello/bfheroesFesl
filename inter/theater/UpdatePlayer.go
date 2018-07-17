@@ -17,10 +17,9 @@ type reqUPLA struct {
 	LobbyID string `fesl:"LID"`
 	// PID=6
 	PlayerID int `fesl:"PID"`
-	// HMO=6
-	HostOwnerID int `fesl:"HMO"`
+	clientID int `fesl:"P-cid"`
 
-	reqUPLAKeys
+	HostOwnerID int `fesl:"HMO"`
 }
 
 type reqUPLAKeys struct {
@@ -48,7 +47,16 @@ func (tM *Theater) UPLA(event network.EvProcess) {
 
 	pid := event.Process.Msg["PID"]
 	gid := event.Process.Msg["GID"]
-	//cid := event.Process.Msg["P-cid"]
+	cid := event.Process.Msg["P-cid"]
+
+	// event.Client.Answer(&codec.Packet{ // need to check this
+	// 	Message: thtrKICK,
+	// 	Content: ansKICK{
+	// 		event.Process.Msg["PID"],
+	// 		event.Process.Msg["LID"],
+	// 		event.Process.Msg["TID"],
+	// 	},
+	// })
 
 	// wtf
 	for index, value := range event.Process.Msg {
@@ -68,6 +76,7 @@ func (tM *Theater) UPLA(event network.EvProcess) {
 
 		args = append(args, gid)
 		args = append(args, pid)
+		args = append(args, cid)
 		args = append(args, index)
 		args = append(args, value)
 	}
