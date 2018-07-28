@@ -47,18 +47,7 @@ func (tM *Theater) UPLA(event network.EvProcess) {
 
 	pid := event.Process.Msg["PID"]
 	gid := event.Process.Msg["GID"]
-	cid := event.Process.Msg["P-cid"]
 
-	// event.Client.Answer(&codec.Packet{ // need to check this
-	// 	Message: thtrKICK,
-	// 	Content: ansKICK{
-	// 		event.Process.Msg["PID"],
-	// 		event.Process.Msg["LID"],
-	// 		event.Process.Msg["TID"],
-	// 	},
-	// })
-
-	// wtf
 	for index, value := range event.Process.Msg {
 		if index == "TID" || index == "PID" || index == "GID" {
 			continue
@@ -76,7 +65,6 @@ func (tM *Theater) UPLA(event network.EvProcess) {
 
 		args = append(args, gid)
 		args = append(args, pid)
-		args = append(args, cid)
 		args = append(args, index)
 		args = append(args, value)
 	}

@@ -18,15 +18,6 @@ func (socket *SocketUDP) Answer(Packet *codec.Packet, addr *net.UDPAddr) error {
 	})
 }
 
-// Close fires a close-event and closes the socket
-func (socket *SocketUDP) Close() {
-	// Fire closing event
-	socket.EventChan <- SocketUDPEvent{Name: "close", Addr: nil, Data: nil}
-
-	// Close socket
-	socket.listen.Close()
-}
-
 func AnswerUDP(Packet *codec.Packet, writer func(*bytes.Buffer) error) error {
 	logger := logrus.WithFields(logrus.Fields{"type": Packet.Message, "HEX": Packet.Send})
 

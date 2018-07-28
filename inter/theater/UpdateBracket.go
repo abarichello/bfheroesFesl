@@ -37,7 +37,10 @@ func (tM *Theater) UBRA(event network.EvProcess) {
 			START: 1,
 		}},
 	)
-	gdata := tM.level.NewObject("gdata", event.Process.Msg["GID"])
+	gdata := tM.level.NewObject("gdata", event.Process.Msg["GID"])	
+	
+
+
 	if event.Process.Msg["START"] == "1" {
 		gdata.Set("AP", "0") // AP = Active-Player FOR THAT Player
 		// If Player Entered -> Reset AP

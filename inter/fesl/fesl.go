@@ -83,7 +83,6 @@ func (fm *Fesl) run() {
 				fm.UpdateStats(event.Data.(network.EvProcess))
 			case "client.command.Start":
 				fm.Start(event.Data.(network.EvProcess))
-				fm.Status(event.Data.(network.EvProcess))
 			case "client.Goodbye":
 				fm.Goodbye(event.Data.(network.EvProcess))
 			case "client.close":
@@ -91,9 +90,11 @@ func (fm *Fesl) run() {
 			case "client.command":
 				txn := event.Data.(network.EvProcess).Process.Msg["TXN"]
 				logrus.WithFields(logrus.Fields{
-					"func": fm.name,
-					"cmd":  fmt.Sprintf("%s/TXN:%s", event.Name, txn),
-				})
+					"srv": fm.name,
+					"cmd": fmt.Sprintf("%s/TXN:%s", event.Name, txn),
+				}).Debugf("Got event")
+			default:
+				logrus.WithFields(logrus.Fields{"srv": fm.name, "event": event.Name}).Debugf("Got event")
 			}
 		}
 	}

@@ -29,9 +29,6 @@ type statsPair struct {
 
 // GetStats - Get basic stats about a soldier/owner (account holder)
 func (fm *Fesl) GetStats(event network.EvProcess) {
-	if !event.Client.IsActive {
-		return             
-	}
 
 	answer := event.Process.Msg
 	convert := strconv.Itoa
@@ -72,18 +69,21 @@ func (fm *Fesl) GetStats(event network.EvProcess) {
 	}
 
 	rows, err := fm.db.getStatsStatement(keys).Query(args...)
+
+	// rows, err := fm.db.getStatsStatement(keys).Query(args...)
 	if err != nil {
 		logrus.Errorln("Failed gettings stats for hero "+owner, err.Error())
-
-		// Send stats not found with default value of ""
-		for key := range statsKeys {
-			ans.Stats = append(ans.Stats, statsPair{
-				Key:   key,
-				Text:  "",
-				Value: "0",
-			})
-		}
 	}
+
+	// 	// Send stats not found with default value of ""
+	// 	for key := range statsKeys {
+	// 		ans.Stats = append(ans.Stats, statsPair{
+	// 			Key:   key,
+	// 			Text:  "",
+	// 			Value: "0",
+	// 		})
+	// 	}
+	// }
 
 	for rows.Next() {
 		var userID, heroID, statsKey, statsValue string

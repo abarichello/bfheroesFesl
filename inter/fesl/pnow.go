@@ -10,44 +10,41 @@ import (
 
 type reqStart struct {
 	TXN        string `fesl:"TXN"`
-	Partition  string `fesl:"partition.partition"`
 	debugLevel string `fesl:"debugLevel"`
 	Version    int    `fesl:"version"`
 }
 
-type Start struct {
-	ID         int    `fesl:"id.id"`
-	TXN        string `fesl:"TXN"`
-	Properties int 	  `fesl:"props.{}.[]"`
-	Part       string `fesl:"id.partition"`
+type statusPartition struct {
+	ID        int    `fesl:"id"`
+	Partition string `fesl:"partition"`
+}
+
+type ansStart struct {
+	TXN string          `fesl:"TXN"`
+	ID    statusPartition `fesl:"id"`
 }
 
 // Start handles pnow.Start
 func (fm *Fesl) Start(event network.EvProcess) {
-	logrus.Println("==START==")
-	//var isSearching = true
+	logrus.Println("---START---")
 
 	event.Client.Answer(&codec.Packet{
-		Content: Start{
+		Content: ansStart{
 			TXN:  "Start",
-			ID:	1,
-			Properties: 3,
-			Part: event.Process.Msg["bfwest/dedicated"],
+			ID:    statusPartition{1, event.Process.Msg["eagames/bfwest-dedicated"]},
 		},
 		Send:    event.Process.HEX,
 		Message: "pnow",
 	})
+	fm.Status(event)
+
 }
 
 type Status struct {
 	TXN        string                 `fesl:"TXN"`
-	ID         int                    `fesl:"id.id"`
+	ID         statusPartition        `fesl:"id"`
 	State      string                 `fesl:"sessionState"`
-	idpart     string                 `fesl:"id.partition"`
-	Debug	   int				      `fesl:"players.0.props.{debugHostAssignment}"`
-	Props      int                    `fesl:"props.{}.[]"`
 	Properties map[string]interface{} `fesl:"props"`
-	result     string                 `fesl:"props.{resultType}"`
 }
 
 type stGame struct {
@@ -58,38 +55,33 @@ type stGame struct {
 
 // Status comes after Start. tells info about desired server
 func (fm *Fesl) Status(event network.EvProcess) {
-	logrus.Println("--Status--")
+	logrus.Println("--Status--")	
+		
+	// var gid string	
+	// var err error
 
-	search := mm.FindGIDs()
-	var gid string	
-	var err error
+	// err = fm.db.stmtGetBookmark.QueryRow(event.Client.HashState.Get("uID")).Scan(&gid)
+	// if err != nil {	
+ 	// 	logrus.Println("no game found for player")
+	//  }	
 
-	err = fm.db.stmtGetBookmark.QueryRow(event.Client.HashState.Get("uID")).Scan(&gid)
-	if err != nil {
-		gid = search
- 		return
-	 }	
-
-
+	// continuos search
+	for search := range mm.Games {
+	gid := search
 	gamesArray := []stGame{
 		{
 			GID:     gid,
 			Fit:     1001,
 			LobbyID: 1,
 		},
-	}
+	}		
 
-	//if event.Process.Msg["props.{games}.0.gid=0"]
 
 	event.Client.Answer(&codec.Packet{
 		Content: Status{
 			TXN:    "Status",
 			State:  "COMPLETE",
-			ID:     1,
-			idpart: event.Process.Msg["partition.partition"],
-			Props:  3,
-			result: "JOIN",
-			Debug: 1,
+			ID:    statusPartition{1, event.Process.Msg["eagames/bfwest-dedicated"]},
 			Properties: map[string]interface{}{
 				"resultType": "JOIN",
 				"sessionType": "FindServer",
@@ -98,4 +90,4 @@ func (fm *Fesl) Status(event network.EvProcess) {
 		Send:    0x80000000,
 		Message: "pnow",
 	})
-}
+}}

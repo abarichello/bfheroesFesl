@@ -36,7 +36,7 @@ type reqHello struct {
 
 type ansHello struct {
 	TXN           string          `fesl:"TXN"`
-	Domain        domainPartition `fesl:"domainPartition"`
+	Domain        domainPartition 		  `fesl:"domainPartition"`
 	ConnTTL       int             `fesl:"activityTimeoutSecs"`
 	ConnectedAt   string          `fesl:"curTime"`
 	MessengerIP   string          `fesl:"messengerIp"`
@@ -57,10 +57,6 @@ func (fm *Fesl) hello(event network.EvProcess) {
 		return
 	}
 
-	// var firstLogin = true
-	if !firstLogin {
-		fm.NuLogin(event)
-	}
 
 	redisState := fm.createState(fmt.Sprintf(
 		"%s-%s",
@@ -83,6 +79,7 @@ func (fm *Fesl) hello(event network.EvProcess) {
 		"locale":         event.Process.Msg["locale"],
 		"sku":            event.Process.Msg["sku"],
 	}
+
 	event.Client.HashState.SetM(saveRedis)
 
 	answer := ansHello{
@@ -106,6 +103,7 @@ func (fm *Fesl) hello(event network.EvProcess) {
 		Message: fsys,
 		Send:    0xC0000001,
 	})
+
 	firstLogin = true
 	if !AFK {
 		return

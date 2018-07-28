@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"crypto/tls"
 	"encoding/hex"
+
 	"fmt"
 	"github.com/Synaxis/bfheroesFesl/inter/network/codec"
 	"io"
@@ -91,7 +92,7 @@ func newClientTLS(name string, conn *tls.Conn) *Client {
 		IsActive:  true,
 		eventChan: make(chan ClientEvent, 500),
 		Options: ClientOptions{
-			FESL: true, // Always true
+			FESL: true, 
 		},
 	}
 }
@@ -143,11 +144,11 @@ func (client *Client) handleRequest() {
 
 		message := strings.TrimSpace(string(client.recvBuffer))
 
-		logrus.Debugln("Got message:", hex.EncodeToString(client.recvBuffer))
+		logrus.Println("Got message:", hex.EncodeToString(client.recvBuffer))
 
 		if strings.Index(message, `\final\`) == -1 {
 			if len(client.recvBuffer) > 1024 {
-				// We don't support more than 2048 long messages
+				// Split message into 2
 				client.recvBuffer = make([]byte, 0)
 			}
 			continue
@@ -192,7 +193,7 @@ func (c *Client) Close() {
 	c.eventChan <- ClientEvent{Name: "close", Data: c}
 	c.conn.Close()
 	c.IsActive = false
-	// close(c.eventChan)
+	c.FireClose()
 }
 
 type ClientState struct {

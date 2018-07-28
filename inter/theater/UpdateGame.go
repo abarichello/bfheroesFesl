@@ -54,10 +54,7 @@ type reqUGAMKeys struct {
 }
 
 func (tM *Theater) UGAM(event network.EvProcess) {
-	if !event.Client.IsActive {
-		logrus.Println("Cli Left")
-		return
-	}
+	
 	logrus.Println("==============UPDATE GAME==============")
 	gameID := event.Process.Msg["GID"] // TODO gameID := mm.FindGids()
 

@@ -230,7 +230,7 @@ func (socket *SocketUDP) run() {
 	for socket.EventChan != nil {
 		n, addr, err := socket.listen.ReadFromUDP(buf)
 		if err != nil {
-			logrus.WithError(err).Error("Error reading from UDP", err)
+			logrus.WithError(err).Error("Error reading from UDP Ln 227 socket.go", err)
 			socket.EventChan <- SocketUDPEvent{Name: "error", Addr: addr, Data: err}
 			continue
 		}
@@ -263,7 +263,8 @@ func (socket *SocketUDP) readFESL(data []byte, addr *net.UDPAddr) {
 	}
 }
 
-func (socket *SocketUDP) WriteEncode(Packet *codec.Packet, addr *net.UDPAddr) error {
+func (socket *SocketUDP) WriteEncode(Packet *codec.Packet, addr *net.UDPAddr) error {	
+
 	// Encode packet
 	buf, err := codec.
 		NewEncoder().
@@ -288,3 +289,13 @@ func (socket *SocketUDP) WriteEncode(Packet *codec.Packet, addr *net.UDPAddr) er
 
 	return nil
 }
+
+// Close fires a close-event and closes the socket
+func (socket *SocketUDP) Close() {
+	// Fire closing event
+	socket.EventChan <- SocketUDPEvent{Name: "close", Addr: nil, Data: nil}
+
+	// Close socket
+	socket.listen.Close()
+}
+
