@@ -2,34 +2,40 @@ package network
 
 import (
 	"crypto/tls"
-	"net"
-	"time"
-	"bytes"
-	"encoding/binary"
+	"github.com/Synaxis/bfheroesFesl/config"
 	"github.com/Synaxis/bfheroesFesl/inter/network/codec"
 
+	"bytes"
+	"encoding/binary"
 	"github.com/sirupsen/logrus"
-
-	"github.com/Synaxis/bfheroesFesl/config"
+	"net"
+	"strings"
+	"time"
 )
 
 // Socket is a basic event-based TCP-Server
-// TODO: Rename it to broker
 type Socket struct {
+	Clients   *Clients
+	name      string
 	bind      string
 	listen    net.Listener
 	EventChan chan SocketEvent
+	fesl      bool
 }
 
-func newSocket(bind string) *Socket {
+func newSocket(name, bind string, fesl bool) *Socket {
 	return &Socket{
+		name:      name,
 		bind:      bind,
-		EventChan: make(chan SocketEvent),
+		fesl:      fesl,
+		Clients:   newClients(),
+		EventChan: make(chan SocketEvent, 1000),
 	}
 }
 
-func NewSocketTCP(bind string) (*Socket, error) {
-	socket := newSocket(bind)
+// New starts to listen on a new Socket
+func NewSocketTCP(name, bind string, fesl bool) (*Socket, error) {
+	socket := newSocket(name, bind, fesl)
 	listener, err := socket.listenTCP()
 	if err != nil {
 		return nil, err
@@ -40,8 +46,8 @@ func NewSocketTCP(bind string) (*Socket, error) {
 	return socket, nil
 }
 
-func NewSocketTLS(bind string) (*Socket, error) {
-	socket := newSocket(bind)
+func NewSocketTLS(name, bind string) (*Socket, error) {
+	socket := newSocket(name, bind, true)
 	listener, err := socket.listenTLS()
 	if err != nil {
 		return nil, err
@@ -55,7 +61,7 @@ func NewSocketTLS(bind string) (*Socket, error) {
 func (socket *Socket) listenTCP() (net.Listener, error) {
 	listener, err := net.Listen("tcp", socket.bind)
 	if err != nil {
-		logrus.WithError(err).Errorf("Listening on %s threw an error", socket.bind)
+		logrus.Errorf("%s: Listening on %s threw an error.\n%v", socket.name, socket.bind, err)
 		return nil, err
 	}
 	return listener, nil
@@ -72,7 +78,6 @@ func (socket *Socket) listenTLS() (net.Listener, error) {
 		ClientAuth:         tls.NoClientCert,
 		MinVersion:         tls.VersionSSL30,
 		InsecureSkipVerify: true,
-		//MaxVersion:   tls.VersionSSL30,
 		CipherSuites: []uint16{
 			tls.TLS_RSA_WITH_RC4_128_SHA,
 		},
@@ -85,6 +90,35 @@ func (socket *Socket) listenTLS() (net.Listener, error) {
 	}
 
 	return listener, nil
+}
+
+func (socket *Socket) handleClientEvents(client *Client) {
+	defer socket.removeClient(client)
+
+	for client.IsActive {
+		select {
+		case event := <-client.eventChan:
+			switch {
+			case event.Name == "close":
+				socket.EventChan <- client.FireClientClose(event)
+				socket.removeClient(client)
+			case strings.Index(event.Name, "command") != -1:
+				socket.EventChan <- client.FireClientCommand(event)
+			case event.Name == "data":
+				socket.EventChan <- client.FireClientData(event)
+			default:
+				socket.EventChan <- client.FireSomething(event)
+			}
+		}
+	}
+}
+
+func (socket *Socket) removeClient(client *Client) {
+	logrus.Debugf("Removing client %s", client.name)
+
+	client.IsActive = false
+	client.Close()
+	socket.Clients.Remove(client)
 }
 
 type connAcceptFunc func(conn net.Conn)
@@ -104,9 +138,10 @@ func (socket *Socket) run(connect connAcceptFunc) {
 }
 
 func (socket *Socket) createClientTCP(conn net.Conn) {
-	tcpClient := NewClientTCP(conn)
-	go tcpClient.handleRequestTCP()
-	go tcpClient.handleClientEvents(socket)
+	tcpClient := newClientTCP(socket.name, conn, socket.fesl)
+	socket.Clients.Add(tcpClient)
+	go tcpClient.handleRequest()
+	go socket.handleClientEvents(tcpClient)
 	socket.EventChan <- socket.FireNewClient(tcpClient)
 }
 
@@ -120,31 +155,31 @@ func (socket *Socket) createClientTLS(conn net.Conn) {
 	tlscon.SetDeadline(time.Now().Add(time.Second * 10))
 	err := tlscon.Handshake()
 	if err != nil {
-		logrus.WithError(err).Errorf("A new client from %s connecting to %s threw an error", tlscon.RemoteAddr(), socket.bind)
+		logrus.Errorf("%s: A new client connecting threw an error.\n%v\n%v", socket.name, err, tlscon.RemoteAddr())
+		socket.EventChan <- socket.FireError(err)
 		tlscon.Close()
 	}
-	tlscon.SetDeadline(time.Time{})
 
 	state := tlscon.ConnectionState()
-	logrus.Debugf("Connection handshake complete %t, %v", state.HandshakeComplete, state)
+	logrus.Debugf("===HANDSHAKE DONE=== %t, %v", state.HandshakeComplete, state)
 
-	tlsClient := NewClientTLS(tlscon)
+	// reset deadline after handshake
+	tlscon.SetDeadline(time.Time{})
+
+	tlsClient := newClientTLS(socket.name, tlscon)
 	go tlsClient.handleRequestTLS()
-	go tlsClient.handleClientEvents(socket)
+	go socket.handleClientEvents(tlsClient)
 
-	logrus.
-		WithField("bind", socket.bind).
-		WithField("protocol", "tcp").
-		Print("A new client connected")
+	logrus.Println(socket.name + ":New Client connect")
+	socket.Clients.Add(tlsClient)
 
 	socket.EventChan <- socket.FireNewClient(tlsClient)
 }
 
-
 // Close fires a close-event and closes the socket
 func (socket *Socket) Close() {
 	// Fire closing event
-	close(socket.EventChan)
+	socket.EventChan <- socket.FireClose()
 
 	// Close socket
 	socket.listen.Close()
@@ -195,7 +230,7 @@ func (socket *SocketUDP) run() {
 	for socket.EventChan != nil {
 		n, addr, err := socket.listen.ReadFromUDP(buf)
 		if err != nil {
-			logrus.WithError(err).Error("Error reading from UDP", err)
+			logrus.WithError(err).Error("Error reading from UDP Ln 227 socket.go", err)
 			socket.EventChan <- SocketUDPEvent{Name: "error", Addr: addr, Data: err}
 			continue
 		}
@@ -228,7 +263,8 @@ func (socket *SocketUDP) readFESL(data []byte, addr *net.UDPAddr) {
 	}
 }
 
-func (socket *SocketUDP) WriteEncode(Packet *codec.Packet, addr *net.UDPAddr) error {
+func (socket *SocketUDP) WriteEncode(Packet *codec.Packet, addr *net.UDPAddr) error {	
+
 	// Encode packet
 	buf, err := codec.
 		NewEncoder().
@@ -253,3 +289,13 @@ func (socket *SocketUDP) WriteEncode(Packet *codec.Packet, addr *net.UDPAddr) er
 
 	return nil
 }
+
+// Close fires a close-event and closes the socket
+func (socket *SocketUDP) Close() {
+	// Fire closing event
+	socket.EventChan <- SocketUDPEvent{Name: "close", Addr: nil, Data: nil}
+
+	// Close socket
+	socket.listen.Close()
+}
+

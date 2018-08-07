@@ -47,7 +47,7 @@ type Theater struct {
 
 // New creates and starts a new TheaterManager
 func New(name, bind string, conn *sql.DB, lvl *level.Level) *Theater {
-	socket, err := network.NewSocketTCP(bind)
+	socket, err := network.NewSocketTCP(name, bind, true)
 	if err != nil {
 		return nil
 	}
