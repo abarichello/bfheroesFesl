@@ -1,6 +1,8 @@
 package network
 
 import (
+	"bytes"
+	"encoding/binary"
 	"errors"
 	"net"
 	"strings"
@@ -12,22 +14,38 @@ import (
 
 type eventReadFesl func(outCommand *ProcessFESL, ContentType string)
 
-func (client *Client) readFESL(data []byte) {
-	cmds, err := codec.ParseCommands(data)
-	if err != nil {
-		logrus.
-			WithError(err).
-			WithField("packet", string(data)).
-			Error("Cannot parse commands")
-		return
-	}
-	for _, cmd := range cmds {
-		client.receiver <- ClientEvent{
-			Name: "command." + cmd.Query,
-			Data: cmd,
-		}
-	}
+func (client *Client) readFESL(data []byte) []byte {
+	return readFesl(data, func(cmd *ProcessFESL, ContentType string) {
+		client.eventChan <- ClientEvent{Name: "command." + ContentType, Data: cmd}
+		client.eventChan <- ClientEvent{Name: "command", Data: cmd}
+	})
 }
+
+func (client *Client) readFESLTLS(data []byte) []byte {
+	return readFesl(data, func(cmd *ProcessFESL, ContentType string) {
+		client.eventChan <- ClientEvent{Name: "command." + cmd.Msg["TXN"], Data: cmd}
+		client.eventChan <- ClientEvent{Name: "command", Data: cmd}
+	})
+}
+
+
+//new
+// func (client *Client) readFESL(data []byte) {
+// 	cmds, err := codec.ParseCommands(data)
+// 	if err != nil {
+// 		logrus.
+// 			WithError(err).
+// 			WithField("packet", string(data)).
+// 			Error("Cannot parse commands")
+// 		return
+// 	}
+// 	for _, cmd := range cmds {
+// 		client.receiver <- ClientEvent{
+// 			Name: "command." + cmd.Query,
+// 			Data: cmd,
+// 		}
+// 	}
+// }
 
 
 // func (socket *SocketUDP) readFESL(data []byte, addr *net.UDPAddr) {
@@ -78,56 +96,56 @@ func (client *Client) readTLSPacket(data []byte) {
 	}
 }
 
-// func readFesl(data []byte, fireEvent eventReadFesl) []byte {
-// 	p := bytes.NewBuffer(data)
-// 	i := 0
-// 	var ContentRaw []byte
-// 	for {
-// 		// Create a copy at this point in case we have to abort later
-// 		// And send back the Packet to get the rest
-// 		curData := p
+func readFesl(data []byte, fireEvent eventReadFesl) []byte {
+	p := bytes.NewBuffer(data)
+	i := 0
+	var ContentRaw []byte
+	for {
+		// Create a copy at this point in case we have to abort later
+		// And send back the Packet to get the rest
+		curData := p
 
-// 		var HEX uint32
-// 		var length uint32
+		var HEX uint32
+		var length uint32
 
-// 		ContentTypeRaw := make([]byte, 4)
-// 		_, err := p.Read(ContentTypeRaw)
-// 		if err != nil {
-// 			return nil
-// 		}
+		ContentTypeRaw := make([]byte, 4)
+		_, err := p.Read(ContentTypeRaw)
+		if err != nil {
+			return nil
+		}
 
-// 		ContentType := string(ContentTypeRaw)
+		ContentType := string(ContentTypeRaw)
 
-// 		binary.Read(p, binary.BigEndian, &HEX)
+		binary.Read(p, binary.BigEndian, &HEX)
 
-// 		if p.Len() < 4 {
-// 			return nil
-// 		}
+		if p.Len() < 4 {
+			return nil
+		}
 
-// 		binary.Read(p, binary.BigEndian, &length)
+		binary.Read(p, binary.BigEndian, &length)
 
-// 		if (length - 12) > uint32(len(p.Bytes())) {
-// 			logrus.Println("Packet not fully read")
-// 			return curData.Bytes()
-// 		}
+		if (length - 12) > uint32(len(p.Bytes())) {
+			logrus.Println("Packet not fully read")
+			return curData.Bytes()
+		}
 
-// 		ContentRaw = make([]byte, (length - 12))
-// 		p.Read(ContentRaw)
+		ContentRaw = make([]byte, (length - 12))
+		p.Read(ContentRaw)
 
-// 		Content := codec.DecodeFESL(ContentRaw) //hex to asci
+		Content := codec.DecodeFESL(ContentRaw) //hex to asci
 
-// 		out := &ProcessFESL{
-// 			Query: ContentType,
-// 			HEX:   HEX, //ContentID like 0xc000000d
-// 			Msg:   Content,
-// 		}
-// 		fireEvent(out, ContentType)
+		out := &ProcessFESL{
+			Query: ContentType,
+			HEX:   HEX, //ContentID like 0xc000000d
+			Msg:   Content,
+		}
+		fireEvent(out, ContentType)
 
-// 		i++
-// 	}
+		i++
+	}
 
-// 	return nil
-// }
+	return nil
+}
 
 type ProcessFESL struct {
 	Msg   map[string]string

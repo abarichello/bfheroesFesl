@@ -1,6 +1,10 @@
 package network
 
-import "net"
+import (
+ "net"
+ "github.com/Synaxis/bfheroesFesl/inter/network/codec"
+
+)
 
 type SocketEvent struct {
 	Name string
@@ -18,6 +22,13 @@ type ClientEvent struct {
 	Name string
 	Data interface{}
 }
+
+type EventClientCommand struct {
+	Client *Client
+	// If TLS (theater then we ignore payloadID - it is always 0x0)
+	Command *codec.Packet
+}
+
 
 type EventError struct {
 	Error error
@@ -83,6 +94,7 @@ func (c *Client) FireClientCommand(event ClientEvent) SocketEvent {
 		},
 	}
 }
+
 
 func (c *Client) FireSomething(event ClientEvent) SocketEvent {
 	var interfaceSlice = make([]interface{}, 2)

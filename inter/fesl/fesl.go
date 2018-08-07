@@ -2,6 +2,8 @@ package fesl
 
 import (
 	"database/sql"
+	"context"
+
 	"fmt"
 	"github.com/Synaxis/bfheroesFesl/inter/network"
 	"github.com/Synaxis/bfheroesFesl/storage/level"
@@ -29,7 +31,7 @@ func New(name, bind string, server bool, conn *sql.DB, lvl *level.Level) *Fesl {
 		return nil
 	}
 
-	socket, err := network.NewSocketTLS(name, bind)
+	socket, err := network.NewSocketTLS(bind)
 	if err != nil {
 		logrus.Fatal(err)
 		return nil
@@ -42,14 +44,29 @@ func New(name, bind string, server bool, conn *sql.DB, lvl *level.Level) *Fesl {
 		server: server,
 		socket: socket,
 	}
-
-	go fm.run()
 	return fm
 }
 
-func (fm *Fesl) run() {
+func (fm *Fesl) ListenAndServe(ctx context.Context) {
+	go fm.Run(ctx)
+}
+
+func (fm *Fesl) Run(ctx context.Context) {
+	for {
+		select {
+		case event := <-fm.socket.EventChan:
+			fm.handleTCP(event)
+		case <-ctx.Done():
+			return
+		}
+	}
+}
+
+
+func (fm *Fesl) handleTCP(event network.SocketEvent) {
 	// Close all database statements
 	defer fm.db.closeStatements()
+
 
 	for {
 		select {

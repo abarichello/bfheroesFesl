@@ -36,7 +36,7 @@ type reqHello struct {
 
 type ansHello struct {
 	TXN           string          `fesl:"TXN"`
-	Domain        domainPartition 		  `fesl:"domainPartition"`
+	Domain        domainPartition `fesl:"domainPartition"`
 	ConnTTL       int             `fesl:"activityTimeoutSecs"`
 	ConnectedAt   string          `fesl:"curTime"`
 	MessengerIP   string          `fesl:"messengerIp"`
@@ -51,6 +51,16 @@ type domainPartition struct {
 }
 
 func (fm *Fesl) hello(event network.EvProcess) {
+	AFK := event.Client.IsActive
+	if !AFK {
+		logrus.Println("Cli Left")
+		return
+	}
+
+	// var firstLogin = true
+	if !firstLogin {
+		fm.NuLogin(event)
+	}
 
 	redisState := fm.createState(fmt.Sprintf(
 		"%s-%s",
@@ -73,17 +83,14 @@ func (fm *Fesl) hello(event network.EvProcess) {
 		"locale":         event.Process.Msg["locale"],
 		"sku":            event.Process.Msg["sku"],
 	}
-
 	event.Client.HashState.SetM(saveRedis)
 
 	answer := ansHello{
 		TXN:         fsysHello,
-		ConnTTL:       int((60 * time.Second).Seconds()),
-		ConnectedAt:   time.Now().Format("Jan-02-2006 15:04:05 MST"),
-		TheaterIP:     config.General.ThtrAddr,
-		MessengerIP:   config.General.TelemetryIP,
-		MessengerPort: config.General.TelemetryPort,
-
+		ConnTTL:     int((60 * time.Hour).Seconds()),
+		ConnectedAt: time.Now().Format("Jan-02-2006 15:04:05 MST"),
+		TheaterIP:   config.General.ThtrAddr,
+		MessengerIP: config.General.MessengerAddr,
 	}
 
 	if fm.server {
@@ -99,6 +106,10 @@ func (fm *Fesl) hello(event network.EvProcess) {
 		Message: fsys,
 		Send:    0xC0000001,
 	})
+	firstLogin = true
+	if !AFK {
+		return
+	}
 }
 
 ///////////////////////////////////////////////

@@ -2,40 +2,34 @@ package network
 
 import (
 	"crypto/tls"
-	"github.com/Synaxis/bfheroesFesl/config"
-	"github.com/Synaxis/bfheroesFesl/inter/network/codec"
-
+	"net"
+	"time"
 	"bytes"
 	"encoding/binary"
+	"github.com/Synaxis/bfheroesFesl/inter/network/codec"
+
 	"github.com/sirupsen/logrus"
-	"net"
-	"strings"
-	"time"
+
+	"github.com/Synaxis/bfheroesFesl/config"
 )
 
 // Socket is a basic event-based TCP-Server
+// TODO: Rename it to broker
 type Socket struct {
-	Clients   *Clients
-	name      string
 	bind      string
 	listen    net.Listener
 	EventChan chan SocketEvent
-	fesl      bool
 }
 
-func newSocket(name, bind string, fesl bool) *Socket {
+func newSocket(bind string) *Socket {
 	return &Socket{
-		name:      name,
 		bind:      bind,
-		fesl:      fesl,
-		Clients:   newClients(),
-		EventChan: make(chan SocketEvent, 1000),
+		EventChan: make(chan SocketEvent),
 	}
 }
 
-// New starts to listen on a new Socket
-func NewSocketTCP(name, bind string, fesl bool) (*Socket, error) {
-	socket := newSocket(name, bind, fesl)
+func NewSocketTCP(bind string) (*Socket, error) {
+	socket := newSocket(bind)
 	listener, err := socket.listenTCP()
 	if err != nil {
 		return nil, err
@@ -46,8 +40,8 @@ func NewSocketTCP(name, bind string, fesl bool) (*Socket, error) {
 	return socket, nil
 }
 
-func NewSocketTLS(name, bind string) (*Socket, error) {
-	socket := newSocket(name, bind, true)
+func NewSocketTLS(bind string) (*Socket, error) {
+	socket := newSocket(bind)
 	listener, err := socket.listenTLS()
 	if err != nil {
 		return nil, err
@@ -61,7 +55,7 @@ func NewSocketTLS(name, bind string) (*Socket, error) {
 func (socket *Socket) listenTCP() (net.Listener, error) {
 	listener, err := net.Listen("tcp", socket.bind)
 	if err != nil {
-		logrus.Errorf("%s: Listening on %s threw an error.\n%v", socket.name, socket.bind, err)
+		logrus.WithError(err).Errorf("Listening on %s threw an error", socket.bind)
 		return nil, err
 	}
 	return listener, nil
@@ -78,6 +72,7 @@ func (socket *Socket) listenTLS() (net.Listener, error) {
 		ClientAuth:         tls.NoClientCert,
 		MinVersion:         tls.VersionSSL30,
 		InsecureSkipVerify: true,
+		//MaxVersion:   tls.VersionSSL30,
 		CipherSuites: []uint16{
 			tls.TLS_RSA_WITH_RC4_128_SHA,
 		},
@@ -90,35 +85,6 @@ func (socket *Socket) listenTLS() (net.Listener, error) {
 	}
 
 	return listener, nil
-}
-
-func (socket *Socket) handleClientEvents(client *Client) {
-	defer socket.removeClient(client)
-
-	for client.IsActive {
-		select {
-		case event := <-client.eventChan:
-			switch {
-			case event.Name == "close":
-				socket.EventChan <- client.FireClientClose(event)
-				socket.removeClient(client)
-			case strings.Index(event.Name, "command") != -1:
-				socket.EventChan <- client.FireClientCommand(event)
-			case event.Name == "data":
-				socket.EventChan <- client.FireClientData(event)
-			default:
-				socket.EventChan <- client.FireSomething(event)
-			}
-		}
-	}
-}
-
-func (socket *Socket) removeClient(client *Client) {
-	logrus.Debugf("Removing client %s", client.name)
-
-	client.IsActive = false
-	client.Close()
-	socket.Clients.Remove(client)
 }
 
 type connAcceptFunc func(conn net.Conn)
@@ -138,10 +104,9 @@ func (socket *Socket) run(connect connAcceptFunc) {
 }
 
 func (socket *Socket) createClientTCP(conn net.Conn) {
-	tcpClient := newClientTCP(socket.name, conn, socket.fesl)
-	socket.Clients.Add(tcpClient)
-	go tcpClient.handleRequest()
-	go socket.handleClientEvents(tcpClient)
+	tcpClient := NewClientTCP(conn)
+	go tcpClient.handleRequestTCP()
+	go tcpClient.handleClientEvents(socket)
 	socket.EventChan <- socket.FireNewClient(tcpClient)
 }
 
@@ -155,31 +120,31 @@ func (socket *Socket) createClientTLS(conn net.Conn) {
 	tlscon.SetDeadline(time.Now().Add(time.Second * 10))
 	err := tlscon.Handshake()
 	if err != nil {
-		logrus.Errorf("%s: A new client connecting threw an error.\n%v\n%v", socket.name, err, tlscon.RemoteAddr())
-		socket.EventChan <- socket.FireError(err)
+		logrus.WithError(err).Errorf("A new client from %s connecting to %s threw an error", tlscon.RemoteAddr(), socket.bind)
 		tlscon.Close()
 	}
-
-	state := tlscon.ConnectionState()
-	logrus.Debugf("===HANDSHAKE DONE=== %t, %v", state.HandshakeComplete, state)
-
-	// reset deadline after handshake
 	tlscon.SetDeadline(time.Time{})
 
-	tlsClient := newClientTLS(socket.name, tlscon)
-	go tlsClient.handleRequestTLS()
-	go socket.handleClientEvents(tlsClient)
+	state := tlscon.ConnectionState()
+	logrus.Debugf("Connection handshake complete %t, %v", state.HandshakeComplete, state)
 
-	logrus.Println(socket.name + ":New Client connect")
-	socket.Clients.Add(tlsClient)
+	tlsClient := NewClientTLS(tlscon)
+	go tlsClient.handleRequestTLS()
+	go tlsClient.handleClientEvents(socket)
+
+	logrus.
+		WithField("bind", socket.bind).
+		WithField("protocol", "tcp").
+		Print("A new client connected")
 
 	socket.EventChan <- socket.FireNewClient(tlsClient)
 }
 
+
 // Close fires a close-event and closes the socket
 func (socket *Socket) Close() {
 	// Fire closing event
-	socket.EventChan <- socket.FireClose()
+	close(socket.EventChan)
 
 	// Close socket
 	socket.listen.Close()
@@ -230,7 +195,7 @@ func (socket *SocketUDP) run() {
 	for socket.EventChan != nil {
 		n, addr, err := socket.listen.ReadFromUDP(buf)
 		if err != nil {
-			logrus.WithError(err).Error("Error reading from UDP Ln 227 socket.go", err)
+			logrus.WithError(err).Error("Error reading from UDP", err)
 			socket.EventChan <- SocketUDPEvent{Name: "error", Addr: addr, Data: err}
 			continue
 		}
@@ -263,8 +228,7 @@ func (socket *SocketUDP) readFESL(data []byte, addr *net.UDPAddr) {
 	}
 }
 
-func (socket *SocketUDP) WriteEncode(Packet *codec.Packet, addr *net.UDPAddr) error {	
-
+func (socket *SocketUDP) WriteEncode(Packet *codec.Packet, addr *net.UDPAddr) error {
 	// Encode packet
 	buf, err := codec.
 		NewEncoder().
@@ -289,13 +253,3 @@ func (socket *SocketUDP) WriteEncode(Packet *codec.Packet, addr *net.UDPAddr) er
 
 	return nil
 }
-
-// Close fires a close-event and closes the socket
-func (socket *SocketUDP) Close() {
-	// Fire closing event
-	socket.EventChan <- SocketUDPEvent{Name: "close", Addr: nil, Data: nil}
-
-	// Close socket
-	socket.listen.Close()
-}
-

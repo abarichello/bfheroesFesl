@@ -37,7 +37,7 @@ func AnswerUDP(Packet *codec.Packet, writer func(*bytes.Buffer) error) error {
 }
 
 func (client *Client) SendPacket(pkt []byte) error {
-	_, err := client.conn.Write(pkt)
+	_, err := client.Conn.Write(pkt)
 	if err != nil {
 		logrus.
 			WithError(err).
