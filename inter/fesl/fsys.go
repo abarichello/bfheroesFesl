@@ -51,12 +51,6 @@ type domainPartition struct {
 }
 
 func (fm *Fesl) hello(event network.EvProcess) {
-	AFK := event.Client.IsActive
-	if !AFK {
-		logrus.Println("Cli Left")
-		return
-	}
-
 
 	redisState := fm.createState(fmt.Sprintf(
 		"%s-%s",
@@ -84,10 +78,12 @@ func (fm *Fesl) hello(event network.EvProcess) {
 
 	answer := ansHello{
 		TXN:         fsysHello,
-		ConnTTL:     int((60 * time.Hour).Seconds()),
-		ConnectedAt: time.Now().Format("Jan-02-2006 15:04:05 MST"),
-		TheaterIP:   config.General.ThtrAddr,
-		MessengerIP: config.General.MessengerAddr,
+		ConnTTL:       int((60 * time.Second).Seconds()),
+		ConnectedAt:   time.Now().Format("Jan-02-2006 15:04:05 MST"),
+		TheaterIP:     config.General.ThtrAddr,
+		MessengerIP:   config.General.TelemetryIP,
+		MessengerPort: config.General.TelemetryPort,
+
 	}
 
 	if fm.server {
@@ -103,11 +99,6 @@ func (fm *Fesl) hello(event network.EvProcess) {
 		Message: fsys,
 		Send:    0xC0000001,
 	})
-
-	firstLogin = true
-	if !AFK {
-		return
-	}
 }
 
 ///////////////////////////////////////////////

@@ -37,8 +37,8 @@ func (fm *Fesl) fsysMemCheck(event *network.EventNewClient) {
 		Message: fsys,
 		Content: ansMemCheck{
 			TXN:  "MemCheck",
-			Salt: "5",
-			Result: "",
+			Salt: "",
+			//Result: "",
 		},
 		Send: 0xC0000000,
 	})

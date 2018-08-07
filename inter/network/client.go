@@ -3,7 +3,6 @@ package network
 import (
 	"bufio"
 	"crypto/tls"
-	"encoding/hex"
 
 	"fmt"
 	"github.com/Synaxis/bfheroesFesl/inter/network/codec"
@@ -16,6 +15,10 @@ import (
 	"github.com/Synaxis/bfheroesFesl/storage/level"
 
 	"github.com/sirupsen/logrus"
+)
+
+const (
+	FragmentSize = 8096
 )
 
 type Clients struct {
@@ -74,6 +77,8 @@ func newClientTCP(name string, conn net.Conn, fesl bool) *Client {
 	return &Client{
 		name:      name,
 		conn:      conn,
+		receiver:   make(chan ClientEvent, 5),
+		sender:     make(chan codec.Packet, 5),
 		IpAddr:    conn.RemoteAddr(),
 		eventChan: make(chan ClientEvent, 500),
 		reader:    bufio.NewReader(conn),
@@ -99,8 +104,7 @@ func newClientTLS(name string, conn *tls.Conn) *Client {
 
 func (client *Client) handleRequestTLS() {
 	client.IsActive = true
-	buf := make([]byte, 8096) // buffer
-	tempBuf := []byte{}
+	buf := make([]byte, FragmentSize)
 
 	for client.IsActive {
 		n, err := client.readBuf(buf)
@@ -108,65 +112,22 @@ func (client *Client) handleRequestTLS() {
 			return
 		}
 
-		if tempBuf != nil {
-			tempBuf = append(tempBuf, buf[:n]...)
-			tempBuf = client.readFESLTLS(buf[:n])
-		} else {
-			tempBuf = client.readFESLTLS(buf[:n])
-		}
-		buf = make([]byte, 8096) // new fresh buffer
+		client.readTLSPacket(buf[:n])
+		buf = make([]byte, FragmentSize)
 	}
 }
 
 func (client *Client) handleRequest() {
 	client.IsActive = true
-	buf := make([]byte, 8096) // buffer
-	tempBuf := []byte{}
+	buf := make([]byte, FragmentSize)
 
 	for client.IsActive {
 		n, err := client.readBuf(buf)
 		if err != nil {
 			return
 		}
-
-		if client.Options.FESL {
-			if tempBuf != nil {
-				tempBuf = append(tempBuf, buf[:n]...)
-				tempBuf = client.readFESL(buf[:n])
-			} else {
-				tempBuf = client.readFESL(buf[:n])
-			}
-			buf = make([]byte, 8096) // new fresh buffer
-			continue
-		}
-
-		client.recvBuffer = append(client.recvBuffer, buf[:n]...)
-
-		message := strings.TrimSpace(string(client.recvBuffer))
-
-		logrus.Println("Got message:", hex.EncodeToString(client.recvBuffer))
-
-		if strings.Index(message, `\final\`) == -1 {
-			if len(client.recvBuffer) > 1024 {
-				// Split message into 2
-				client.recvBuffer = make([]byte, 0)
-			}
-			continue
-		}
-
-		client.eventChan <- ClientEvent{Name: "data", Data: message}
-
-		commands := strings.Split(message, `\final\`)
-		for _, command := range commands {
-			if len(command) == 0 {
-				continue
-			}
-
-			client.processCommand(command)
-		}
-
-		// Add unprocessed commands back into recvBuffer
-		client.recvBuffer = []byte(commands[(len(commands) - 1)])
+		client.readFESL(buf[:n])
+		buf = make([]byte, FragmentSize)
 	}
 }
 
@@ -184,6 +145,27 @@ func (client *Client) readBuf(buf []byte) (int, error) {
 	return n, nil
 }
 
+func (client *Client) handleClientEvents(socket *Socket) {
+	defer client.Close()
+
+	for client.IsActive {
+		select {
+		case event := <-client.receiver:
+			switch {
+			case event.Name == "close":
+				return
+			case strings.Index(event.Name, "command") != -1:
+				socket.EventChan <- client.FireClientCommand(event)
+			case event.Name == "data":
+				logrus.Warnf("Not implemented: Client send client.data: %s", event.Data)
+			default:
+				logrus.Warn("Not implemented client.%s for %s", event.Name, event.Data)
+			}
+		}
+	}
+}
+
+
 func (c *Client) Key() ClientKey {
 	return ClientKey{c.name, c.IpAddr.String()}
 }
@@ -193,7 +175,7 @@ func (c *Client) Close() {
 	c.eventChan <- ClientEvent{Name: "close", Data: c}
 	c.conn.Close()
 	c.IsActive = false
-	c.FireClose()
+	//c.FireClose()
 }
 
 type ClientState struct {

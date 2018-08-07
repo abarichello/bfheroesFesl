@@ -20,6 +20,8 @@ type cfg struct {
 	TelemetryToken string `envconfig:"TELEMETRY_TOKEN"`
 	LogLevel       string `envconfig:"LOG_LEVEL" default:"DEBUG"`
 
+	
+
 	GameSpyIP string `envconfig:"GAMESPY_IP" default:"0.0.0.0"`
 
 	FeslClientPort int `envconfig:"FESL_CLIENT_PORT" default:"18270"`
