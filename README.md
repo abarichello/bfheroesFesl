@@ -16,15 +16,14 @@
    in windows -> glide.exe
    linux/mac -> ./glide
 
-   -Init your Settings 
+   -Init Glide 
    glide init
    
    -Download it!
    glide install   
    
    -Now build with Golang
-   go build main.go
-   
+   go build main.go   
 ```
 Remember to configure GOPATH to match your github directory
 
@@ -75,7 +74,7 @@ The general  consists of the following components:
 
 4. Theater Server: Another back-end server that stores player and server data and responsible for other functions like: match-making/ranking/leveling up/server bookmarks. This server provides persistance in between matches.
 
-5. 3. "Magma server": an HTTPS API ,  essential for the login,used to validate  the web_token(sessionId), and other game requests(Store,Entitlements,FriendSystem ,ServerBookmark), the reponse is parsed as XML
+5. "Magma server": an HTTPS API ,  essential for the login,used to validate  the web_token(sessionId), and other game requests(Store,Entitlements,FriendSystem ,ServerBookmark), the reponse is parsed as XML
 
 ## Master server overview
 The MASTER server has 3 components:(Note ,in this Code FESL and UDP are together , but you can make your own code and separate TCP from UDP. "Magma" API is already working standalone)
@@ -373,10 +372,6 @@ This is only used in 2009 client ?
 |--------------------------|---------------------------|-------------------------------|
 |telemetryToken            |MTU5LjE1My4yMzUuMjYsOTk0Nix|                               |
 |                          |lblVTLF7ZmajcnLfGpKSJk53K/4|                               |
-|                          |WQj7LRw9asjLHvxLGhgoaMsrDE3|                               |
-|                          |bGWhsyb4e6woYKGjJiw4MCBg4bM|                               |
-|                          |srnKibuDppiWxYKditSp0amvhJm|                               |
-|                          |StMiMlrHk4IGzhoyYsO7A4dLM26|                               |
 |                          |rTgAo%3d                   |                               |
 |enabled                   |US                         |                               |
 |filters                   |*empty*                    |                               |
