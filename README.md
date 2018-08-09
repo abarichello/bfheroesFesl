@@ -82,8 +82,6 @@ The MASTER server has 3 components:(Note ,in this Code FESL and UDP are together
 
 2. 1 UDP Server Interface: a message based protocol server that handles querying, joining, leaving, ... For Both game servers and clients
 
-
-
 ## TLS
 On Start, both the game client and the game server will first connect to the FESL server(Which works like a Login). 
 The address of the FESL server is inside the game client/server exe HEX. 
@@ -444,7 +442,7 @@ The following HTTPS paths are listed in the game executable:
  
     ```<success><token code="NEW_TOKEN">$userKey$</token></success>```
  
-  with `$userKey$` equal to the value of the `magma` cookie.
+  where `$userKey$` is the web token ID.
 
 ### /relationships/roster/{type}:{id}
     ```
