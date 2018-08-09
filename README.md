@@ -1,5 +1,5 @@
 [![HitCount](http://hits.dwyl.io/Synaxis/bfheroesFesl.svg)](http://hits.dwyl.io/Synaxis/bfheroesFesl)
-# Open Heroes Backend Master Server
+# Open Heroes Backend
    UNFINISHED CODE
    ```How to
    1 clone the repository   
