@@ -2,17 +2,19 @@
 # Open Heroes Backend Master Server
    UNFINISHED CODE
    ```How to
-   1 download the repository with git
+   1 clone the repository   
    
    git clone https://github.com/Synaxis/bfheroesFesl   
    
    2 copy the ENTIRE folder to your GOPATH
+   
    3- Open your favorite terminal/command
    Windows CMD / git bash 
    linux/Mac - terminal
    
-   -Run Glide to download the vendor Packages
-   glide.exe
+   -Use Glide to download the vendor Packages
+   in windows -> glide.exe
+   linux/mac -> ./glide
 
    -Init your Settings 
    glide init
@@ -24,7 +26,7 @@
    go build main.go
    
 ```
-Remember to configure your GOPATH
+Remember to configure GOPATH to match your github directory
 
 ## Configuration
 
@@ -36,10 +38,10 @@ Enviroment (.env) variables You can look in `./config/config.go` for more detail
 | `HTTP_BIND`           | `0.0.0.0:8080`       |
 | `HTTPS_BIND`          | `0.0.0.0:443`        |
 | `GAMESPY_IP`          | `0.0.0.0`(auto bind) |
-| `FESL_CLIENT_PORT`    | `18270`              |//cannot be changed
-| `FESL_SERVER_PORT`    | `18051`              |//cannot be changed
-| `THEATER_CLIENT_PORT` | `18275`              |//cannot be changed
-| `THEATER_SERVER_PORT` | `18056`              |//cannot be changed
+| `FESL_CLIENT_PORT`    | `18270`              |//fixed
+| `FESL_SERVER_PORT`    | `18051`              |//fixed
+| `THEATER_CLIENT_PORT` | `18275`              |//fixed
+| `THEATER_SERVER_PORT` | `18056`              |//fixed
 | `THEATER_ADDR`        | `127.0.0.1`          |
 | `LEVEL_DB_PATH`       | `_data/lvl.db`       |
 | `DATABASE_USERNAME`   | `root`               |
@@ -55,32 +57,32 @@ WARNING for testing environment! Use Safe values in Production!
 DATABASE_NAME=tutorialDB
 DATABASE_HOST=127.0.0.1
 DATABASE_PASSWORD=dbPass
-LOG_LEVEL=DEBUG /INFO.
+LOG_LEVEL=DEBUG
+
 ===========================================================================================================================
 # FESL PROTOCOL
-This provides the info about the Backend/FESL . Between the Master server , Fesl Server and Theater Server
+This explains the Protocol for gameClient.exe / gameServer.exe ==> MasterServer(Fesl Server for Login) and Theater Server for gameplay
 
 ## Overview
-
-Battlefield Heroes has a network structure similar to many other online games. It is based on previous games that also used the gamespy protocol, such as Battlefield 2 or Battlefield 2142. Need For Speed Carbon , and others
+Battlefield Heroes uses a network communication protocol similar to many other online games, named GameSpy EA games had it's own version also used in famous titles, such as Battlefield2/Battlefield2142. Need For Speed , and others.
 
 The general  consists of the following components:
-1. gameClient.exe: the front-end software that runs on the player's computer. Consists mainly of a graphical userinterface and some game-logic.
-2. gameServer.exe: the back-end server that acts as a central game coordinator for the players in a match. Consists mainly of game logic and connections to game clients.
-3. Master server: the back-end server that stores player and server data and does match-making. This server provides persistance in between matches.
+1. gameClient.exe: the front-end gameClient - for Production mode that runs on the player's computer. Consists mainly of a graphical userinterface and some game-logic.
 
-This specification provides details on the communication between the game client and master server, and the game server and the master server. 
-##This document does not specify the protocol between game server and game client.##
+2. gameServer.exe: the back-end server that acts as a central game coordinator for the players in a match. Consists mainly of game logic and connections to game clients.
+
+3.FESL Login.   A backend  login System. Used mostly for authentication for account and Stats being retrieved for the player.
+
+4. Theater Server: Another back-end server that stores player and server data and responsible for other functions like: match-making/ranking/leveling up/server bookmarks. This server provides persistance in between matches.
+
+5. 3. "Magma server": an HTTPS API ,  essential for the login,used to validate  the web_token(sessionId), and other game requests(Store,Entitlements,FriendSystem ,ServerBookmark), the reponse is parsed as XML
 
 ## Master server overview
 The MASTER server has 3 components:(Note ,in this Code FESL and UDP are together , but you can make your own code and separate TCP from UDP. "Magma" API is already working standalone)
-1. The FESL Interface: a message based protocol server that handles authentication, quering account info,. It works like a Login..
 
 2. 1 UDP Server Interface: a message based protocol server that handles querying, joining, leaving, ... For Both game servers and clients
 
-3. "Magma server": an HTTPS API , it's essential for the login, because it parses the web_token(sessionId), and other game requests(Store,Entitlements,FriendSystem ,ServerBookmark), the reponse is parsed as XML
 
-## FESL
 
 ## TLS
 On Start, both the game client and the game server will first connect to the FESL server(Which works like a Login). 
@@ -226,7 +228,7 @@ This message retrieves general account information, based on the parameters sent
 |DOBYear                   |1992                       |                               |
 |userId                    |1                          |                               |
 |globalOptin               |0                          |always 0                       |
-|thidPartyOptin            |0                          |always 0                       |
+|thirdPartyOptin            |0                         |always 0                       |
 |language                  |enUS                       |                               |
 |country                   |US                         |                               |
 
