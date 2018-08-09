@@ -63,7 +63,8 @@ LOG_LEVEL=DEBUG
 This explains the Protocol for gameClient.exe / gameServer.exe ==> MasterServer(Fesl Server for Login) and Theater Server for gameplay
 
 ## Overview
-Battlefield Heroes uses a network communication protocol similar to many other online games, named GameSpy EA games had it's own version also used in famous titles, such as Battlefield2/Battlefield2142. Need For Speed , and others.
+Battlefield Heroes uses a network communication protocol similar to many other online games, named GameSpy EA games
+had it's own version also used in famous titles, such as Battlefield2/Battlefield2142. Need For Speed , and others.
 
 The general  consists of the following components:
 1. gameClient.exe: the front-end gameClient - for Production mode that runs on the player's computer. Consists mainly of a graphical userinterface and some game-logic.
