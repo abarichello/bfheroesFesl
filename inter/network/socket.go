@@ -4,9 +4,6 @@ import (
 	"crypto/tls"
 	"github.com/Synaxis/bfheroesFesl/config"
 	"github.com/Synaxis/bfheroesFesl/inter/network/codec"
-
-	"bytes"
-	"encoding/binary"
 	"github.com/sirupsen/logrus"
 	"net"
 	"strings"
@@ -61,11 +58,12 @@ func NewSocketTLS(name, bind string) (*Socket, error) {
 func (socket *Socket) listenTCP() (net.Listener, error) {
 	listener, err := net.Listen("tcp", socket.bind)
 	if err != nil {
-		logrus.Errorf("%s: Listening on %s threw an error.\n%v", socket.name, socket.bind, err)
+		logrus.WithError(err).Errorf("Listening on %s threw an error", socket.bind)
 		return nil, err
 	}
 	return listener, nil
 }
+
 
 func (socket *Socket) listenTLS() (net.Listener, error) {
 	cert, err := config.ParseCertificate()
@@ -239,29 +237,6 @@ func (socket *SocketUDP) run() {
 	}
 }
 
-func (socket *SocketUDP) readFESL(data []byte, addr *net.UDPAddr) {
-	p := bytes.NewBuffer(data)
-	var payloadID uint32
-	var payloadLen uint32
-
-	payloadType := string(data[:4])
-	p.Next(4)
-
-	binary.Read(p, binary.BigEndian, &payloadID)
-	binary.Read(p, binary.BigEndian, &payloadLen)
-
-	payload := codec.DecodeFESL(data[12:])
-
-	socket.EventChan <- SocketUDPEvent{
-		Name: payloadType,
-		Addr: addr,
-		Data: &codec.Command{
-			Query:     payloadType,
-			PayloadID: payloadID,
-			Message:   payload,
-		},
-	}
-}
 
 func (socket *SocketUDP) WriteEncode(Packet *codec.Packet, addr *net.UDPAddr) error {	
 

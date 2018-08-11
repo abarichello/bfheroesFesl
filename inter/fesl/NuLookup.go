@@ -16,10 +16,10 @@ type ansNuLookupUserInfo struct {
 type userInfo struct {
 	Namespace    string `fesl:"namespace"`
 	XUID         int    `fesl:"xuid"`
-	MasterUserID string `fesl:"masterUserId"`
-	UserID       string `fesl:"userId"`
+	MasterUserID int 	`fesl:"masterUserId"`
+	UserID       int 	`fesl:"userId"`
 	UserName     string `fesl:"userName"`
-	ClientID     string `fesl:"cid"`
+	ClientID     int 	`fesl:"cid"`
 }
 
 func (fm *Fesl) NuLookupUserInfo(event network.EvProcess) {
@@ -36,15 +36,20 @@ func (fm *Fesl) NuLookupUserInfo(event network.EvProcess) {
 	keys, _ := strconv.Atoi(event.Process.Msg["userInfo.[]"])
 	for i := 0; i < keys; i++ {
 
-		heroNamePkt := event.Process.Msg[fmt.Sprintf("userInfo.%d.userName", i)]
+		NamePkt := event.Process.Msg[fmt.Sprintf("userInfo.%d.userName", i)]
 
-		var id, userID, heroName, online string
-		err := fm.db.stmtGetHeroByName.QueryRow(heroNamePkt).Scan(&id, &userID, //br
+		//data types
+		var id 			int
+		var userID 		int
+		var heroName 	string
+		var	online 		string
+
+
+		err := fm.db.stmtGetHeroByName.QueryRow(NamePkt).Scan(&id, &userID, //br
 			&heroName, &online) //auth
 		if err != nil {
 			return
 		}
-		logrus.Println("TEST TEST")
 		answer.UserInfo = append(answer.UserInfo, userInfo{
 			ClientID:     id,
 			UserName:     heroName,
@@ -84,9 +89,9 @@ func (fm *Fesl) NuLookupUserInfoServer(event network.EvProcess) {
 				{
 					Namespace:    "MAIN",
 					XUID:         24,
-					MasterUserID: "1",
-					UserID:       "1",
-					ClientID:     "1",
+					MasterUserID: 1,
+					UserID:       1,
+					ClientID:     1,
 					UserName:     servername,
 				},
 			},

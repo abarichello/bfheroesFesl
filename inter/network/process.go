@@ -6,7 +6,6 @@ import (
 	"errors"
 	"net"
 	"strings"
-
 	"github.com/Synaxis/bfheroesFesl/inter/network/codec"
 
 	"github.com/sirupsen/logrus"
@@ -96,9 +95,53 @@ func (client *Client) readTLSPacket(data []byte) {
 	}
 }
 
+type RawPacket struct {
+	// Query first 4 bytes
+	// i.e. "fsys", "acct" "CONN", "UPLA"
+	Query []byte
+
+	// Broadcast, next 4 bytes
+	// TOOD: Use enumerator
+	Broadcast []byte
+
+	// Length, next 4 bytes
+	Length []byte
+
+	// Payload
+	Payload []byte
+}
+
+
+func (socket *SocketUDP) readFESL(data []byte, addr *net.UDPAddr) {
+	p := bytes.NewBuffer(data)
+	var payloadID uint32
+	var payloadLen uint32
+
+	payloadType := string(data[:4])
+	p.Next(4)
+
+	binary.Read(p, binary.BigEndian, &payloadID)
+	binary.Read(p, binary.BigEndian, &payloadLen)
+
+	payload := codec.DecodeFESL(data[12:])
+
+	socket.EventChan <- SocketUDPEvent{
+		Name: payloadType,
+		Addr: addr,
+		Data: &codec.Command{
+			Query:     payloadType,
+			PayloadID: payloadID,
+			Message:   payload,
+		},
+	}
+}
+
+
+
 func readFesl(data []byte, fireEvent eventReadFesl) []byte {
 	p := bytes.NewBuffer(data)
 	i := 0
+	
 	var ContentRaw []byte
 	for {
 		// Create a copy at this point in case we have to abort later
@@ -118,9 +161,11 @@ func readFesl(data []byte, fireEvent eventReadFesl) []byte {
 
 		binary.Read(p, binary.BigEndian, &HEX)
 
+
 		if p.Len() < 4 {
 			return nil
 		}
+
 
 		binary.Read(p, binary.BigEndian, &length)
 
@@ -156,13 +201,14 @@ type ProcessFESL struct {
 // processCommand turns gamespy's command string to the
 // command struct
 func processCommand(msg string) (*ProcessFESL, error) {
+	
+	
+	
 	outCommand := new(ProcessFESL) // Command not a CommandFESL
 	outCommand.Msg = make(map[string]string)
 	data := strings.Split(msg, `\`)
 
-	// TODO:
-	// Should maybe return an emtpy Command struct instead
-	if len(data) < 1 {
+	if len(data) <= 0 {
 		logrus.Errorln("Command Msg invalid")
 		return nil, errors.New("Command Msg invalid")
 	}

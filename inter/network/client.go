@@ -200,13 +200,6 @@ type ClientState struct {
 	ServerChallenge string
 	ClientChallenge string
 	ClientResponse  string
-	Username        string
-	PlyName         string
-	PlyEmail        string
-	PlyCountry      string
-	PlyPid          int
-	Sessionkey      int
-	Confirmed       bool
 	IpAddress       net.Addr
 	HasLogin        bool
 	ProfileSent     bool

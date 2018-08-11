@@ -14,14 +14,12 @@ type reqStart struct {
 	Version    int    `fesl:"version"`
 }
 
-type statusPartition struct {
-	ID        int    `fesl:"id"`
-	Partition string `fesl:"partition"`
-}
 
 type ansStart struct {
-	TXN string          `fesl:"TXN"`
-	ID    statusPartition `fesl:"id"`
+	TXN    string          `fesl:"TXN"`
+	ID    string         `fesl:"id"`
+	Partition 	string  `fesl:"partition"`
+
 }
 
 // Start handles pnow.Start
@@ -31,7 +29,8 @@ func (fm *Fesl) Start(event network.EvProcess) {
 	event.Client.Answer(&codec.Packet{
 		Content: ansStart{
 			TXN:  "Start",
-			ID:    statusPartition{1, event.Process.Msg["eagames/bfwest-dedicated"]},
+			ID:    "1",
+			Partition: "eagames/bfwest-dedicated",
 		},
 		Send:    event.Process.HEX,
 		Message: "pnow",
@@ -42,9 +41,15 @@ func (fm *Fesl) Start(event network.EvProcess) {
 
 type Status struct {
 	TXN        string                 `fesl:"TXN"`
-	ID         statusPartition        `fesl:"id"`
+	ID         string       		  `fesl:"id"`
+	Partition 	string				  `fesl:"partition"`
 	State      string                 `fesl:"sessionState"`
 	Properties map[string]interface{} `fesl:"props"`
+}
+
+type statusPartition struct {
+	ID        string    `fesl:"id"`
+	Partition string `fesl:"partition"`
 }
 
 type stGame struct {
@@ -76,12 +81,15 @@ func (fm *Fesl) Status(event network.EvProcess) {
 		},
 	}		
 
+	//todo if joined = true ( do nothing)
+	//if joined = false ( send canceled STATE)
 
 	event.Client.Answer(&codec.Packet{
 		Content: Status{
 			TXN:    "Status",
 			State:  "COMPLETE",
-			ID:    statusPartition{1, event.Process.Msg["eagames/bfwest-dedicated"]},
+			ID:    "1",
+			Partition: "eagames/bfwest-dedicated",
 			Properties: map[string]interface{}{
 				"resultType": "JOIN",
 				"sessionType": "FindServer",

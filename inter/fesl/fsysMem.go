@@ -19,17 +19,12 @@ type ansMemCheck struct {
 	// TXN stands for Taxon, sub-query name of the command.
 	// Should be equal: MemCheck.
 	TXN string `fesl:"TXN"`
-
-	MemChecks []memCheck `fesl:"memcheck"`
-	Salt      string     `fesl:"salt"`
-	Type      int        `fesl:"type"`
-	Result 	  string 	 `fesl:"result"`
+	MemChecks string `fesl:"memcheck.[]"`
+	Salt      string `fesl:"salt"`
+	Type      string `fesl:"type"`
+	Result 	  string `fesl:"result"`
 }
 
-type memCheck struct {
-	Addr   string `fesl:"addr"`
-	Length int    `fesl:"len"`
-}
 
 func (fm *Fesl) fsysMemCheck(event *network.EventNewClient) {
 	logrus.Println("Sending MemCheck")
@@ -39,6 +34,8 @@ func (fm *Fesl) fsysMemCheck(event *network.EventNewClient) {
 			TXN:  "MemCheck",
 			Salt: "5",
 			Result: "",
+			Type: "0",
+			MemChecks: "0",
 		},
 		Send: 0xC0000000,
 	})

@@ -83,7 +83,7 @@ func (fm *Fesl) run() {
 				fm.UpdateStats(event.Data.(network.EvProcess))
 			case "client.command.Start":
 				fm.Start(event.Data.(network.EvProcess))
-			case "client.Goodbye":
+			case "client.command.Goodbye":
 				fm.Goodbye(event.Data.(network.EvProcess))
 			case "client.close":
 				fm.close(event.Data.(network.EventClientClose)) // TLS
