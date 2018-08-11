@@ -7,18 +7,23 @@ import (
 	"github.com/Synaxis/bfheroesFesl/inter/network/codec"
 	"github.com/sirupsen/logrus"
 )
+const (
+	pnow = "pnow"
+)
 
 type reqStart struct {
 	TXN        string `fesl:"TXN"`
 	debugLevel string `fesl:"debugLevel"`
 	Version    int    `fesl:"version"`
+	Partition 	string    `fesl:"partition"`
+
 }
 
 
 type ansStart struct {
-	TXN    string          `fesl:"TXN"`
-	ID    string         `fesl:"id"`
-	Partition 	string  `fesl:"partition"`
+	TXN    	string        `fesl:"TXN"`
+	ID    	string        `fesl:"id.id"`
+	Partition 	string    `fesl:"id.partition"`
 
 }
 
@@ -33,7 +38,7 @@ func (fm *Fesl) Start(event network.EvProcess) {
 			Partition: "eagames/bfwest-dedicated",
 		},
 		Send:    event.Process.HEX,
-		Message: "pnow",
+		Message: pnow,
 	})
 	fm.Status(event)
 
@@ -41,15 +46,10 @@ func (fm *Fesl) Start(event network.EvProcess) {
 
 type Status struct {
 	TXN        string                 `fesl:"TXN"`
-	ID         string       		  `fesl:"id"`
+	ID         string       		  `fesl:"id.id"`
 	Partition 	string				  `fesl:"partition"`
 	State      string                 `fesl:"sessionState"`
 	Properties map[string]interface{} `fesl:"props"`
-}
-
-type statusPartition struct {
-	ID        string    `fesl:"id"`
-	Partition string `fesl:"partition"`
 }
 
 type stGame struct {
@@ -69,6 +69,16 @@ func (fm *Fesl) Status(event network.EvProcess) {
 	// if err != nil {	
  	// 	logrus.Println("no game found for player")
 	//  }	
+
+
+	var gid string	
+	var err error
+
+	err = fm.db.stmtGetBookmark.QueryRow(event.Client.HashState.Get("uID")).Scan(&gid)
+	if err != nil {	
+ 		logrus.Println("no game found for player")
+	 }	
+
 
 	// continuos search
 	for search := range mm.Games {
@@ -92,10 +102,10 @@ func (fm *Fesl) Status(event network.EvProcess) {
 			Partition: "eagames/bfwest-dedicated",
 			Properties: map[string]interface{}{
 				"resultType": "JOIN",
-				"sessionType": "FindServer",
+				"sessionType": "findServer",
 				"games":      gamesArray},
 		},
 		Send:    0x80000000,
-		Message: "pnow",
+		Message: pnow,
 	})
 }}

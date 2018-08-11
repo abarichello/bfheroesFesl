@@ -123,7 +123,7 @@ type ansGoodbye struct {
 func (fm *Fesl) Goodbye(event network.EvProcess) {
 	logrus.Println("Client Disconnected")
 	event.Client.Answer(&codec.Packet{
-		Message: event.Process.Query,
+		Message: fsys,
 		Send:    event.Process.HEX,
 		Content: ansGoodbye{
 			TXN:        "Goodbye",
@@ -151,7 +151,7 @@ type pingSite struct {
 func (fm *Fesl) GetPingSites(event network.EvProcess) {
 
 	event.Client.Answer(&codec.Packet{
-		Message: event.Process.Query,
+		Message: fsys,
 		Send:    event.Process.HEX,
 		Content: ansGetPingSites{
 			TXN:      fsysGetPingSites,
