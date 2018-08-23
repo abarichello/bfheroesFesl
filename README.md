@@ -69,18 +69,18 @@ had it's own version also used in famous titles, such as Battlefield2/Battlefiel
 The general  consists of the following components:
 1. gameClient.exe: the front-end gameClient - for Production mode that runs on the player's computer. Consists mainly of a graphical userinterface and some game-logic.
 
-2. gameServer.exe: the back-end server that acts as a central game coordinator for the players in a match. Consists mainly of game logic and connections to game clients.
+2. gameServer.exe: the server that acts as a central game coordinator for the players in a match. Consists mainly of game logic and connections to game clients.
 
-3.FESL Login.   A backend  login System. Used mostly for authentication for account and Stats being retrieved for the player.
+3.FESL Login Server. A  login System. Used mostly for authentication for account and Stats retrieving for the player. We don't know the meaning of FESL, probably front end socket-lawyer?
 
 4. Theater Server: Another back-end server that stores player and server data and responsible for other functions like: match-making/ranking/leveling up/server bookmarks. This server provides persistance in between matches.
 
-5. "Magma server": an HTTPS API ,  essential for the login,used to validate  the web_token(sessionId),and other game requests(Store,Entitlements,FriendSystem ,ServerBookmark), the reponse is parsed as XML
+5. "Magma server": an HTTP API , used for the login,validation and for the web_token(sessionId),& more game requests(Store,Entitlements,FriendSystem ,ServerBookmark), the reponse is parsed as XML
 
 ## Master server overview
-The MASTER server has 3 components:(Note ,in this Code FESL and UDP are together , but you can make your own code and separate TCP from UDP. "Magma" API is already working standalone)
+The MASTER server has 3 components:(Note ,in this Code FESL and UDP are together , but you can make your own code and separate TCP from UDP. Magma Server already work as Standalone
 
-2. 1 UDP Server Interface: a message based protocol server that handles querying, joining, leaving, ... For Both game servers and clients
+2. 1 UDP Server Interface: a message based server that handles querying, joining, leaving, ... For Both gameServer(BFHeroes_w32ded.exe) and gameClient(BFHeroes.exe)
 
 ## TLS
 On Start, both the game client and the game server will first connect to the FESL server(Which works like a Login). 
