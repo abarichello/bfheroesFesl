@@ -1,10 +1,76 @@
+## Generated files
 
-storage/kvstore/hash.go
+main
 
-*.zip
-vendor
-*vendor
-_data
-bfheroesFesl.exe
-glide.yaml
-glide.lock
+## Go .gitignore:
+
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Test binary, build with `go test -c`
+*.test
+
+# dep files
+### Go Patch ###
+/vendor/
+/Godeps/
+
+# Output of the go coverage tool, specifically when used with LiteIDE
+*.out
+
+## Qt .gitignore:
+
+**/linux
+**/deploy
+**/windows
+
+# C++ objects and libs
+*.slo
+*.lo
+*.o
+*.a
+*.la
+*.lai
+*.so
+*.dll
+*.dylib
+
+# Qt-es
+object_script.*.Release
+object_script.*.Debug
+*_plugin_import.cpp
+/.qmake.cache
+/.qmake.stash
+*.pro.user
+*.pro.user.*
+*.qbs.user
+*.qbs.user.*
+*.moc
+moc_*.cpp
+moc_*.h
+qrc_*.cpp
+ui_*.h
+*.qmlc
+*.jsc
+Makefile*
+*build-*
+
+# Qt unit tests
+target_wrapper.*
+
+# QtCreator
+*.autosave
+
+# QtCreator Qml
+*.qmlproject.user
+*.qmlproject.user.*
+
+# QtCreator CMake
+CMakeLists.txt.user*
+
+*.vs
+vs.code-workspace
