@@ -113,8 +113,8 @@ Key1=Value1
 Key2=Value2
 ```
 ## Message types
-One of the keys in the FESLData key-value store is 'TXN'. This entry determines the message type , and Order
-Depending on the message type, and whether the message is to or from the FESL server, other fields may be present in the FESLData.
+The 'TXN' key is used to determine the current Message field , and it's Order
+it's suposed to mean 'TAXON'
 Response Packets are always sent with the same Type and ID values as the query Packet.
 
 #### TXN = Hello, game client/server => FESL server
