@@ -49,7 +49,8 @@ func (fm *Fesl) NuLogin(event network.EvProcess) {
 	event.Client.HashState.SetM(saveRedis)
 
 	// Setup a new key for our persona
-	lkey := uuid.NewV4().String()
+	idd, _ := uuid.NewV4()
+	lkey := idd.String()
 	lkeyRedis := fm.level.NewObject("lkeys", lkey)
 	lkeyRedis.Set("id", id)
 	lkeyRedis.Set("userID", id)
@@ -75,7 +76,6 @@ type ansNuLoginPersona struct {
 	UserID    string `fesl:"userId"`
 	Lkey      string `fesl:"lkey"`
 	Encrypt   int    `fesl:"returnEncryptedInfo"`
-
 }
 
 // User Login with selected Hero (persona)
@@ -99,7 +99,8 @@ func (fm *Fesl) NuLoginPersona(event network.EvProcess) {
 	}
 
 	// Setup a new key for our persona
-	lkey := uuid.NewV4().String()
+	idd, _ := uuid.NewV4()
+	lkey := idd.String()
 	lkeyRedis := fm.level.NewObject("lkeys", lkey)
 	lkeyRedis.Set("id", id)
 	lkeyRedis.Set("userID", userID)

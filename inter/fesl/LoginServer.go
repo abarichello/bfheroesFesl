@@ -20,8 +20,7 @@ func (fm *Fesl) NuLoginServer(event network.EvProcess) {
 	if event.Client.HashState.Get("clientType") != "server" {
 		logrus.Println("====Possible Exploit===")
 		return
-	}		
-	
+	}
 
 	var id, userID, servername, secretKey, username string
 	err := fm.db.stmtGetServerBySecret.QueryRow(event.Process.Msg["password"]).Scan(&id,
@@ -41,7 +40,8 @@ func (fm *Fesl) NuLoginServer(event network.EvProcess) {
 	event.Client.HashState.SetM(saveRedis)
 
 	// Setup a new key for new persona
-	lkey := uuid.NewV4().String()
+	idd, _ := uuid.NewV4()
+	lkey := idd.String()
 	lkeyRedis := fm.level.NewObject("lkeys", lkey)
 	lkeyRedis.Set("id", id)
 	lkeyRedis.Set("userID", userID)
@@ -81,12 +81,12 @@ func (fm *Fesl) NuLoginPersonaServer(event network.EvProcess) {
 
 	if event.Client.HashState.Get("clientType") != "server" {
 		logrus.Println("====Possible Exploit====")
-		return	}
+		return
+	}
 
 	var id, userID, servername, secretKey, username string
 	err := fm.db.stmtGetServerByName.QueryRow(event.Process.Msg["name"]).Scan(&id, //continue
 		&userID, &servername, &secretKey, &username)
-
 
 	if event.Client.HashState.Get("clientType") != "server" || err != nil {
 		logrus.Println("======Possible Exploit======")
@@ -101,7 +101,8 @@ func (fm *Fesl) NuLoginPersonaServer(event network.EvProcess) {
 	////////////Checks////////////////
 
 	// Setup a key for Server
-	lkey := uuid.NewV4().String()
+	idd, _ := uuid.NewV4()
+	lkey := idd.String()
 	lkeyRedis := fm.level.NewObject("lkeys", lkey)
 	lkeyRedis.Set("id", userID)
 	lkeyRedis.Set("userID", userID)
