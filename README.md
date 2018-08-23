@@ -22,7 +22,7 @@
    -Download it!
    glide install   
    
-   -Now build with Golang
+   -Now compile the code
    go build main.go   
 ```
 Remember to configure GOPATH to match your github directory
