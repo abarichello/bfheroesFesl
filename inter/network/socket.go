@@ -174,7 +174,7 @@ func (socket *Socket) createClientTLS(conn net.Conn) {
 	socket.EventChan <- socket.FireNewClient(tlsClient)
 }
 
-// Close fires a close-event and closes the socket
+// Close the UDP connection to that client
 func (socket *Socket) Close() {
 	// Fire closing event
 	socket.EventChan <- socket.FireClose()
