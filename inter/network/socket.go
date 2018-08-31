@@ -2,8 +2,8 @@ package network
 
 import (
 	"crypto/tls"
-	"github.com/Synaxis/bfheroesFesl/config"
-	"github.com/Synaxis/bfheroesFesl/inter/network/codec"
+	"github.com/OSHeroes/bfheroesFesl/config"
+	"github.com/OSHeroes/bfheroesFesl/inter/network/codec"
 	"github.com/sirupsen/logrus"
 	"net"
 	"strings"
@@ -238,7 +238,7 @@ func (socket *SocketUDP) run() {
 }
 
 
-func (socket *SocketUDP) WriteEncode(Packet *codec.Packet, addr *net.UDPAddr) error {	
+func (socket *SocketUDP) WriteEncode(Packet *codec.Packet, addr *net.UDPAddr) error {
 
 	// Encode packet
 	buf, err := codec.

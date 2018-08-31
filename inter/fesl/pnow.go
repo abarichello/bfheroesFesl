@@ -1,10 +1,10 @@
 package fesl
 
 import (
-	"github.com/Synaxis/bfheroesFesl/inter/network"
-	"github.com/Synaxis/bfheroesFesl/inter/mm"
+	"github.com/OSHeroes/bfheroesFesl/inter/network"
+	"github.com/OSHeroes/bfheroesFesl/inter/mm"
 
-	"github.com/Synaxis/bfheroesFesl/inter/network/codec"
+	"github.com/OSHeroes/bfheroesFesl/inter/network/codec"
 	"github.com/sirupsen/logrus"
 )
 const (
@@ -60,24 +60,24 @@ type stGame struct {
 
 // Status comes after Start. tells info about desired server
 func (fm *Fesl) Status(event network.EvProcess) {
-	logrus.Println("--Status--")	
-		
-	// var gid string	
+	logrus.Println("--Status--")
+
+	// var gid string
 	// var err error
 
 	// err = fm.db.stmtGetBookmark.QueryRow(event.Client.HashState.Get("uID")).Scan(&gid)
-	// if err != nil {	
+	// if err != nil {
  	// 	logrus.Println("no game found for player")
-	//  }	
+	//  }
 
 
-	var gid string	
+	var gid string
 	var err error
 
 	err = fm.db.stmtGetBookmark.QueryRow(event.Client.HashState.Get("uID")).Scan(&gid)
-	if err != nil {	
+	if err != nil {
  		logrus.Println("no game found for player")
-	 }	
+	 }
 
 
 	// continuos search
@@ -89,7 +89,7 @@ func (fm *Fesl) Status(event network.EvProcess) {
 			Fit:     1001,
 			LobbyID: 1,
 		},
-	}		
+	}
 
 	//todo if joined = true ( do nothing)
 	//if joined = false ( send canceled STATE)

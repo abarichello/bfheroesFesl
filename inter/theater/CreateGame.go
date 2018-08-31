@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"net"
 
-	"github.com/Synaxis/bfheroesFesl/inter/mm"
-	"github.com/Synaxis/bfheroesFesl/inter/network"
-	"github.com/Synaxis/bfheroesFesl/inter/network/codec"
+	"github.com/OSHeroes/bfheroesFesl/inter/mm"
+	"github.com/OSHeroes/bfheroesFesl/inter/network"
+	"github.com/OSHeroes/bfheroesFesl/inter/network/codec"
 	"github.com/sirupsen/logrus"
 )
 

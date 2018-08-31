@@ -6,14 +6,14 @@ import (
 	"encoding/hex"
 
 	"fmt"
-	"github.com/Synaxis/bfheroesFesl/inter/network/codec"
+	"github.com/OSHeroes/bfheroesFesl/inter/network/codec"
 	"io"
 	"net"
 	"strings"
 	"sync"
 	"time"
 
-	"github.com/Synaxis/bfheroesFesl/storage/level"
+	"github.com/OSHeroes/bfheroesFesl/storage/level"
 
 	"github.com/sirupsen/logrus"
 )
@@ -92,7 +92,7 @@ func newClientTLS(name string, conn *tls.Conn) *Client {
 		IsActive:  true,
 		eventChan: make(chan ClientEvent, 500),
 		Options: ClientOptions{
-			FESL: true, 
+			FESL: true,
 		},
 	}
 }

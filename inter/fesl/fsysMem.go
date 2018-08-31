@@ -2,8 +2,8 @@ package fesl
 
 import (
 	"github.com/sirupsen/logrus"
-	"github.com/Synaxis/bfheroesFesl/inter/network"
-	"github.com/Synaxis/bfheroesFesl/inter/network/codec"
+	"github.com/OSHeroes/bfheroesFesl/inter/network"
+	"github.com/OSHeroes/bfheroesFesl/inter/network/codec"
 )
 
 type reqMemCheck struct {

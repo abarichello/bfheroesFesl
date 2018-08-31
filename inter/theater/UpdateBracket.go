@@ -1,8 +1,8 @@
 package theater
 
 import (
-	"github.com/Synaxis/bfheroesFesl/inter/network"
-	"github.com/Synaxis/bfheroesFesl/inter/network/codec"
+	"github.com/OSHeroes/bfheroesFesl/inter/network"
+	"github.com/OSHeroes/bfheroesFesl/inter/network/codec"
 
 	"github.com/sirupsen/logrus"
 )
@@ -37,8 +37,8 @@ func (tM *Theater) UBRA(event network.EvProcess) {
 			START: 1,
 		}},
 	)
-	gdata := tM.level.NewObject("gdata", event.Process.Msg["GID"])	
-	
+	gdata := tM.level.NewObject("gdata", event.Process.Msg["GID"])
+
 
 
 	if event.Process.Msg["START"] == "1" {

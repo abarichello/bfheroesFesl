@@ -1,8 +1,8 @@
 package theater
 
 import (
-	"github.com/Synaxis/bfheroesFesl/inter/network"
-	"github.com/Synaxis/bfheroesFesl/inter/network/codec"
+	"github.com/OSHeroes/bfheroesFesl/inter/network"
+	"github.com/OSHeroes/bfheroesFesl/inter/network/codec"
 )
 
 type reqPING struct {
@@ -14,7 +14,7 @@ type ansPING struct {
 }
 
 func (tm *Theater) PING(event *network.EventNewClient) {
-	event.Client.Answer(&codec.Packet{		
+	event.Client.Answer(&codec.Packet{
 		Message: thtrPING,
 		Content: ansPING{"0"},
 	})

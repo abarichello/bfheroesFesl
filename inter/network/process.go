@@ -6,7 +6,7 @@ import (
 	"errors"
 	"net"
 	"strings"
-	"github.com/Synaxis/bfheroesFesl/inter/network/codec"
+	"github.com/OSHeroes/bfheroesFesl/inter/network/codec"
 
 	"github.com/sirupsen/logrus"
 )
@@ -141,7 +141,7 @@ func (socket *SocketUDP) readFESL(data []byte, addr *net.UDPAddr) {
 func readFesl(data []byte, fireEvent eventReadFesl) []byte {
 	p := bytes.NewBuffer(data)
 	i := 0
-	
+
 	var ContentRaw []byte
 	for {
 		// Create a copy at this point in case we have to abort later
@@ -201,9 +201,9 @@ type ProcessFESL struct {
 // processCommand turns gamespy's command string to the
 // command struct
 func processCommand(msg string) (*ProcessFESL, error) {
-	
-	
-	
+
+
+
 	outCommand := new(ProcessFESL) // Command not a CommandFESL
 	outCommand.Msg = make(map[string]string)
 	data := strings.Split(msg, `\`)

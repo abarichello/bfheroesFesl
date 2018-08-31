@@ -1,8 +1,8 @@
 package fesl
 
 import (
-	"github.com/Synaxis/bfheroesFesl/inter/network"
-	"github.com/Synaxis/bfheroesFesl/inter/network/codec"
+	"github.com/OSHeroes/bfheroesFesl/inter/network"
+	"github.com/OSHeroes/bfheroesFesl/inter/network/codec"
 	"github.com/sirupsen/logrus"
 	"strconv"
 )
@@ -38,9 +38,9 @@ func (fm *Fesl) UpdateStats(event network.EvProcess) {
 	answer := event.Process.Msg
 	convert := strconv.Itoa
 
-	//answer payload	
+	//answer payload
 	ans := ansUpdateStats{TXN: rankUpdateStats, Users: []userStats{}}
-	
+
 	//data types
 	userId := event.Client.HashState.Get("uID")
 	users, _ := strconv.Atoi(answer["u.[]"])
@@ -106,7 +106,7 @@ func (fm *Fesl) UpdateStats(event network.EvProcess) {
 			var userID int
 			var heroID int
 			var statsKey string
-			var statsValue string //this is fucked up 
+			var statsValue string //this is fucked up
 
 			err := rows.Scan(&userID, &heroID, &statsKey, &statsValue)
 			if err != nil {
@@ -153,13 +153,13 @@ func (fm *Fesl) UpdateStats(event network.EvProcess) {
 			key := answer["u."+convert(i)+".s."+convert(j)+".k"]
 			value := answer["u."+convert(i)+".s."+convert(j)+".t"]
 
-			//if value empty 
+			//if value empty
 			if value == "" {
 				logrus.Println("Updating stat", key+":", answer["u."+convert(i)+".s."+convert(j)+".v"], "+", stats[key].value)
 				// We are dealing with a number
 				value = answer["u."+convert(i)+".s."+convert(j)+".v"]
 
-				// ut = 3 when we ready to level up , check python files from bf2 folder  
+				// ut = 3 when we ready to level up , check python files from bf2 folder
 				//if you level up = 0 (not needed to level up)
 				if answer["u."+convert(i)+".s."+convert(j)+".ut"] == "3" {
 					intValue, err := strconv.ParseFloat(value, 64)

@@ -3,8 +3,8 @@ package fesl
 import (
 	"strconv"
 
-	"github.com/Synaxis/bfheroesFesl/inter/network"
-	"github.com/Synaxis/bfheroesFesl/inter/network/codec"
+	"github.com/OSHeroes/bfheroesFesl/inter/network"
+	"github.com/OSHeroes/bfheroesFesl/inter/network/codec"
 	"github.com/sirupsen/logrus"
 )
 

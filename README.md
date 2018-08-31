@@ -1,31 +1,9 @@
 [![HitCount](http://hits.dwyl.io/Synaxis/bfheroesFesl.svg)](http://hits.dwyl.io/Synaxis/bfheroesFesl)
 # Open Heroes Backend
-   UNFINISHED CODE
-   ```How to
-   1 clone the repository   
-   
-   git clone https://github.com/Synaxis/bfheroesFesl   
-   
-   2 copy the ENTIRE folder to your GOPATH
-   
-   3- Open your favorite terminal/command
-   Windows CMD / git bash 
-   linux/Mac - terminal
-   
-   -Use Glide to download the vendor Packages
-   in windows -> glide.exe
-   linux/mac -> ./glide
 
-   -Init Glide 
-   glide init
-   
-   -Download it!
-   glide install   
-   
-   -Now compile the code
-   go build main.go   
-```
-Remember to configure GOPATH to match your github directory
+## Setting up
+Follow instructions in our [wiki](https://github.com/OSHeroes/bfheroesFesl/wiki/Setting-up).<br>
+Remember to configure GOPATH to match your github directory.
 
 ## Configuration
 

@@ -3,9 +3,9 @@ package theater
 import (
 	"fmt"
 
-	"github.com/Synaxis/bfheroesFesl/inter/network"
-	"github.com/Synaxis/bfheroesFesl/inter/network/codec"
-	"github.com/Synaxis/bfheroesFesl/storage/level"
+	"github.com/OSHeroes/bfheroesFesl/inter/network"
+	"github.com/OSHeroes/bfheroesFesl/inter/network/codec"
+	"github.com/OSHeroes/bfheroesFesl/storage/level"
 
 	"github.com/sirupsen/logrus"
 )

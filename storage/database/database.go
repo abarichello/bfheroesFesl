@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net/url"
 
-	"github.com/Synaxis/bfheroesFesl/config"
+	"github.com/OSHeroes/bfheroesFesl/config"
 
 	// Needed since we are using this as driver for MySQL database
 	"github.com/Synaxis/logrus"

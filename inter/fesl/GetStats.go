@@ -3,8 +3,8 @@ package fesl
 import (
 	"strconv"
 
-	"github.com/Synaxis/bfheroesFesl/inter/network"
-	"github.com/Synaxis/bfheroesFesl/inter/network/codec"
+	"github.com/OSHeroes/bfheroesFesl/inter/network"
+	"github.com/OSHeroes/bfheroesFesl/inter/network/codec"
 	"github.com/sirupsen/logrus"
 )
 
@@ -91,7 +91,7 @@ func (fm *Fesl) GetStats(event network.EvProcess) {
 	for key := range statsKeys {
 		ans.Stats = append(ans.Stats, statsPair{Key: key})
 	}
-	
+
 	event.Client.Answer(&codec.Packet{
 		Content: ans,
 		Send:    event.Process.HEX,

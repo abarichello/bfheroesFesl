@@ -1,7 +1,7 @@
 package theater
 
 import (
-	"github.com/Synaxis/bfheroesFesl/inter/network"
+	"github.com/OSHeroes/bfheroesFesl/inter/network"
 	"github.com/sirupsen/logrus"
 	"strings"
 )
@@ -54,7 +54,7 @@ type reqUGAMKeys struct {
 }
 
 func (tM *Theater) UGAM(event network.EvProcess) {
-	
+
 	logrus.Println("==============UPDATE GAME==============")
 	gameID := event.Process.Msg["GID"] // TODO gameID := mm.FindGids()
 

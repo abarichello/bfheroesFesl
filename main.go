@@ -8,11 +8,11 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/Synaxis/bfheroesFesl/config"
-	"github.com/Synaxis/bfheroesFesl/inter/fesl"
-	"github.com/Synaxis/bfheroesFesl/inter/theater"
-	"github.com/Synaxis/bfheroesFesl/storage/database"
-	"github.com/Synaxis/bfheroesFesl/storage/level"
+	"github.com/OSHeroes/bfheroesFesl/config"
+	"github.com/OSHeroes/bfheroesFesl/inter/fesl"
+	"github.com/OSHeroes/bfheroesFesl/inter/theater"
+	"github.com/OSHeroes/bfheroesFesl/storage/database"
+	"github.com/OSHeroes/bfheroesFesl/storage/level"
 
 	"github.com/sirupsen/logrus"
 	"github.com/subosito/gotenv"

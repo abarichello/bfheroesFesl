@@ -2,7 +2,7 @@ package network
 
 import (
  "net"
- "github.com/Synaxis/bfheroesFesl/inter/network/codec"
+ "github.com/OSHeroes/bfheroesFesl/inter/network/codec"
 
 )
 

@@ -4,9 +4,9 @@ import (
 	"database/sql"
 	"time"
 
-	"github.com/Synaxis/bfheroesFesl/inter/mm"
-	"github.com/Synaxis/bfheroesFesl/inter/network"
-	"github.com/Synaxis/bfheroesFesl/storage/level"
+	"github.com/OSHeroes/bfheroesFesl/inter/mm"
+	"github.com/OSHeroes/bfheroesFesl/inter/network"
+	"github.com/OSHeroes/bfheroesFesl/storage/level"
 
 	"github.com/sirupsen/logrus"
 )
@@ -99,7 +99,7 @@ func (tm *Theater) Listen() {
 			case "client.command.GDAT":
 				go tm.GDAT(event.Data.(network.EvProcess))
 			case "client.command.EGAM":
-				go tm.EGAM(event.Data.(network.EvProcess))			
+				go tm.EGAM(event.Data.(network.EvProcess))
 			case "client.command.CGAM":
 				go tm.CGAM(event.Data.(network.EvProcess))
 			case "client.command.UBRA":
