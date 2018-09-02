@@ -9,25 +9,25 @@ Remember to configure GOPATH to match your github directory.
 
 Enviroment (.env) variables You can look in `./config/config.go` for more details
 
-| String Name           | Default value        |
-|-----------------------|----------------------|
-| `LOG_LEVEL`           | `INFO`               |
-| `HTTP_BIND`           | `0.0.0.0:8080`       |
-| `HTTPS_BIND`          | `0.0.0.0:443`        |
-| `GAMESPY_IP`          | `0.0.0.0`(auto bind) |
-| `FESL_CLIENT_PORT`    | `18270`              |//fixed
-| `FESL_SERVER_PORT`    | `18051`              |//fixed
-| `THEATER_CLIENT_PORT` | `18275`              |//fixed
-| `THEATER_SERVER_PORT` | `18056`              |//fixed
-| `THEATER_ADDR`        | `127.0.0.1`          |
-| `LEVEL_DB_PATH`       | `_data/lvl.db`       |
-| `DATABASE_USERNAME`   | `root`               |
-| `DATABASE_PASSWORD`   |                      |
-| `DATABASE_HOST`       | `127.0.0.1`          |
-| `DATABASE_PORT`       | `3306`               |
-| `DATABASE_NAME`       | `tutorialDB`         |
+| String Name          |Default value        |
+|--------------------- |---------------------|
+| `LOG_LEVEL`          |`INFO`               |
+| `HTTP_BIND`          |`0.0.0.0:8080`       |
+| `HTTPS_BIND`         |`0.0.0.0:443`        |
+| `GAMESPY_IP`         |`0.0.0.0`(auto bind) |
+| `FESL_CLIENT_PORT`   |`18270` (fixed)      |
+| `FESL_SERVER_PORT`   |`18051` (fixed)      |
+| `THEATER_CLIENT_PORT`|`18275` (fixed)      |
+| `THEATER_SERVER_PORT`|`18056` (fixed)      |
+| `THEATER_ADDR`       |`127.0.0.1`          |
+| `LEVEL_DB_PATH`      |`_data/lvl.db`       |
+| `DATABASE_USERNAME`  |`root`               |
+| `DATABASE_PASSWORD`  |                     |
+| `DATABASE_HOST`      |`127.0.0.1`          |
+| `DATABASE_PORT`      |`3306`               |
+| `DATABASE_NAME`      |`tutorialDB`         |
 
-WARNING for testing environment! Use Safe values in Production!
+WARNING for Production environment! Use Safe values!
 
 ## Example `.env` file
 ```ini
@@ -38,30 +38,24 @@ LOG_LEVEL=DEBUG
 
 ===========================================================================================================================
 # FESL PROTOCOL
-This explains the Protocol for gameClient.exe / gameServer.exe ==> MasterServer(Fesl Server for Login) and Theater Server for gameplay
+This explains the Protocol for gameClient.exe/gameServer.exe => MasterServer(Fesl Login)Theater Server for gameplay
 
 ## Overview
-Battlefield Heroes uses a network communication protocol similar to many other online games, named GameSpy EA games
-had it's own version also used in famous titles, such as Battlefield2/Battlefield2142. Need For Speed , and others.
+Battlefield Heroes uses a network protocol similar to many other online games, named GameSpy. it's also used in  other titles, such as BF2/BF2142. Need For Speed, and more.
 
-The general  consists of the following components:
-1. gameClient.exe: the front-end gameClient - for Production mode that runs on the player's computer. Consists mainly of a graphical userinterface and some game-logic.
+It works basically as :
+1. gameClient.exe: the front-end gameClient(BFHeroes.exe) - for Production mode that runs on the player's computer. Consists mainly of a graphical userinterface and some game-logic.
 
-2. gameServer.exe: the server that acts as a central game coordinator for the players in a match. Consists mainly of game logic and connections to game clients.
+2. gameServer.exe: the server that acts as a central game coordinator for the players in a match. And hosts the game shared area.
 
-3.FESL Login Server. A  login System. Used mostly for authentication for account and Stats retrieving for the player. We don't know the meaning of FESL, probably front end socket-lawyer?
+3.FESL Login Server. A  login System. Used mostly for authentication/account and Stats retrieving. We don't know the meaning of FESL, probably front end socket-lawyer?
 
-4. Theater Server: Another back-end server that stores player and server data and responsible for other functions like: match-making/ranking/leveling up/server bookmarks. This server provides persistance in between matches.
+4. Theater Server: Another back-end server that stores player and server data and responsible for other functions like: match-making/ranking/leveling up/server bookmarks. This server provides a sync with the gameClient to gameServer.
 
-5. "Magma server": an HTTP API , used for the login,validation and for the web_token(sessionId),& more game requests(Store,Entitlements,FriendSystem ,ServerBookmark), the reponse is parsed as XML
-
-## Master server overview
-The MASTER server has 3 components:(Note ,in this Code FESL and UDP are together , but you can make your own code and separate TCP from UDP. Magma Server already work as Standalone
-
-2. 1 UDP Server Interface: a message based server that handles querying, joining, leaving, ... For Both gameServer(BFHeroes_w32ded.exe) and gameClient(BFHeroes.exe)
+5. "Magma": an HTTP API , used for login,validation and for the web_token(sessionId),& more game requests(Store,Entitlements,FriendSystem ,ServerBookmark), the reponse is parsed as XML.
 
 ## TLS
-On Start, both the game client and the game server will first connect to the FESL server(Which works like a Login). 
+On Start, both the game client and the game server will first connect to the FESL server(working as a Login). 
 The address of the FESL server is inside the game client/server exe HEX. 
 
 ===changing it with an Hex editor==
@@ -98,17 +92,17 @@ Response Packets are always sent with the same Type and ID values as the query P
 #### TXN = Hello, game client/server => FESL server
 This is the first Pkt that is sent when a FESL connection is made.
 
-|Key                       |Example value              |Note                           |
-|--------------------------|---------------------------|-------------------------------|
-|SDKVersion                |5.0.0.0.0                  |GameSpy SDK version            |
-|clientPlatform            |PC                         |                               |
-|clientString              |bfwest-pc                  |                               |
-|clientType                |server                     |GameServer.exe                 |
-|clientVersion             |1.46.222034                |Static only                    |
-|locale                    |en_US                      |                               |
-|sku                       |125170                     |                               |
-|protocolVersion           |2.0                        |TLS version                    |
-|fragmentSize              |8096                       |Max buffer size                |
+|Key                   |Example value              |Note                           |
+|----------------------|---------------------------|-------------------------------|
+|SDKVersion            |5.0.0.0.0                  |GameSpy SDK version            |
+|clientPlatform        |PC                         |                               |
+|clientString          |bfwest-pc                  |                               |
+|clientType            |server                     |GameServer.exe                 |
+|clientVersion         |1.46.222034                |Static only                    |
+|locale                |en_US                      |                               |
+|sku                   |125170                     |                               |
+|protocolVersion       |2.0                        |TLS version                    |
+|fragmentSize          |8096                       |Max buffer size                |
 
 ## TXN = Hello, FESL server => game client/server
 
@@ -178,12 +172,10 @@ This message is a query to lookup all characters owned by a user.
 
 ## TXN = NuGetPersonas, FESL server => game client/server
 
-|Key                       |Example value              |Note                                             |
-|--------------------------|---------------------------|-------------------------------------------------|
-|personas.*i*              |xXx_1337Sn1per_xXx         |One entry for every character owned by the user. |
-|                          |                           |Contains the character name.                     |
-|                          |                           |*i* is the zero-based index of the character.    |
-|personas.[]               |1                          |The total amount of characters.                  |
+|Key                       |Example value              |Note                   |
+|--------------------------|---------------------------|-------------------- --|
+|personas.*i*              |xXx_1337Sn1per_xXx         |1 entry for each hero  |
+|personas.[]               |1                          |The amount of heroes   |
 
 
 ## TXN = NuGetAccount, game client/server => FESL server
@@ -195,18 +187,18 @@ This message retrieves general account information, based on the parameters sent
 
 ## TXN = NuGetAccount, FESL server => game client/server
 
-|Key                       |Example value              |Note                           |
-|--------------------------|---------------------------|-------------------------------|
-|heroName                  |xXx_1337Sn1per_xXx         |                               |
-|nuid                      |email@account.com          |                               |
-|DOBDay                    |1                          |Date Of Birth                  |
-|DOBMonth                  |1                          |                               |
-|DOBYear                   |1992                       |                               |
-|userId                    |1                          |                               |
-|globalOptin               |0                          |always 0                       |
-|thirdPartyOptin            |0                         |always 0                       |
-|language                  |enUS                       |                               |
-|country                   |US                         |                               |
+|Key                       |Example value             |Note                           |
+|--------------------------|--------------------------|-------------------------------|
+|heroName                  |xXx_1337Sn1per_xXx        |                               |
+|nuid                      |email@account.com         |                               |
+|DOBDay                    |1                         |Date Of Birth                  |
+|DOBMonth                  |1                         |                               |
+|DOBYear                   |1992                      |                               |
+|userId                    |1                         |                               |
+|globalOptin               |0                         |always 0                       |
+|thirdPartyOptin           |0                         |always 0                       |
+|language                  |enUS                      |                               |
+|country                   |US                        |                               |
 
 
 ## TXN = NuLoginPersona, game client/server => FESL server
