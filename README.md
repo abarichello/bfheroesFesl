@@ -30,13 +30,13 @@ Enviroment (.env) variables You can look in `./config/config.go` for more detail
 WARNING for Production environment! Use Safe values!
 
 ## Example `.env` file
-```ini
+```
 DATABASE_NAME=tutorialDB
 DATABASE_HOST=127.0.0.1
 DATABASE_PASSWORD=dbPass
 LOG_LEVEL=DEBUG
+```
 
-===========================================================================================================================
 # FESL PROTOCOL
 This explains the Protocol for gameClient.exe/gameServer.exe => MasterServer(Fesl Login)Theater Server for gameplay
 
@@ -55,13 +55,12 @@ It works basically as :
 5. "Magma": an HTTP API , used for login,validation and for the web_token(sessionId),& more game requests(Store,Entitlements,FriendSystem ,ServerBookmark), the reponse is parsed as XML.
 
 ## TLS
-On Start, both the game client and the game server will first connect to the FESL server(working as a Login). 
-The address of the FESL server is inside the game client/server exe HEX. 
+On Start, both the game client and the game server will first connect to the FESL server(working as a Login).
+The address of the FESL server is inside the game client/server exe HEX.
 
-===changing it with an Hex editor==
- search for "bfwest" , and put your IP / DNS there
--> then search for ".com", and also replace with you IP / DNS
-==============================================================
+# Changing it with an Hex editor
+Search for "bfwest" , and put your IP / DNS there then search for ".com", and also replace with you IP / DNS
+
 The game checks if the TLS certificate is Valid and disconnects if doesn't match the EA certificate.
 We use A Patch for this. From aluigi
 http://aluigi.altervista.org/patches/fesl.lpatch
@@ -80,10 +79,12 @@ http://old.zenhax.com/post10292.html
 
 The FESLData field is a key-value map where each pair is seperated by a newline (\n), and the key and value are seperated by '='.
 For example:
+
 ```
 Key1=Value1
 Key2=Value2
 ```
+
 ## Message types
 The 'TXN' key is used to determine the current Message field , and it's Order
 it's suposed to mean 'TAXON'
@@ -119,8 +120,8 @@ This is the first Pkt that is sent when a FESL connection is made.
 |theaterPort               |18056                      |By default, 18056 is for game servers and        |
 |                          |                           |18275 for game clients                           |
 
-## TXN = MemCheck, FESL server => game client/server
-This message is sent every 10 seconds, and acts a heartbeat. 
+### TXN = MemCheck, FESL server => game client/server
+This message is sent every 10 seconds, and acts a heartbeat.
 If either stops receiving the MemCheck messages, connection loss is assumed.
 
 |Key                       |Example value              |Note                           |
@@ -128,14 +129,14 @@ If either stops receiving the MemCheck messages, connection loss is assumed.
 |memcheck.[]               |0  (guessed response)      |                               |
 |salt                      |5  (guessed response)      |                               |
 
-## TXN = MemCheck, game client/server => FESL server
+### TXN = MemCheck, game client/server => FESL server
 This message is always a response to a MemCheck query message by the FESL server.
 
 |Key                       |Example value              |Note                           |
 |--------------------------|---------------------------|-------------------------------|
 |result                    |*empty*                    |                               |
 
-## TXN = NuLogin, game client/server => FESL server
+### TXN = NuLogin, game client/server => FESL server
 This message is sent by clients/servers to authenticate.
 
 |Key                       |Example value              |Note                           |
@@ -145,7 +146,7 @@ This message is sent by clients/servers to authenticate.
 |password                  |thisIsAPassword            |                               |
 |macAddr                   |$31dc51d43797              |                               |
 
-## TXN = NuLogin, FESL server => game client/server, on error
+### TXN = NuLogin, FESL server => game client/server, on error
 
 |Key                       |Example value              |Note                           |
 |--------------------------|---------------------------|-------------------------------|
@@ -153,7 +154,7 @@ This message is sent by clients/servers to authenticate.
 |errorContainer.[]         |0                          |custom error message           |
 |errorCode                 |122                        |                               |
 
-## TXN = NuLogin, FESL server => game client/server, on success
+### TXN = NuLogin, FESL server => game client/server, on success
 
 |Key                       |Example value              |Note                                    |
 |--------------------------|---------------------------|----------------------------------------|
@@ -163,14 +164,14 @@ This message is sent by clients/servers to authenticate.
 |lkey                      |OwPcFq[xA338SppTjx0Ybw4c   |A 24 character BF2Random (see Appendix) |
 
 
-## TXN = NuGetPersonas, game client/server => FESL server
+### TXN = NuGetPersonas, game client/server => FESL server
 This message is a query to lookup all characters owned by a user.
 
 |Key                       |Example value              |Note                           |
 |--------------------------|---------------------------|-------------------------------|
 |                          |                           |                               |
 
-## TXN = NuGetPersonas, FESL server => game client/server
+### TXN = NuGetPersonas, FESL server => game client/server
 
 |Key                       |Example value              |Note                   |
 |--------------------------|---------------------------|-------------------- --|
@@ -178,14 +179,14 @@ This message is a query to lookup all characters owned by a user.
 |personas.[]               |1                          |The amount of heroes   |
 
 
-## TXN = NuGetAccount, game client/server => FESL server
+### TXN = NuGetAccount, game client/server => FESL server
 This message retrieves general account information, based on the parameters sent.
 
 |Key                       |Example value              |Note                           |
 |--------------------------|---------------------------|-------------------------------|
 |                          |                           |                               |
 
-## TXN = NuGetAccount, FESL server => game client/server
+### TXN = NuGetAccount, FESL server => game client/server
 
 |Key                       |Example value             |Note                           |
 |--------------------------|--------------------------|-------------------------------|
@@ -201,14 +202,14 @@ This message retrieves general account information, based on the parameters sent
 |country                   |US                        |                               |
 
 
-## TXN = NuLoginPersona, game client/server => FESL server
+### TXN = NuLoginPersona, game client/server => FESL server
 This message is sent to login to a character/server.
 
 |Key                       |Example value              |Note                           |
 |--------------------------|---------------------------|-------------------------------|
 |name                      |Hero2                      |                               |
 
-## TXN = NuLoginPersona, FESL server => game client/server
+### TXN = NuLoginPersona, FESL server => game client/server
 
 |Key                       |Example value              |Note                                    |
 |--------------------------|---------------------------|----------------------------------------|
@@ -216,7 +217,7 @@ This message is sent to login to a character/server.
 |profileId                 |1                          |                                        |
 |userId                    |1                          |                                        |
 
-## TXN = GetStatsForOwners, game client/server => FESL server
+### TXN = GetStatsForOwners, game client/server => FESL server
 This message is sent to retrieve info for the character selection screen.
 
 |Key                       |Example value              |Note                                     |
@@ -228,7 +229,7 @@ This message is sent to retrieve info for the character selection screen.
 |periodId                  |0                          |                                         |
 |periodPast                |0                          |                                         |
 
-## TXN = GetStatsForOwners, FESL server => game client/server
+### TXN = GetStatsForOwners, FESL server => game client/server
 
 |Key                       |Example value              |Note                           |
 |--------------------------|---------------------------|-------------------------------|
@@ -240,7 +241,7 @@ This message is sent to retrieve info for the character selection screen.
 |stats.*i*.stats.[]        |1                          |                               |
 |stats.[]                  |1                          |                               |
 
-## TXN = GetStats, game client/server => FESL server
+### TXN = GetStats, game client/server => FESL server
 This message is sent to retrieve info about a character/user.
 
 |Key                       |Example value              |Note                                     |
@@ -252,7 +253,7 @@ This message is sent to retrieve info about a character/user.
 |keys.*i*                  |c_items(abilities)         |One entry for every stat to be retrieved |
 |keys.[]                   |1                          |Amount of stats to be retrieved          |
 
-#### TXN = GetStats, FESL server => game client/server
+##### TXN = GetStats, FESL server => game client/server
 
 |Key                       |Example value              |Note                           |
 |--------------------------|---------------------------|-------------------------------|
@@ -264,7 +265,7 @@ This message is sent to retrieve info about a character/user.
 |stats.[]                  |2                          |                               |
 
 
-## TXN = NuLookupUserInfo, game client/server => FESL server
+### TXN = NuLookupUserInfo, game client/server => FESL server
 This message is sent to retrieve basic information about a user.
 
 |Key                       |Example value              |Note                              |
@@ -272,7 +273,7 @@ This message is sent to retrieve basic information about a user.
 |userInfo.*i*.userName     |xXx_1337Sn1per_xXx         |Names of the characters to lookup |
 |userInfo.[]               |1                          |Amount of characters to lookup    |
 
-## TXN = NuLookupUserInfo, FESL server => game client/server
+### TXN = NuLookupUserInfo, FESL server => game client/server
 
 |Key                       |Example value              |Note                              |
 |--------------------------|---------------------------|----------------------------------|
@@ -287,18 +288,18 @@ This message is sent to retrieve basic information about a user.
 This is a query for a list of endpoints to test for the lowest latency on a game client.
 This is not working at the moment, maybe EA used it to change from DataCenters , based on Ping
 like LoadBalancer
-## TXN = GetPingSites, FESL server => game client/server
+### TXN = GetPingSites, FESL server => game client/server
 
 |Key                       |Example value              |Note                           |
 |--------------------------|---------------------------|-------------------------------|
 |minPingSitesToPing        |1                          |this was used in the past tho  |
-|pingSites.*i*.addr        |8.8.8.8                    |it doesnt seem to work. check  | 
+|pingSites.*i*.addr        |8.8.8.8                    |it doesnt seem to work. check  |
 |pingSites.*i*.name        |iad                        | valid response ?              |
 |pingSites.*i*.type        |0                          | or it's just telemetric shit  |
 |pingSites.[]              |1                          |                               |
 
 
-## TXN = UpdateStats, game client/server => FESL server
+### TXN = UpdateStats, game client/server => FESL server
 This message is sent to update character stats.
 
 |Key                       |Example value              |Note                           |
@@ -313,7 +314,7 @@ This message is sent to update character stats.
 |u.*i*.s.[]                |1                          |Amount of stats to query       |
 |u.[]                      |1                          |Amount of character to query   |
 
-## TXN = UpdateStats, FESL server => game client/server
+### TXN = UpdateStats, FESL server => game client/server
 
 |Key                       |Example value              |Note                             |
 |--------------------------|---------------------------|---------------------------------|
@@ -327,7 +328,7 @@ This message is sent to update character stats.
 |u.[]                      |                           |                                 |
 
 
-## TXN = GetTelemetryToken, game client/server => FESL server
+### TXN = GetTelemetryToken, game client/server => FESL server
 Returns a unique token for game telemetry.
 This is only used in 2009 client ?
 
@@ -335,7 +336,7 @@ This is only used in 2009 client ?
 |--------------------------|---------------------------|-------------------------------|
 |                          |                           |                               |
 
-## TXN = GetTelemetryToken, FESL server => game client/server
+### TXN = GetTelemetryToken, FESL server => game client/server
 ## only requested in 2009 client and 2015 client
 |Key                       |Example value              |Note                           |
 |--------------------------|---------------------------|-------------------------------|
@@ -346,7 +347,7 @@ This is only used in 2009 client ?
 |filters                   |*empty*                    |                               |
 |disabled                  |*empty*                    |                               |
 
-## TXN = Start, game client/server => FESL server
+### TXN = Start, game client/server => FESL server
 This message is sent to initiate a "playnow".
 
 |Key                               |Example value              |Note                                  |
@@ -358,7 +359,7 @@ This message is sent to initiate a "playnow".
 |players.*i*.props.{*propertykey*} |3                          |Example *propertykey* is pref-lvl_avg |
 |players.[]                        |1                          |                                      |
 
-## TXN = Start, FESL server => game client/server
+### TXN = Start, FESL server => game client/server
 
 |Key                       |Example value              |Note                           |
 |--------------------------|---------------------------|-------------------------------|
@@ -370,6 +371,7 @@ This message is sent to initiate a "playnow".
 On start, the game will connect to an HTTPS server. called MAGMA, this connection is encrypted using TLS. Multiple Magma server domains are in the game executable.
 
 The following HTTPS paths are listed in the game executable:
+```
 * /dc/submit
 * /nucleus/authToken
 * /nucleus/check/%s/%I64d
@@ -401,21 +403,22 @@ The following HTTPS paths are listed in the game executable:
 * /relationships/status/server:%s
 * /user
 * /user/updateUserProfile/%I64d
+```
 
+```
 ## /nucleus/authToken
-  For game servers: 
+  For game servers:
     ```<success><token>$serverSECRET$</token></success>```
- 
+
   `$SECRET$` equal to the value of the `X-SERVER-KEY` and "+Secret" given in start parameter
- 
+
   For game clients:
- 
-    ```<success><token code="NEW_TOKEN">$userKey$</token></success>```
- 
+
+    <success><token code="NEW_TOKEN">$userKey$</token></success>
+
   where `$userKey$` is the web token ID.
 
 ### /relationships/roster/{type}:{id}
-    ```
     <update>
         <id>1</id>
         <name>Test</name>
@@ -424,12 +427,10 @@ The following HTTPS paths are listed in the game executable:
         <status>Online</status>
         <realid>$id$</realid>
     </update>
-    ```
   with $id$ equal to the id in the URL.
 
 ### /nucleus/entitlements/{heroID}  // this is not a valid response
 
-    ```
     <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
     <entitlements>
         <entitlement>
@@ -445,11 +446,9 @@ The following HTTPS paths are listed in the game executable:
             <userId>$heroID$</userId>
         </entitlement>
     </entitlements>
-    ```
   with $heroID$ equal to heroID in the URL.
 
 ### /nucleus/wallets/{heroID}
-    ```
     <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
     <billingAccounts>
         <walletAccount>
@@ -457,10 +456,8 @@ The following HTTPS paths are listed in the game executable:
             <balance>1</balance>
         </walletAccount>
     </billingAccounts>
-    ```
 
 ### /ofb/products // this is not a valid response
-    ```
     <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
     <products>
         <product overwrite="false" default_locale="en_US" status="Published" productId="">
@@ -515,10 +512,10 @@ The following HTTPS paths are listed in the game executable:
             </attributes>
         </product>
     </products>
-    ``` 
+```
 Theater Protocol
 ## Theater
-The 3rd type of connection is the Theater connection and runs over TCP and UDP 
+The 3rd type of connection is the Theater connection and runs over TCP and UDP
 Ports used are listed at the Readme.txt inside the original files
 Packets received or sent from the UDP port are decoded/encoded using the "gamespy XOR"
 more info will be added soon.
